@@ -1,6 +1,6 @@
 # web-app
 
-A React login page built with Vite.
+A React login page built with Vite. (very basic login page)
 
 ## Development
 
