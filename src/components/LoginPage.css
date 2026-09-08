@@ -1,0 +1,104 @@
+.login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #f2f4f7;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
+
+.login-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 360px;
+  padding: 2.5rem;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.login-card h1 {
+  margin: 0 0 1rem;
+  font-size: 1.5rem;
+  text-align: center;
+  color: #1a1a1a;
+}
+
+.login-card label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  margin-top: 0.5rem;
+}
+
+.login-card input {
+  padding: 0.625rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.login-card input:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+.login-card input[aria-invalid='true'] {
+  border-color: #dc2626;
+}
+
+.field-error {
+  margin: 0;
+  color: #dc2626;
+  font-size: 0.8125rem;
+}
+
+.submit-button {
+  margin-top: 1.25rem;
+  padding: 0.7rem;
+  border: none;
+  border-radius: 8px;
+  background: #4f46e5;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.submit-button:hover {
+  background: #4338ca;
+}
+
+.login-links {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+  font-size: 0.8125rem;
+}
+
+.login-links a {
+  color: #4f46e5;
+  text-decoration: none;
+}
+
+.login-links a:hover {
+  text-decoration: underline;
+}
+
+.success-message {
+  text-align: center;
+  color: #374151;
+}
+
+.link-button {
+  background: none;
+  border: none;
+  color: #4f46e5;
+  cursor: pointer;
+  font-size: 0.875rem;
+  padding: 0;
+  align-self: center;
+}
