@@ -36,6 +36,7 @@ export default function SetPasswordPage() {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          aria-invalid={Boolean(error)}
         />
 
         <label htmlFor="confirm-password">Confirm new password</label>
@@ -44,9 +45,14 @@ export default function SetPasswordPage() {
           type="password"
           value={confirm}
           onChange={(e) => setConfirm(e.target.value)}
+          aria-invalid={Boolean(error)}
         />
 
-        {error && <p className="field-error">{error}</p>}
+        {error && (
+          <p className="field-error" role="alert">
+            {error}
+          </p>
+        )}
 
         <button type="submit" className="submit-button">
           Save password

@@ -39,10 +39,17 @@ export default function ChangePasswordPage() {
           type="password"
           value={current}
           onChange={(e) => setCurrent(e.target.value)}
+          aria-invalid={Boolean(error)}
         />
 
         <label htmlFor="new-password">New password</label>
-        <input id="new-password" type="password" value={next} onChange={(e) => setNext(e.target.value)} />
+        <input
+          id="new-password"
+          type="password"
+          value={next}
+          onChange={(e) => setNext(e.target.value)}
+          aria-invalid={Boolean(error)}
+        />
 
         <label htmlFor="confirm-password">Confirm new password</label>
         <input
@@ -50,10 +57,19 @@ export default function ChangePasswordPage() {
           type="password"
           value={confirm}
           onChange={(e) => setConfirm(e.target.value)}
+          aria-invalid={Boolean(error)}
         />
 
-        {error && <p className="field-error">{error}</p>}
-        {success && <p className="success-message">Password updated.</p>}
+        {error && (
+          <p className="field-error" role="alert">
+            {error}
+          </p>
+        )}
+        {success && (
+          <p className="success-message" role="alert">
+            Password updated.
+          </p>
+        )}
 
         <button type="submit" className="submit-button">
           Update password

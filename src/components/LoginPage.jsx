@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Navigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext.jsx'
 import './LoginPage.css'
 
@@ -9,7 +9,7 @@ function maskEmail(email) {
 }
 
 export default function LoginPage() {
-  const { admin, verifyCredentials, beginLogin, verifySecurityCode, pendingLogin } = useApp()
+  const { admin, isAuthenticated, verifyCredentials, beginLogin, verifySecurityCode, pendingLogin } = useApp()
   const navigate = useNavigate()
 
   const [step, setStep] = useState('credentials')
@@ -17,6 +17,10 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [code, setCode] = useState('')
   const [error, setError] = useState('')
+
+  if (isAuthenticated) {
+    return <Navigate to="/admin" replace />
+  }
 
   async function handleCredentialsSubmit(e) {
     e.preventDefault()
@@ -67,8 +71,13 @@ export default function LoginPage() {
             maxLength={4}
             value={code}
             onChange={(e) => setCode(e.target.value)}
+            aria-invalid={Boolean(error)}
           />
-          {error && <p className="field-error">{error}</p>}
+          {error && (
+            <p className="field-error" role="alert">
+              {error}
+            </p>
+          )}
 
           <button type="submit" className="submit-button">
             Verify
@@ -87,7 +96,13 @@ export default function LoginPage() {
         <h1>Sign in</h1>
 
         <label htmlFor="username">Username</label>
-        <input id="username" type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
+        <input
+          id="username"
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          aria-invalid={Boolean(error)}
+        />
 
         <label htmlFor="password">Password</label>
         <input
@@ -95,9 +110,14 @@ export default function LoginPage() {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          aria-invalid={Boolean(error)}
         />
 
-        {error && <p className="field-error">{error}</p>}
+        {error && (
+          <p className="field-error" role="alert">
+            {error}
+          </p>
+        )}
 
         <button type="submit" className="submit-button">
           Log in

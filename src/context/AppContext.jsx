@@ -38,8 +38,12 @@ export function AppProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState)
 
   async function verifyCredentials(username, password) {
-    const enteredHash = await hashPassword(password)
-    return username === state.admin.username && enteredHash === state.admin.passwordHash
+    try {
+      const enteredHash = await hashPassword(password)
+      return username === state.admin.username && enteredHash === state.admin.passwordHash
+    } catch {
+      return false
+    }
   }
 
   function beginLogin() {
@@ -70,26 +74,34 @@ export function AppProvider({ children }) {
     if (error) {
       return { ok: false, error }
     }
-    const passwordHash = await hashPassword(newPassword)
-    dispatch({ type: 'SET_PASSWORD_HASH', payload: { passwordHash, mustChangePassword: false } })
-    return { ok: true }
+    try {
+      const passwordHash = await hashPassword(newPassword)
+      dispatch({ type: 'SET_PASSWORD_HASH', payload: { passwordHash, mustChangePassword: false } })
+      return { ok: true }
+    } catch {
+      return { ok: false, error: 'Something went wrong. Please try again.' }
+    }
   }
 
   async function changePassword(currentPassword, newPassword) {
-    const currentHash = await hashPassword(currentPassword)
-    if (currentHash !== state.admin.passwordHash) {
-      return { ok: false, error: 'Current password is incorrect' }
+    try {
+      const currentHash = await hashPassword(currentPassword)
+      if (currentHash !== state.admin.passwordHash) {
+        return { ok: false, error: 'Current password is incorrect' }
+      }
+      const error = validatePasswordComplexity(newPassword)
+      if (error) {
+        return { ok: false, error }
+      }
+      const passwordHash = await hashPassword(newPassword)
+      dispatch({
+        type: 'SET_PASSWORD_HASH',
+        payload: { passwordHash, mustChangePassword: state.admin.mustChangePassword },
+      })
+      return { ok: true }
+    } catch {
+      return { ok: false, error: 'Something went wrong. Please try again.' }
     }
-    const error = validatePasswordComplexity(newPassword)
-    if (error) {
-      return { ok: false, error }
-    }
-    const passwordHash = await hashPassword(newPassword)
-    dispatch({
-      type: 'SET_PASSWORD_HASH',
-      payload: { passwordHash, mustChangePassword: state.admin.mustChangePassword },
-    })
-    return { ok: true }
   }
 
   const value = {
