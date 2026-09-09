@@ -1,79 +1,93 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useApp } from '../context/AppContext.jsx'
 import './LoginPage.css'
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+function maskEmail(email) {
+  const [local, domain] = email.split('@')
+  return `${local[0]}***@${domain}`
+}
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('')
+  const { admin, verifyCredentials, beginLogin, verifySecurityCode, pendingLogin } = useApp()
+  const navigate = useNavigate()
+
+  const [step, setStep] = useState('credentials')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [errors, setErrors] = useState({})
-  const [submitted, setSubmitted] = useState(false)
+  const [code, setCode] = useState('')
+  const [error, setError] = useState('')
 
-  function validate() {
-    const next = {}
-    if (!email.trim()) {
-      next.email = 'Email is required'
-    } else if (!EMAIL_PATTERN.test(email)) {
-      next.email = 'Enter a valid email address'
-    }
-    if (!password) {
-      next.password = 'Password is required'
-    } else if (password.length < 8) {
-      next.password = 'Password must be at least 8 characters'
-    }
-    return next
-  }
-
-  function handleSubmit(e) {
+  async function handleCredentialsSubmit(e) {
     e.preventDefault()
-    const next = validate()
-    setErrors(next)
-    if (Object.keys(next).length === 0) {
-      setSubmitted(true)
+    setError('')
+    if (!username.trim() || !password) {
+      setError('Username and password are required')
+      return
     }
+    const valid = await verifyCredentials(username.trim(), password)
+    if (!valid) {
+      setError('Invalid username or password')
+      return
+    }
+    beginLogin()
+    setStep('code')
   }
 
-  if (submitted) {
+  function handleCodeSubmit(e) {
+    e.preventDefault()
+    const result = verifySecurityCode(code)
+    if (!result.ok) {
+      setError(result.reason === 'expired' ? 'Code expired. Request a new one.' : 'Invalid code')
+      return
+    }
+    navigate('/admin')
+  }
+
+  function handleResend() {
+    beginLogin()
+    setCode('')
+    setError('')
+  }
+
+  if (step === 'code') {
     return (
       <div className="login-page">
-        <div className="login-card">
-          <h1>Welcome back</h1>
-          <p className="success-message">You're logged in as {email}.</p>
-          <button
-            type="button"
-            className="link-button"
-            onClick={() => {
-              setSubmitted(false)
-              setEmail('')
-              setPassword('')
-            }}
-          >
-            Log out
+        <form className="login-card" onSubmit={handleCodeSubmit} noValidate>
+          <h1>Enter security code</h1>
+          <p className="success-message">
+            Code sent to {maskEmail(admin.email)}: {pendingLogin?.code}
+          </p>
+
+          <label htmlFor="code">Security code</label>
+          <input
+            id="code"
+            type="text"
+            inputMode="numeric"
+            maxLength={4}
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+          />
+          {error && <p className="field-error">{error}</p>}
+
+          <button type="submit" className="submit-button">
+            Verify
           </button>
-        </div>
+          <button type="button" className="link-button" onClick={handleResend}>
+            Resend code
+          </button>
+        </form>
       </div>
     )
   }
 
   return (
     <div className="login-page">
-      <form className="login-card" onSubmit={handleSubmit} noValidate>
+      <form className="login-card" onSubmit={handleCredentialsSubmit} noValidate>
         <h1>Sign in</h1>
 
-        <label htmlFor="email">Email</label>
-        <input
-          id="email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          aria-invalid={Boolean(errors.email)}
-          aria-describedby={errors.email ? 'email-error' : undefined}
-        />
-        {errors.email && (
-          <p className="field-error" id="email-error">
-            {errors.email}
-          </p>
-        )}
+        <label htmlFor="username">Username</label>
+        <input id="username" type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
 
         <label htmlFor="password">Password</label>
         <input
@@ -81,23 +95,13 @@ export default function LoginPage() {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          aria-invalid={Boolean(errors.password)}
-          aria-describedby={errors.password ? 'password-error' : undefined}
         />
-        {errors.password && (
-          <p className="field-error" id="password-error">
-            {errors.password}
-          </p>
-        )}
+
+        {error && <p className="field-error">{error}</p>}
 
         <button type="submit" className="submit-button">
           Log in
         </button>
-
-        <div className="login-links">
-          <a href="#">Forgot password?</a>
-          <a href="#">Sign up</a>
-        </div>
       </form>
     </div>
   )
