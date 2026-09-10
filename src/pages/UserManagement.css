@@ -5,6 +5,8 @@
 .user-management {
   max-width: 900px;
   margin: 0 auto;
+  padding: 2rem;
+  /*background: rgb(173, 167, 255);*/
 }
 
 .user-management-header {
@@ -20,7 +22,7 @@
 
 .user-management-header p {
   margin-top: 0;
-  color: #6b7280;
+  color: #4d4d4d;
 }
 
 .back-button,
@@ -29,14 +31,14 @@
   padding: 0.6rem 1rem;
   border: 1px solid #d1d5db;
   border-radius: 6px;
-  background: white;
-  color: #4f46e5;
+  background: #4f46e5;
+  color: #ffffff;
   text-decoration: none;
 }
 
 .back-button:hover,
 .request-button:hover {
-  background: #f9fafb;
+  background: #daa3ff;
 }
 
 /* ============================================================

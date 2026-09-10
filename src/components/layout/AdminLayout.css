@@ -30,15 +30,20 @@
 }
 
 .admin-user {
-  color: #6b7280;
+  color: #9636c3;
 }
 
 .admin-nav button {
   padding: 0.4rem 0.75rem;
   border: 1px solid #d1d5db;
   border-radius: 6px;
-  background: #ffffff;
+  background: #4f46e5;
+  color: rgb(255, 255, 255);
   cursor: pointer;
+}
+
+.admin-nav button:hover {
+  background: #daa3ff;
 }
 
 .admin-content {
