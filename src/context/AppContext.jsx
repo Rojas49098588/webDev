@@ -1,6 +1,6 @@
 import { createContext, useContext, useReducer } from 'react'
 import { ADMIN_SEED } from '../data/seed.js'
-import { generateSecurityCode, hashPassword, validatePasswordComplexity } from '../utils/auth.js'
+import { generateSecurityCode, generateTempPassword, hashPassword, validatePasswordComplexity } from '../utils/auth.js'
 import { SAMPLE_USERS, SAMPLE_ADD_REQUESTS, SAMPLE_REMOVE_REQUESTS, } from '../data/users.js'
 
 export const SECURITY_CODE_TTL_MS = 5 * 60 * 1000
@@ -191,8 +191,9 @@ export function AppProvider({ children }) {
       )
     }
 
-    // All newly approved users receive this temporary password.
-    const initialPassword = 'MyChildIsSmart!'
+    // Each newly approved user gets its own randomly generated
+    // temporary password (never reused across users).
+    const initialPassword = generateTempPassword()
 
     const passwordHash = await hashPassword(initialPassword)
 
