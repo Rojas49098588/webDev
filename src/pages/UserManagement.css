@@ -1,0 +1,115 @@
+/* ============================================================
+   USER MANAGEMENT
+   ============================================================ */
+
+.user-management {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.user-management-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.user-management-header h1 {
+  margin-bottom: 0.25rem;
+}
+
+.user-management-header p {
+  margin-top: 0;
+  color: #6b7280;
+}
+
+.back-button,
+.request-button {
+  display: inline-block;
+  padding: 0.6rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: white;
+  color: #4f46e5;
+  text-decoration: none;
+}
+
+.back-button:hover,
+.request-button:hover {
+  background: #f9fafb;
+}
+
+/* ============================================================
+   SEARCH
+   ============================================================ */
+
+.user-search {
+  margin-top: 2rem;
+}
+
+.user-search label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.user-search input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+/* ============================================================
+   USER LIST
+   ============================================================ */
+
+.user-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.user-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  color: inherit;
+  text-decoration: none;
+  background: white;
+}
+
+.user-list-item:hover {
+  background: #f9fafb;
+}
+
+.user-list-item p {
+  margin: 0.25rem 0 0;
+  color: #6b7280;
+}
+
+.user-role {
+  color: #4f46e5;
+  font-weight: 600;
+}
+
+.no-users {
+  color: #6b7280;
+}
+
+/* ============================================================
+   REQUEST BUTTONS
+   ============================================================ */
+
+.request-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2.5rem;
+}

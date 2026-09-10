@@ -10,7 +10,7 @@ const initialState = {
   isAuthenticated: false,
   pendingLogin: null,
 
-  // USER MANAGEMENT ================
+  // USER MANAGEMENT ===================================
 
   users: [...SAMPLE_USERS],
   addRequests: [...SAMPLE_ADD_REQUESTS],
@@ -34,7 +34,7 @@ function reducer(state, action) {
           mustChangePassword: action.payload.mustChangePassword,
         },
       }
-    // USER MANAGEMENT ================
+    // USER MANAGEMENT =================================
 
     case 'UPDATE_USER':
       return {
@@ -147,8 +147,8 @@ export function AppProvider({ children }) {
     }
   }
 
-  // USER MANAGEMENT FUNCTIONS =====================
-  
+  // USER MANAGEMENT FUNCTIONS ================================
+
   function updateUser(userId, updatedInformation) {
     dispatch({
       type: 'UPDATE_USER',
@@ -159,14 +159,139 @@ export function AppProvider({ children }) {
     })
   }
 
+  // ADD USER REQUESTS ========================================
+
+  async function approveAddUserRequest(requestId) {
+    const request = state.addRequests.find(
+      (item) => item.id === requestId
+    )
+
+    if (!request) {
+      return {
+        ok: false,
+        error: 'Add request could not be found.',
+      }
+    }
+
+    // Create the username from the user's first initial + last name.
+    // Two random digits are added at the end.
+    let username = ''
+    let usernameExists = true
+
+    while (usernameExists) {
+      const randomDigits = Math.floor(10 + Math.random() * 90)
+
+      username =
+        request.firstName.charAt(0).toLowerCase() +
+        request.lastName.toLowerCase().replace(/[^a-z]/g, '') +
+        randomDigits
+
+      usernameExists = state.users.some(
+        (user) => user.username === username
+      )
+    }
+
+    // All newly approved users receive this temporary password.
+    const initialPassword = 'MyChildIsSmart!'
+
+    const passwordHash = await hashPassword(initialPassword)
+
+    const newUser = {
+      id: `user-${Date.now()}`,
+      firstName: request.firstName,
+      lastName: request.lastName,
+      username,
+      email: request.email,
+      phone: request.phone,
+      mailingAddress: request.mailingAddress,
+      role: request.role,
+      groupNumber: request.groupNumber ?? null,
+      active: true,
+
+      // New users don't have connected children yet.
+      connectedChildren: [],
+
+      // This tells the existing password system that the user
+      // needs to create a new password when they first log in.
+      passwordHash,
+      mustChangePassword: true,
+    }
+
+    dispatch({
+      type: 'APPROVE_ADD_REQUEST',
+      payload: {
+        requestId,
+        user: newUser,
+      },
+    })
+
+    return {
+      ok: true,
+      username,
+      initialPassword,
+    }
+  }
+
+  // REMOVE USER REQUESTS =========================================
+
+  function approveRemoveUserRequest(requestId) {
+    const request = state.removeRequests.find(
+      (item) => item.id === requestId
+    )
+
+    if (!request) {
+      return {
+        ok: false,
+        error: 'Remove request could not be found.',
+      }
+    }
+
+    const user = state.users.find(
+      (item) => item.id === request.userId
+    )
+
+    if (!user) {
+      return {
+        ok: false,
+        error: 'User could not be found.',
+      }
+    }
+
+    // A user cannot be archived while they are still
+    // connected to a child.
+    if (user.connectedChildren && user.connectedChildren.length > 0) {
+      return {
+        ok: false,
+        error:
+          'This user cannot be removed because a child is still connected to their account.',
+      }
+    }
+
+    dispatch({
+      type: 'APPROVE_REMOVE_REQUEST',
+      payload: {
+        requestId,
+        userId: request.userId,
+      },
+    })
+
+    return {
+      ok: true,
+    }
+  }
+
   const value = {
     admin: state.admin,
     isAuthenticated: state.isAuthenticated,
     pendingLogin: state.pendingLogin,
-    // USER MANAGEMENT ================
+    // USER MANAGEMENT =====================
     users: state.users,
     addRequests: state.addRequests,
     removeRequests: state.removeRequests,
+    updateUser,
+    approveAddUserRequest,
+    approveRemoveUserRequest,
+    //========================================
     verifyCredentials,
     beginLogin,
     verifySecurityCode,

@@ -1,0 +1,131 @@
+/* ============================================================
+   USER PROFILE
+   ============================================================ */
+
+.user-profile {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.profile-back {
+  color: #4f46e5;
+  text-decoration: none;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.profile-header h1 {
+  margin: 0;
+}
+
+.profile-role {
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: #4f46e5;
+  font-weight: 600;
+}
+
+/* ============================================================
+   PROFILE SECTIONS
+   ============================================================ */
+
+.profile-section {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: white;
+}
+
+.profile-section h2 {
+  margin-top: 0;
+}
+
+/* ============================================================
+   PROFILE FIELDS
+   ============================================================ */
+
+.profile-field {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.profile-field input,
+.profile-field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font: inherit;
+}
+
+.profile-field textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* ============================================================
+   EDIT BUTTONS
+   ============================================================ */
+
+.edit-button,
+.edit-buttons button,
+.profile-actions button {
+  padding: 0.6rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: white;
+  cursor: pointer;
+}
+
+.edit-button {
+  margin-top: 1rem;
+}
+
+.edit-buttons {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+/* ============================================================
+   CONNECTED CHILDREN
+   ============================================================ */
+
+.connected-children {
+  margin-top: 2rem;
+}
+
+.child-card {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+}
+
+/* ============================================================
+   USER ACTIONS
+   ============================================================ */
+
+.profile-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.remove-user-button {
+  color: #b91c1c;
+}

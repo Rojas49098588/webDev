@@ -6,6 +6,10 @@ import LoginPage from './components/LoginPage.jsx'
 import AdminHome from './pages/AdminHome.jsx'
 import SetPasswordPage from './pages/SetPasswordPage.jsx'
 import ChangePasswordPage from './pages/ChangePasswordPage.jsx'
+import UserManagement from './pages/UserManagement.jsx'
+import UserProfile from './pages/UserProfile.jsx'
+import AddUserRequests from './pages/AddUserRequests.jsx'
+import RemoveUserRequests from './pages/RemoveUserRequests.jsx'
 
 export default function App() {
   return (
@@ -37,6 +41,51 @@ export default function App() {
               <ProtectedRoute>
                 <AdminLayout>
                   <AdminHome />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+          {/* USER MANAGEMENT ROUTES ============================ */}
+
+          <Route
+            path="/admin/users"
+            element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <UserManagement />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/users/:id"
+            element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <UserProfile />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/users/add"
+            element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <AddUserRequests />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/users/remove"
+            element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <RemoveUserRequests />
                 </AdminLayout>
               </ProtectedRoute>
             }
