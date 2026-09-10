@@ -30,7 +30,7 @@ export default function ChangePasswordPage() {
   }
 
   return (
-    <div>
+    <div className="change-password-page">
       <h1>Change password</h1>
       <form className="login-card" onSubmit={handleSubmit} noValidate>
         <label htmlFor="current-password">Current password</label>

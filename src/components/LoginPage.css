@@ -102,3 +102,18 @@
   padding: 0;
   align-self: center;
 }
+
+/* CHANGE PASSWORD ================*/
+
+.change-password-page {
+  min-height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.change-password-page h1 {
+  width: 100%;
+  max-width: 400px;
+}

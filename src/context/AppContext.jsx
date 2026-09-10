@@ -1,6 +1,7 @@
 import { createContext, useContext, useReducer } from 'react'
 import { ADMIN_SEED } from '../data/seed.js'
 import { generateSecurityCode, hashPassword, validatePasswordComplexity } from '../utils/auth.js'
+import { SAMPLE_USERS, SAMPLE_ADD_REQUESTS, SAMPLE_REMOVE_REQUESTS, } from '../data/users.js'
 
 export const SECURITY_CODE_TTL_MS = 5 * 60 * 1000
 
@@ -8,6 +9,12 @@ const initialState = {
   admin: { ...ADMIN_SEED },
   isAuthenticated: false,
   pendingLogin: null,
+
+  // USER MANAGEMENT ================
+
+  users: [...SAMPLE_USERS],
+  addRequests: [...SAMPLE_ADD_REQUESTS],
+  removeRequests: [...SAMPLE_REMOVE_REQUESTS],
 }
 
 function reducer(state, action) {
@@ -26,6 +33,42 @@ function reducer(state, action) {
           passwordHash: action.payload.passwordHash,
           mustChangePassword: action.payload.mustChangePassword,
         },
+      }
+    // USER MANAGEMENT ================
+
+    case 'UPDATE_USER':
+      return {
+        ...state,
+        users: state.users.map((user) =>
+          user.id === action.payload.id
+            ? {
+                ...user,
+                email: action.payload.email,
+                phone: action.payload.phone,
+                mailingAddress: action.payload.mailingAddress,
+              }
+            : user
+        ),
+      }
+    case 'APPROVE_ADD_REQUEST':
+      return {
+        ...state,
+        users: [...state.users, action.payload.user],
+        addRequests: state.addRequests.filter(
+          (request) => request.id !== action.payload.requestId
+        ),
+      }
+    case 'APPROVE_REMOVE_REQUEST':
+      return {
+        ...state,
+        users: state.users.map((user) =>
+          user.id === action.payload.userId
+            ? { ...user, active: false }
+            : user
+        ),
+        removeRequests: state.removeRequests.filter(
+          (request) => request.id !== action.payload.requestId
+        ),
       }
     default:
       return state
@@ -104,10 +147,26 @@ export function AppProvider({ children }) {
     }
   }
 
+  // USER MANAGEMENT FUNCTIONS =====================
+  
+  function updateUser(userId, updatedInformation) {
+    dispatch({
+      type: 'UPDATE_USER',
+      payload: {
+        id: userId,
+        ...updatedInformation,
+      },
+    })
+  }
+
   const value = {
     admin: state.admin,
     isAuthenticated: state.isAuthenticated,
     pendingLogin: state.pendingLogin,
+    // USER MANAGEMENT ================
+    users: state.users,
+    addRequests: state.addRequests,
+    removeRequests: state.removeRequests,
     verifyCredentials,
     beginLogin,
     verifySecurityCode,
