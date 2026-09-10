@@ -14,7 +14,7 @@ export default function AdminLayout({ children }) {
   return (
     <div className="admin-layout">
       <header className="admin-header">
-        <span className="admin-title">Child-Care Admin</span>
+        <span className="title">Smart Children</span>
         <nav className="admin-nav">
           <Link to="/admin">Home</Link>
           <Link to="/admin/change-password">Change Password</Link>

@@ -3,10 +3,10 @@
    ============================================================ */
 
 .admin-home {
-  min-height: calc(100vh - 150px);
+  min-height: calc(100vh - 200px);
   text-align: center;
   margin-top: -1.5rem;
-  padding: 3rem;
+  padding: 5rem;
   background: rgb(173, 167, 255);
 }
 
