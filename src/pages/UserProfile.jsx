@@ -71,17 +71,17 @@ export default function UserProfile() {
         <h2>Account Information</h2>
 
         <div className="profile-field">
-          <strong>First name</strong>
+          <strong>First name*</strong>
           <span>{user.firstName}</span>
         </div>
 
         <div className="profile-field">
-          <strong>Last name</strong>
+          <strong>Last name*</strong>
           <span>{user.lastName}</span>
         </div>
 
         <div className="profile-field">
-          <strong>Username</strong>
+          <strong>Username*</strong>
           <span>{user.username}</span>
         </div>
 
