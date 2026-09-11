@@ -54,7 +54,7 @@ export default function UserManagement() {
         <input
           id="user-search-input"
           type="text"
-          placeholder="Name, username, email, or phone number"
+          placeholder="Enter name, username, email, or phone number..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />

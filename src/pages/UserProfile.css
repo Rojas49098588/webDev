@@ -9,7 +9,6 @@
 
 .profile-back {
   color: #4f46e5;
-  text-decoration: none;
 }
 
 .profile-header {
@@ -60,9 +59,15 @@
   width: 100%;
   box-sizing: border-box;
   padding: 0.5rem;
-  border: 1px solid #ff817a;
+  border: 1px solid #4f46e5;
   border-radius: 6px;
   font: inherit;
+}
+
+.profile-field input:focus,
+.profile-field textarea:focus {
+  outline: none;
+  border-color: #4f46e5;
 }
 
 .profile-field textarea {
@@ -92,6 +97,12 @@
   display: flex;
   gap: 0.75rem;
   margin-top: 1rem;
+}
+
+.edit-button:hover,
+.edit-buttons button:hover,
+.profile-actions button:hover {
+  background: #daa3ff;
 }
 
 /* ============================================================
