@@ -38,13 +38,9 @@
 .profile-section {
   margin-top: 1.5rem;
   padding: 1.5rem;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #c4c6cb;
   border-radius: 8px;
   background: white;
-}
-
-.profile-section h2 {
-  margin-top: 0;
 }
 
 /* ============================================================
@@ -64,7 +60,7 @@
   width: 100%;
   box-sizing: border-box;
   padding: 0.5rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid #ff817a;
   border-radius: 6px;
   font: inherit;
 }
@@ -82,7 +78,7 @@
 .edit-buttons button,
 .profile-actions button {
   padding: 0.6rem 1rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid #c1bcbc;
   border-radius: 6px;
   background: white;
   cursor: pointer;
@@ -96,23 +92,6 @@
   display: flex;
   gap: 0.75rem;
   margin-top: 1rem;
-}
-
-/* ============================================================
-   CONNECTED CHILDREN
-   ============================================================ */
-
-.connected-children {
-  margin-top: 2rem;
-}
-
-.child-card {
-  display: flex;
-  justify-content: space-between;
-  padding: 0.75rem;
-  margin-top: 0.5rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
 }
 
 /* ============================================================

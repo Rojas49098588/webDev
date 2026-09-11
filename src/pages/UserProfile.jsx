@@ -152,40 +152,6 @@ export default function UserProfile() {
       </section>
 
       {/* ============================================================
-          ROLE-SPECIFIC INFORMATION
-          ============================================================ */}
-
-      <section className="profile-section">
-        <h2>Role Information</h2>
-
-        {user.role === 'staff' && (
-          <div className="profile-field">
-            <strong>Group number</strong>
-            <span>{user.groupNumber ?? 'Not assigned'}</span>
-          </div>
-        )}
-
-        {/* ============================================================
-            CONNECTED CHILDREN
-            ============================================================ */}
-
-        <div className="connected-children">
-          <h2>Connected Children</h2>
-
-          {user.connectedChildren?.length > 0 ? (
-            user.connectedChildren.map((child) => (
-              <div key={child.id} className="child-card">
-                <strong>{child.name}</strong>
-                <span>{child.relationship}</span>
-              </div>
-            ))
-          ) : (
-            <p>No children are currently connected to this user.</p>
-          )}
-        </div>
-      </section>
-
-      {/* ============================================================
           USER ACTIONS
           ============================================================ */}
 
