@@ -12,6 +12,8 @@ import UserManagement from './pages/UserManagement.jsx'
 import UserProfile from './pages/UserProfile.jsx'
 import AddUserRequests from './pages/AddUserRequests.jsx'
 import RemoveUserRequests from './pages/RemoveUserRequests.jsx'
+import ChildManagement from './pages/ChildManagement.jsx'
+import ChildProfile from './pages/ChildProfile.jsx'
 
 export default function App() {
   return (
@@ -112,6 +114,28 @@ export default function App() {
               <ProtectedRoute role="staff">
                 <StaffLayout>
                   <ChangePasswordPage />
+                </StaffLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/staff/children"
+            element={
+              <ProtectedRoute role="staff">
+                <StaffLayout>
+                  <ChildManagement />
+                </StaffLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/staff/children/:id"
+            element={
+              <ProtectedRoute role="staff">
+                <StaffLayout>
+                  <ChildProfile />
                 </StaffLayout>
               </ProtectedRoute>
             }
