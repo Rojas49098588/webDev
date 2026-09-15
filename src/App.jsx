@@ -14,6 +14,8 @@ import AddUserRequests from './pages/AddUserRequests.jsx'
 import RemoveUserRequests from './pages/RemoveUserRequests.jsx'
 import ChildManagement from './pages/ChildManagement.jsx'
 import ChildProfile from './pages/ChildProfile.jsx'
+import AddChildRequests from './pages/AddChildRequests.jsx'
+import RemoveChildRequests from './pages/RemoveChildRequests.jsx'
 
 export default function App() {
   return (
@@ -136,6 +138,28 @@ export default function App() {
               <ProtectedRoute role="staff">
                 <StaffLayout>
                   <ChildProfile />
+                </StaffLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/staff/children/add"
+            element={
+              <ProtectedRoute role="staff">
+                <StaffLayout>
+                  <AddChildRequests />
+                </StaffLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/staff/children/remove"
+            element={
+              <ProtectedRoute role="staff">
+                <StaffLayout>
+                  <RemoveChildRequests />
                 </StaffLayout>
               </ProtectedRoute>
             }
