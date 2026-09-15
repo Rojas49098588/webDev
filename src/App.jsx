@@ -18,7 +18,7 @@ export default function App() {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route
-            path="/admin/set-password"
+            path="/set-password"
             element={
               <ProtectedRoute allowMustChangePassword>
                 <SetPasswordPage />
@@ -28,7 +28,7 @@ export default function App() {
           <Route
             path="/admin/change-password"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute role="admin">
                 <AdminLayout>
                   <ChangePasswordPage />
                 </AdminLayout>
@@ -38,7 +38,7 @@ export default function App() {
           <Route
             path="/admin"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute role="admin">
                 <AdminLayout>
                   <AdminHome />
                 </AdminLayout>
@@ -50,7 +50,7 @@ export default function App() {
           <Route
             path="/admin/users"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute role="admin">
                 <AdminLayout>
                   <UserManagement />
                 </AdminLayout>
@@ -61,7 +61,7 @@ export default function App() {
           <Route
             path="/admin/users/:id"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute role="admin">
                 <AdminLayout>
                   <UserProfile />
                 </AdminLayout>
@@ -72,7 +72,7 @@ export default function App() {
           <Route
             path="/admin/users/add"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute role="admin">
                 <AdminLayout>
                   <AddUserRequests />
                 </AdminLayout>
@@ -83,7 +83,7 @@ export default function App() {
           <Route
             path="/admin/users/remove"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute role="admin">
                 <AdminLayout>
                   <RemoveUserRequests />
                 </AdminLayout>

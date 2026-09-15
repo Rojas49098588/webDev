@@ -9,7 +9,7 @@ function maskEmail(email) {
 }
 
 export default function LoginPage() {
-  const { admin, isAuthenticated, verifyCredentials, beginLogin, verifySecurityCode, pendingLogin } = useApp()
+  const { admin, users, isAuthenticated, session, verifyCredentials, beginLogin, verifySecurityCode, pendingLogin } = useApp()
   const navigate = useNavigate()
 
   const [step, setStep] = useState('credentials')
@@ -19,8 +19,13 @@ export default function LoginPage() {
   const [error, setError] = useState('')
 
   if (isAuthenticated) {
-    return <Navigate to="/admin" replace />
+    return <Navigate to={session.role === 'admin' ? '/admin' : '/staff'} replace />
   }
+
+  const pendingEmail =
+    pendingLogin?.role === 'admin'
+      ? admin.email
+      : users.find((user) => user.id === pendingLogin?.id)?.email
 
   async function handleCredentialsSubmit(e) {
     e.preventDefault()
@@ -29,12 +34,12 @@ export default function LoginPage() {
       setError('Username and password are required')
       return
     }
-    const valid = await verifyCredentials(username.trim(), password)
-    if (!valid) {
+    const result = await verifyCredentials(username.trim(), password)
+    if (!result.ok) {
       setError('Invalid username or password')
       return
     }
-    beginLogin()
+    beginLogin(result.role, result.id)
     setStep('code')
   }
 
@@ -45,11 +50,11 @@ export default function LoginPage() {
       setError(result.reason === 'expired' ? 'Code expired. Request a new one.' : 'Invalid code')
       return
     }
-    navigate('/admin')
+    navigate(result.role === 'admin' ? '/admin' : '/staff')
   }
 
   function handleResend() {
-    beginLogin()
+    beginLogin(pendingLogin.role, pendingLogin.id)
     setCode('')
     setError('')
   }
@@ -60,7 +65,7 @@ export default function LoginPage() {
         <form className="login-card" onSubmit={handleCodeSubmit} noValidate>
           <h1>Enter security code</h1>
           <p className="success-message">
-            Code sent to {maskEmail(admin.email)}: {pendingLogin?.code}
+            Code sent to {pendingEmail ? maskEmail(pendingEmail) : 'your email'}: {pendingLogin?.code}
           </p>
 
           <label htmlFor="code">Security code</label>
