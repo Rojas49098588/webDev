@@ -2,14 +2,20 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AppProvider } from './context/AppContext.jsx'
 import ProtectedRoute from './components/routing/ProtectedRoute.jsx'
 import AdminLayout from './components/layout/AdminLayout.jsx'
+import StaffLayout from './components/layout/StaffLayout.jsx'
 import LoginPage from './components/LoginPage.jsx'
 import AdminHome from './pages/AdminHome.jsx'
+import StaffHome from './pages/StaffHome.jsx'
 import SetPasswordPage from './pages/SetPasswordPage.jsx'
 import ChangePasswordPage from './pages/ChangePasswordPage.jsx'
 import UserManagement from './pages/UserManagement.jsx'
 import UserProfile from './pages/UserProfile.jsx'
 import AddUserRequests from './pages/AddUserRequests.jsx'
 import RemoveUserRequests from './pages/RemoveUserRequests.jsx'
+import ChildManagement from './pages/ChildManagement.jsx'
+import ChildProfile from './pages/ChildProfile.jsx'
+import AddChildRequests from './pages/AddChildRequests.jsx'
+import RemoveChildRequests from './pages/RemoveChildRequests.jsx'
 
 export default function App() {
   return (
@@ -18,7 +24,7 @@ export default function App() {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route
-            path="/admin/set-password"
+            path="/set-password"
             element={
               <ProtectedRoute allowMustChangePassword>
                 <SetPasswordPage />
@@ -28,7 +34,7 @@ export default function App() {
           <Route
             path="/admin/change-password"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute role="admin">
                 <AdminLayout>
                   <ChangePasswordPage />
                 </AdminLayout>
@@ -38,7 +44,7 @@ export default function App() {
           <Route
             path="/admin"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute role="admin">
                 <AdminLayout>
                   <AdminHome />
                 </AdminLayout>
@@ -50,7 +56,7 @@ export default function App() {
           <Route
             path="/admin/users"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute role="admin">
                 <AdminLayout>
                   <UserManagement />
                 </AdminLayout>
@@ -61,7 +67,7 @@ export default function App() {
           <Route
             path="/admin/users/:id"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute role="admin">
                 <AdminLayout>
                   <UserProfile />
                 </AdminLayout>
@@ -72,7 +78,7 @@ export default function App() {
           <Route
             path="/admin/users/add"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute role="admin">
                 <AdminLayout>
                   <AddUserRequests />
                 </AdminLayout>
@@ -83,13 +89,82 @@ export default function App() {
           <Route
             path="/admin/users/remove"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute role="admin">
                 <AdminLayout>
                   <RemoveUserRequests />
                 </AdminLayout>
               </ProtectedRoute>
             }
           />
+
+          {/* STAFF ROUTES ============================ */}
+
+          <Route
+            path="/staff"
+            element={
+              <ProtectedRoute role="staff">
+                <StaffLayout>
+                  <StaffHome />
+                </StaffLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/staff/change-password"
+            element={
+              <ProtectedRoute role="staff">
+                <StaffLayout>
+                  <ChangePasswordPage />
+                </StaffLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/staff/children"
+            element={
+              <ProtectedRoute role="staff">
+                <StaffLayout>
+                  <ChildManagement />
+                </StaffLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/staff/children/:id"
+            element={
+              <ProtectedRoute role="staff">
+                <StaffLayout>
+                  <ChildProfile />
+                </StaffLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/staff/children/add"
+            element={
+              <ProtectedRoute role="staff">
+                <StaffLayout>
+                  <AddChildRequests />
+                </StaffLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/staff/children/remove"
+            element={
+              <ProtectedRoute role="staff">
+                <StaffLayout>
+                  <RemoveChildRequests />
+                </StaffLayout>
+              </ProtectedRoute>
+            }
+          />
+
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </BrowserRouter>

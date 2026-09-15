@@ -1,13 +1,15 @@
 import { createContext, useContext, useReducer } from 'react'
 import { ADMIN_SEED } from '../data/seed.js'
 import { generateSecurityCode, generateTempPassword, hashPassword, validatePasswordComplexity } from '../utils/auth.js'
-import { SAMPLE_USERS, SAMPLE_ADD_REQUESTS, SAMPLE_REMOVE_REQUESTS, } from '../data/users.js'
+import { SAMPLE_USERS, SAMPLE_ADD_REQUESTS, SAMPLE_REMOVE_REQUESTS } from '../data/users.js'
+import { SAMPLE_CHILDREN, SAMPLE_ADD_CHILD_REQUESTS, SAMPLE_REMOVE_CHILD_REQUESTS } from '../data/children.js'
+import { validateName, validateDateOfBirth } from '../utils/validation.js'
 
 export const SECURITY_CODE_TTL_MS = 5 * 60 * 1000
 
 const initialState = {
   admin: { ...ADMIN_SEED },
-  isAuthenticated: false,
+  session: null,
   pendingLogin: null,
 
   // USER MANAGEMENT ===================================
@@ -15,6 +17,22 @@ const initialState = {
   users: [...SAMPLE_USERS],
   addRequests: [...SAMPLE_ADD_REQUESTS],
   removeRequests: [...SAMPLE_REMOVE_REQUESTS],
+
+  // CHILD MANAGEMENT ===================================
+
+  children: [...SAMPLE_CHILDREN],
+  addChildRequests: [...SAMPLE_ADD_CHILD_REQUESTS],
+  removeChildRequests: [...SAMPLE_REMOVE_CHILD_REQUESTS],
+}
+
+function getCurrentAccount(state) {
+  if (!state.session) {
+    return null
+  }
+  if (state.session.role === 'admin') {
+    return state.admin
+  }
+  return state.users.find((user) => user.id === state.session.id) ?? null
 }
 
 function reducer(state, action) {
@@ -22,17 +40,35 @@ function reducer(state, action) {
     case 'LOGIN_BEGIN':
       return { ...state, pendingLogin: action.payload }
     case 'LOGIN_SUCCESS':
-      return { ...state, isAuthenticated: true, pendingLogin: null }
-    case 'LOGOUT':
-      return { ...state, isAuthenticated: false, pendingLogin: null }
-    case 'SET_PASSWORD_HASH':
       return {
         ...state,
-        admin: {
-          ...state.admin,
-          passwordHash: action.payload.passwordHash,
-          mustChangePassword: action.payload.mustChangePassword,
-        },
+        session: { role: action.payload.role, id: action.payload.id },
+        pendingLogin: null,
+      }
+    case 'LOGOUT':
+      return { ...state, session: null, pendingLogin: null }
+    case 'SET_PASSWORD_HASH':
+      if (action.payload.role === 'admin') {
+        return {
+          ...state,
+          admin: {
+            ...state.admin,
+            passwordHash: action.payload.passwordHash,
+            mustChangePassword: action.payload.mustChangePassword,
+          },
+        }
+      }
+      return {
+        ...state,
+        users: state.users.map((user) =>
+          user.id === action.payload.id
+            ? {
+                ...user,
+                passwordHash: action.payload.passwordHash,
+                mustChangePassword: action.payload.mustChangePassword,
+              }
+            : user
+        ),
       }
     // USER MANAGEMENT =================================
 
@@ -70,6 +106,29 @@ function reducer(state, action) {
           (request) => request.id !== action.payload.requestId
         ),
       }
+
+    // CHILD MANAGEMENT =================================
+
+    case 'APPROVE_ADD_CHILD_REQUEST':
+      return {
+        ...state,
+        children: [...state.children, action.payload.child],
+        addChildRequests: state.addChildRequests.filter(
+          (request) => request.id !== action.payload.requestId
+        ),
+      }
+    case 'APPROVE_REMOVE_CHILD_REQUEST':
+      return {
+        ...state,
+        children: state.children.map((child) =>
+          child.id === action.payload.childId
+            ? { ...child, active: false }
+            : child
+        ),
+        removeChildRequests: state.removeChildRequests.filter(
+          (request) => request.id !== action.payload.requestId
+        ),
+      }
     default:
       return state
   }
@@ -79,19 +138,36 @@ const AppContext = createContext(null)
 
 export function AppProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState)
+  const currentAccount = getCurrentAccount(state)
+  const isAuthenticated = state.session !== null
 
   async function verifyCredentials(username, password) {
     try {
       const enteredHash = await hashPassword(password)
-      return username === state.admin.username && enteredHash === state.admin.passwordHash
+
+      if (username === state.admin.username && enteredHash === state.admin.passwordHash) {
+        return { ok: true, role: 'admin', id: null }
+      }
+
+      const staffMatch = state.users.find(
+        (user) => user.role === 'staff' && user.active && user.username === username
+      )
+      if (staffMatch && staffMatch.passwordHash && enteredHash === staffMatch.passwordHash) {
+        return { ok: true, role: 'staff', id: staffMatch.id }
+      }
+
+      return { ok: false }
     } catch {
-      return false
+      return { ok: false }
     }
   }
 
-  function beginLogin() {
+  function beginLogin(role, id) {
     const code = generateSecurityCode()
-    dispatch({ type: 'LOGIN_BEGIN', payload: { code, expiresAt: Date.now() + SECURITY_CODE_TTL_MS } })
+    dispatch({
+      type: 'LOGIN_BEGIN',
+      payload: { code, expiresAt: Date.now() + SECURITY_CODE_TTL_MS, role, id },
+    })
   }
 
   function verifySecurityCode(code) {
@@ -104,8 +180,11 @@ export function AppProvider({ children }) {
     if (code !== state.pendingLogin.code) {
       return { ok: false, reason: 'invalid' }
     }
-    dispatch({ type: 'LOGIN_SUCCESS' })
-    return { ok: true }
+    dispatch({
+      type: 'LOGIN_SUCCESS',
+      payload: { role: state.pendingLogin.role, id: state.pendingLogin.id },
+    })
+    return { ok: true, role: state.pendingLogin.role }
   }
 
   function logout() {
@@ -119,7 +198,15 @@ export function AppProvider({ children }) {
     }
     try {
       const passwordHash = await hashPassword(newPassword)
-      dispatch({ type: 'SET_PASSWORD_HASH', payload: { passwordHash, mustChangePassword: false } })
+      dispatch({
+        type: 'SET_PASSWORD_HASH',
+        payload: {
+          role: state.session.role,
+          id: state.session.id,
+          passwordHash,
+          mustChangePassword: false,
+        },
+      })
       return { ok: true }
     } catch {
       return { ok: false, error: 'Something went wrong. Please try again.' }
@@ -128,8 +215,9 @@ export function AppProvider({ children }) {
 
   async function changePassword(currentPassword, newPassword) {
     try {
+      const account = getCurrentAccount(state)
       const currentHash = await hashPassword(currentPassword)
-      if (currentHash !== state.admin.passwordHash) {
+      if (currentHash !== account.passwordHash) {
         return { ok: false, error: 'Current password is incorrect' }
       }
       const error = validatePasswordComplexity(newPassword)
@@ -139,7 +227,12 @@ export function AppProvider({ children }) {
       const passwordHash = await hashPassword(newPassword)
       dispatch({
         type: 'SET_PASSWORD_HASH',
-        payload: { passwordHash, mustChangePassword: state.admin.mustChangePassword },
+        payload: {
+          role: state.session.role,
+          id: state.session.id,
+          passwordHash,
+          mustChangePassword: account.mustChangePassword,
+        },
       })
       return { ok: true }
     } catch {
@@ -173,8 +266,6 @@ export function AppProvider({ children }) {
       }
     }
 
-    // Create the username from the user's first initial + last name.
-    // Two random digits are added at the end.
     let username = ''
     let usernameExists = true
 
@@ -191,10 +282,7 @@ export function AppProvider({ children }) {
       )
     }
 
-    // Each newly approved user gets its own randomly generated
-    // temporary password (never reused across users).
     const initialPassword = generateTempPassword()
-
     const passwordHash = await hashPassword(initialPassword)
 
     const newUser = {
@@ -208,12 +296,7 @@ export function AppProvider({ children }) {
       role: request.role,
       groupNumber: request.groupNumber ?? null,
       active: true,
-
-      // New users don't have connected children yet.
       connectedChildren: [],
-
-      // This tells the existing password system that the user
-      // needs to create a new password when they first log in.
       passwordHash,
       mustChangePassword: true,
     }
@@ -258,8 +341,6 @@ export function AppProvider({ children }) {
       }
     }
 
-    // A user cannot be archived while they are still
-    // connected to a child.
     if (user.connectedChildren && user.connectedChildren.length > 0) {
       return {
         ok: false,
@@ -281,9 +362,78 @@ export function AppProvider({ children }) {
     }
   }
 
+  // ADD CHILD REQUESTS ========================================
+
+  function approveAddChildRequest(requestId) {
+    const request = state.addChildRequests.find((item) => item.id === requestId)
+
+    if (!request) {
+      return { ok: false, error: 'Add-child request could not be found.' }
+    }
+
+    const nameError = validateName(request.firstName) || validateName(request.lastName)
+    if (nameError) {
+      return { ok: false, error: nameError }
+    }
+
+    const dobError = validateDateOfBirth(request.dateOfBirth)
+    if (dobError) {
+      return { ok: false, error: dobError }
+    }
+
+    const newChild = {
+      id: `child-${Date.now()}`,
+      firstName: request.firstName,
+      lastName: request.lastName,
+      dateOfBirth: request.dateOfBirth,
+      primaryCaretakerId: request.primaryCaretakerId,
+      otherCaretakerIds: request.otherCaretakerIds ?? [],
+      active: true,
+    }
+
+    dispatch({
+      type: 'APPROVE_ADD_CHILD_REQUEST',
+      payload: { requestId, child: newChild },
+    })
+
+    return { ok: true }
+  }
+
+  // REMOVE CHILD REQUESTS =========================================
+
+  function approveRemoveChildRequest(requestId) {
+    const request = state.removeChildRequests.find((item) => item.id === requestId)
+
+    if (!request) {
+      return { ok: false, error: 'Remove-child request could not be found.' }
+    }
+
+    const child = state.children.find((item) => item.id === request.childId)
+
+    if (!child) {
+      return { ok: false, error: 'Child could not be found.' }
+    }
+
+    if (request.requestedByUserId !== child.primaryCaretakerId) {
+      return {
+        ok: false,
+        error: "Only the primary caretaker can request this child's removal.",
+      }
+    }
+
+    dispatch({
+      type: 'APPROVE_REMOVE_CHILD_REQUEST',
+      payload: { requestId, childId: request.childId },
+    })
+
+    return { ok: true }
+  }
+
   const value = {
     admin: state.admin,
-    isAuthenticated: state.isAuthenticated,
+    isAuthenticated,
+    session: state.session,
+    currentAccount,
     pendingLogin: state.pendingLogin,
     // USER MANAGEMENT =====================
     users: state.users,
@@ -292,6 +442,12 @@ export function AppProvider({ children }) {
     updateUser,
     approveAddUserRequest,
     approveRemoveUserRequest,
+    // CHILD MANAGEMENT =====================
+    children: state.children,
+    addChildRequests: state.addChildRequests,
+    removeChildRequests: state.removeChildRequests,
+    approveAddChildRequest,
+    approveRemoveChildRequest,
     //========================================
     verifyCredentials,
     beginLogin,

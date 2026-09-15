@@ -4,7 +4,7 @@ import { useApp } from '../context/AppContext.jsx'
 import '../components/LoginPage.css'
 
 export default function SetPasswordPage() {
-  const { setNewPassword } = useApp()
+  const { setNewPassword, session } = useApp()
   const navigate = useNavigate()
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
@@ -21,7 +21,7 @@ export default function SetPasswordPage() {
       setError(result.error)
       return
     }
-    navigate('/admin')
+    navigate(session.role === 'admin' ? '/admin' : '/staff')
   }
 
   return (

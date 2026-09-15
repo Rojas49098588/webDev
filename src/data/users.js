@@ -69,6 +69,27 @@ export const SAMPLE_USERS = [
       },
     ],
   },
+
+  {
+    id: 'user-4',
+    firstName: 'Taylor',
+    lastName: 'Reed',
+    username: 'treed08',
+    email: 'taylor.reed@example.com',
+    phone: '555-678-1234',
+    mailingAddress: '55 Birch Court, Dallas, TX 75205',
+    role: 'staff',
+    groupNumber: 5,
+    active: true,
+    connectedChildren: [],
+
+    // Demo staff credentials for local testing: username "treed08",
+    // password "Staff123!". This is the precomputed SHA-256 hex digest of
+    // "Staff123!":
+    //   node -e "console.log(require('crypto').createHash('sha256').update('Staff123!').digest('hex'))"
+    passwordHash: '05dd4a1376a72d9a5e0fad32000f7e61651a5cef5c9c9a0c3816c7443dafbf6f',
+    mustChangePassword: true,
+  },
 ]
 
 // ============================================================
