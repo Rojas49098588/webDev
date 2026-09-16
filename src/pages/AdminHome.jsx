@@ -11,7 +11,7 @@ export default function AdminHome() {
 
       <div className="admin-home-actions">
         <Link to="/admin/users" className="admin-home-button">
-          Add / Remove User
+          User Requests
         </Link>
       </div>
     </div>
