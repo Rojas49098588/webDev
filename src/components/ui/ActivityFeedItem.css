@@ -1,0 +1,31 @@
+.activity-item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.activity-item:last-child {
+  border-bottom: none;
+}
+
+.activity-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--primary);
+  flex-shrink: 0;
+}
+
+.activity-message {
+  font-size: 13.5px;
+  color: var(--ink);
+  flex: 1;
+}
+
+.activity-time {
+  font-size: 12px;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
