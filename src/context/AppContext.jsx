@@ -23,6 +23,10 @@ const initialState = {
   children: [...SAMPLE_CHILDREN],
   addChildRequests: [...SAMPLE_ADD_CHILD_REQUESTS],
   removeChildRequests: [...SAMPLE_REMOVE_CHILD_REQUESTS],
+
+  // ACTIVITY LOG ===================================
+
+  activity: [],
 }
 
 function getCurrentAccount(state) {
@@ -129,6 +133,14 @@ function reducer(state, action) {
           (request) => request.id !== action.payload.requestId
         ),
       }
+
+    // ACTIVITY LOG =================================
+
+    case 'LOG_ACTIVITY':
+      return {
+        ...state,
+        activity: [action.payload, ...state.activity].slice(0, 10),
+      }
     default:
       return state
   }
@@ -191,6 +203,15 @@ export function AppProvider({ children }) {
     dispatch({ type: 'LOGOUT' })
   }
 
+  // ACTIVITY LOG ================================
+
+  function logActivity(message) {
+    dispatch({
+      type: 'LOG_ACTIVITY',
+      payload: { id: `activity-${Date.now()}`, message, timestamp: Date.now() },
+    })
+  }
+
   async function setNewPassword(newPassword) {
     const error = validatePasswordComplexity(newPassword)
     if (error) {
@@ -250,6 +271,13 @@ export function AppProvider({ children }) {
         ...updatedInformation,
       },
     })
+
+    const user = state.users.find((item) => item.id === userId)
+    if (user) {
+      logActivity(
+        `${currentAccount.firstName} ${currentAccount.lastName} updated ${user.firstName} ${user.lastName}'s contact information`
+      )
+    }
   }
 
   // ADD USER REQUESTS ========================================
@@ -309,6 +337,10 @@ export function AppProvider({ children }) {
       },
     })
 
+    logActivity(
+      `${currentAccount.firstName} ${currentAccount.lastName} approved adding ${newUser.firstName} ${newUser.lastName}`
+    )
+
     return {
       ok: true,
       username,
@@ -357,6 +389,8 @@ export function AppProvider({ children }) {
       },
     })
 
+    logActivity(`${currentAccount.firstName} ${currentAccount.lastName} archived ${user.firstName} ${user.lastName}`)
+
     return {
       ok: true,
     }
@@ -396,6 +430,10 @@ export function AppProvider({ children }) {
       payload: { requestId, child: newChild },
     })
 
+    logActivity(
+      `${currentAccount.firstName} ${currentAccount.lastName} approved adding ${newChild.firstName} ${newChild.lastName}`
+    )
+
     return { ok: true }
   }
 
@@ -426,6 +464,8 @@ export function AppProvider({ children }) {
       payload: { requestId, childId: request.childId },
     })
 
+    logActivity(`${currentAccount.firstName} ${currentAccount.lastName} archived ${child.firstName} ${child.lastName}`)
+
     return { ok: true }
   }
 
@@ -448,6 +488,8 @@ export function AppProvider({ children }) {
     removeChildRequests: state.removeChildRequests,
     approveAddChildRequest,
     approveRemoveChildRequest,
+    // ACTIVITY LOG =====================
+    activity: state.activity,
     //========================================
     verifyCredentials,
     beginLogin,
