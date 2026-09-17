@@ -13,6 +13,14 @@ export default function AddChildRequestsTab() {
   }
 
   function handleApprove(requestId) {
+    const confirmed = window.confirm(
+      'Are you sure you want to add this child?'
+    )
+
+    if (!confirmed) {
+      return
+    }
+
     setError('')
     const result = approveAddChildRequest(requestId)
     if (!result.ok) {

@@ -13,6 +13,13 @@ export default function RemoveChildRequestsTab() {
   }
 
   function handleApprove(requestId) {
+    const confirmed = window.confirm(
+    'Are you sure you want to remove this child? This action cannot be undone.'
+    )
+
+    if (!confirmed) {
+      return
+    }
     setError('')
     const result = approveRemoveChildRequest(requestId)
     if (!result.ok) {

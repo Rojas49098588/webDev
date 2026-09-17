@@ -18,7 +18,7 @@ function calculateAge(dateOfBirth) {
 
 export default function ChildProfilePage() {
   const { id } = useParams()
-  const { children, users } = useApp()
+  const { children, users, getChildPayments, getChildAttendance } = useApp()
 
   const child = children.find((item) => item.id === id)
 
@@ -32,6 +32,9 @@ export default function ChildProfilePage() {
   }
 
   const primaryCaretaker = users.find((user) => user.id === child.primaryCaretakerId)
+
+  const payments = getChildPayments(child.id)
+  const attendance = getChildAttendance(child.id)
 
   return (
     <div className="child-profile-page">
@@ -72,6 +75,105 @@ export default function ChildProfilePage() {
               <span>Status</span>
               <strong>{child.active ? 'Active' : 'Archived'}</strong>
             </div>
+          </Card>
+
+          <Card>
+            <div className="section-heading">
+              <div>
+                <h2>Attendance history</h2>
+                <p className="section-description">
+                  Drop-off and pickup records for this child.
+                </p>
+              </div>
+            </div>
+
+            {attendance.length === 0 ? (
+              <p className="no-results">No attendance records yet.</p>
+            ) : (
+              <div className="attendance-records">
+                {attendance.map((record) => {
+                  const dateTime = new Date(record.dateTime)
+
+                  return (
+                    <div key={record.id} className="attendance-record">
+                      <div>
+                        <strong>
+                          {record.type === 'drop-off' ? 'Drop-off' : 'Pickup'}
+                        </strong>
+
+                        <span>
+                          {dateTime.toLocaleDateString()} ·{' '}
+                          {dateTime.toLocaleTimeString([], {
+                            hour: 'numeric',
+                            minute: '2-digit',
+                          })}
+                        </span>
+                      </div>
+
+                      <span className="attendance-caretaker">
+                        {record.caretakerFirstName} {record.caretakerLastName}
+                      </span>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </Card>
+
+          <Card>
+            <div className="section-heading">
+              <div>
+                <h2>Payment records</h2>
+                <p className="section-description">
+                  Payment history for this child.
+                </p>
+              </div>
+
+              <button type="button" className="profile-action">
+                + Add payment
+              </button>
+            </div>
+
+            {payments.length === 0 ? (
+              <p className="no-results">No payment records yet.</p>
+            ) : (
+              <div className="payment-records">
+                {payments.map((payment) => (
+                  <div key={payment.id} className="payment-record">
+                    <div className="payment-record-header">
+                      <strong>Due {payment.dueOn}</strong>
+
+                      <span>
+                        {payment.balance === 0
+                          ? 'Paid'
+                          : `$${payment.balance.toFixed(2)} remaining`}
+                      </span>
+                    </div>
+
+                    <div className="info-row">
+                      <span>Amount due</span>
+                      <strong>${payment.amountDue.toFixed(2)}</strong>
+                    </div>
+
+                    <div className="info-row">
+                      <span>Amount paid</span>
+                      <strong>${payment.amountPaid.toFixed(2)}</strong>
+                    </div>
+
+                    <div className="info-row">
+                      <span>Paid on</span>
+                      <strong>{payment.paidOn || 'Not paid'}</strong>
+                    </div>
+
+                    <div className="payment-record-footer">
+                      <button type="button" className="profile-action-secondary">
+                        Edit
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </Card>
         </div>
 

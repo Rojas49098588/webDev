@@ -87,3 +87,113 @@
     grid-template-columns: 1fr;
   }
 }
+
+.section-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.section-heading h2 {
+  margin-bottom: 0.2rem;
+}
+
+.section-description {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+
+.profile-action,
+.profile-action-secondary {
+  border: none;
+  border-radius: 7px;
+  padding: 0.5rem 0.75rem;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.profile-action {
+  background: var(--violet);
+  color: white;
+}
+
+.profile-action-secondary {
+  background: var(--surface-soft);
+  color: var(--ink);
+}
+
+.payment-records {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.payment-record {
+  padding: 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.payment-record-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.payment-record-header strong {
+  font-size: 14px;
+}
+
+.payment-record-header span {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+
+.payment-record-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.75rem;
+}
+
+.attendance-records {
+  display: flex;
+  flex-direction: column;
+}
+
+.attendance-record {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.attendance-record:last-child {
+  border-bottom: none;
+}
+
+.attendance-record > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.attendance-record strong {
+  font-size: 13.5px;
+}
+
+.attendance-record span {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+
+.attendance-caretaker {
+  text-align: right;
+}

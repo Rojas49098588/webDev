@@ -6,6 +6,8 @@ import './AppShell.css'
 const STAFF_NAV = [
   { to: '/staff', label: 'Home', icon: '⌂', exact: true },
   { to: '/staff/children', label: 'Children', icon: '◑', exact: false },
+  { to: '/staff/attendance', label: 'Attendance', icon: '◷', exact: false },
+  { to: '/staff/payments', label: 'Payments', icon: '$', exact: false },
   { to: '/staff/change-password', label: 'Change password', icon: '⚿', exact: true },
 ]
 

@@ -162,11 +162,12 @@ function reducer(state, action) {
     case 'UPDATE_PAYMENT_RECORD':
       return {
         ...state,
-        paymentRecords: [
-          ...state.paymentRecords,
-          action.payload,
-        ],
-      } 
+        paymentRecords: state.paymentRecords.map((record) =>
+          record.id === action.payload.id
+            ? action.payload
+            : record
+        ),
+      }
 
     // ACTIVITY LOG =================================
     case 'LOG_ACTIVITY':
@@ -703,7 +704,88 @@ export function AppProvider({ children }) {
 }
 
 function updatePaymentRecord(paymentInformation) {
-  return addPaymentRecord(paymentInformation)
+  const existingRecord = state.paymentRecords.find(
+    (record) => record.id === paymentInformation.id
+  )
+
+  if (!existingRecord) {
+    return {
+      ok: false,
+      error: 'Payment record could not be found.',
+    }
+  }
+
+  const child = state.children.find(
+    (item) => item.id === paymentInformation.childId
+  )
+
+  if (!child) {
+    return {
+      ok: false,
+      error: 'Child could not be found.',
+    }
+  }
+
+  const caretaker = state.users.find(
+    (user) =>
+      user.id === child.primaryCaretakerId &&
+      user.role === 'caretaker' &&
+      user.active
+  )
+
+  if (!caretaker) {
+    return {
+      ok: false,
+      error: 'The child does not have a valid primary caretaker.',
+    }
+  }
+
+  const amountDue = Number(paymentInformation.amountDue)
+  const amountPaid = Number(paymentInformation.amountPaid)
+
+  if (Number.isNaN(amountDue) || amountDue < 0) {
+    return {
+      ok: false,
+      error: 'Amount due must be a valid non-negative number.',
+    }
+  }
+
+  if (Number.isNaN(amountPaid) || amountPaid < 0) {
+    return {
+      ok: false,
+      error: 'Amount paid must be a valid non-negative number.',
+    }
+  }
+
+  const updatedRecord = {
+    id: existingRecord.id,
+
+    childId: child.id,
+    childFirstName: child.firstName,
+    childLastName: child.lastName,
+
+    primaryCaretakerId: caretaker.id,
+    primaryCaretakerFirstName: caretaker.firstName,
+    primaryCaretakerLastName: caretaker.lastName,
+
+    dueOn: paymentInformation.dueOn,
+    amountDue,
+
+    paidOn: paymentInformation.paidOn || null,
+    amountPaid,
+
+    balance: amountDue - amountPaid,
+  }
+
+  dispatch({
+    type: 'UPDATE_PAYMENT_RECORD',
+    payload: updatedRecord,
+  })
+
+  return {
+    ok: true,
+    record: updatedRecord,
+  }
 }
 
   const value = {
