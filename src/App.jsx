@@ -11,6 +11,7 @@ import UserProfilePage from './pages/UserProfilePage.jsx'
 import ChildManagementPage from './pages/ChildManagementPage.jsx'
 import ChildProfilePage from './pages/ChildProfilePage.jsx'
 import Attendance from './pages/Attendance.jsx'
+import Payments from './pages/Payments.jsx'
 
 export default function App() {
   return (
@@ -89,6 +90,17 @@ export default function App() {
               <ProtectedRoute role="staff">
                 <AppShell>
                   <Attendance />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/staff/payments"
+            element={
+              <ProtectedRoute role="staff">
+                <AppShell>
+                  <Payments />
                 </AppShell>
               </ProtectedRoute>
             }
