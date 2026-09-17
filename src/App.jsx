@@ -1,8 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AppProvider } from './context/AppContext.jsx'
 import ProtectedRoute from './components/routing/ProtectedRoute.jsx'
-import AdminLayout from './components/layout/AdminLayout.jsx'
-import StaffLayout from './components/layout/StaffLayout.jsx'
+import AppShell from './components/layout/AppShell.jsx'
 import LoginPage from './components/LoginPage.jsx'
 import AdminHome from './pages/AdminHome.jsx'
 import StaffHome from './pages/StaffHome.jsx'
@@ -35,9 +34,9 @@ export default function App() {
             path="/admin/change-password"
             element={
               <ProtectedRoute role="admin">
-                <AdminLayout>
+                <AppShell>
                   <ChangePasswordPage />
-                </AdminLayout>
+                </AppShell>
               </ProtectedRoute>
             }
           />
@@ -45,9 +44,9 @@ export default function App() {
             path="/admin"
             element={
               <ProtectedRoute role="admin">
-                <AdminLayout>
+                <AppShell>
                   <AdminHome />
-                </AdminLayout>
+                </AppShell>
               </ProtectedRoute>
             }
           />
@@ -57,9 +56,9 @@ export default function App() {
             path="/admin/users"
             element={
               <ProtectedRoute role="admin">
-                <AdminLayout>
+                <AppShell>
                   <UserManagement />
-                </AdminLayout>
+                </AppShell>
               </ProtectedRoute>
             }
           />
@@ -68,9 +67,9 @@ export default function App() {
             path="/admin/users/:id"
             element={
               <ProtectedRoute role="admin">
-                <AdminLayout>
+                <AppShell>
                   <UserProfile />
-                </AdminLayout>
+                </AppShell>
               </ProtectedRoute>
             }
           />
@@ -79,9 +78,9 @@ export default function App() {
             path="/admin/users/add"
             element={
               <ProtectedRoute role="admin">
-                <AdminLayout>
+                <AppShell>
                   <AddUserRequests />
-                </AdminLayout>
+                </AppShell>
               </ProtectedRoute>
             }
           />
@@ -90,9 +89,9 @@ export default function App() {
             path="/admin/users/remove"
             element={
               <ProtectedRoute role="admin">
-                <AdminLayout>
+                <AppShell>
                   <RemoveUserRequests />
-                </AdminLayout>
+                </AppShell>
               </ProtectedRoute>
             }
           />
@@ -103,9 +102,9 @@ export default function App() {
             path="/staff"
             element={
               <ProtectedRoute role="staff">
-                <StaffLayout>
+                <AppShell>
                   <StaffHome />
-                </StaffLayout>
+                </AppShell>
               </ProtectedRoute>
             }
           />
@@ -114,9 +113,9 @@ export default function App() {
             path="/staff/change-password"
             element={
               <ProtectedRoute role="staff">
-                <StaffLayout>
+                <AppShell>
                   <ChangePasswordPage />
-                </StaffLayout>
+                </AppShell>
               </ProtectedRoute>
             }
           />
@@ -125,9 +124,9 @@ export default function App() {
             path="/staff/children"
             element={
               <ProtectedRoute role="staff">
-                <StaffLayout>
+                <AppShell>
                   <ChildManagement />
-                </StaffLayout>
+                </AppShell>
               </ProtectedRoute>
             }
           />
@@ -136,9 +135,9 @@ export default function App() {
             path="/staff/children/:id"
             element={
               <ProtectedRoute role="staff">
-                <StaffLayout>
+                <AppShell>
                   <ChildProfile />
-                </StaffLayout>
+                </AppShell>
               </ProtectedRoute>
             }
           />
@@ -147,9 +146,9 @@ export default function App() {
             path="/staff/children/add"
             element={
               <ProtectedRoute role="staff">
-                <StaffLayout>
+                <AppShell>
                   <AddChildRequests />
-                </StaffLayout>
+                </AppShell>
               </ProtectedRoute>
             }
           />
@@ -158,9 +157,9 @@ export default function App() {
             path="/staff/children/remove"
             element={
               <ProtectedRoute role="staff">
-                <StaffLayout>
+                <AppShell>
                   <RemoveChildRequests />
-                </StaffLayout>
+                </AppShell>
               </ProtectedRoute>
             }
           />
