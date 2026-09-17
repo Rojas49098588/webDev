@@ -2,7 +2,8 @@ import { createContext, useContext, useReducer } from 'react'
 import { ADMIN_SEED } from '../data/seed.js'
 import { generateSecurityCode, generateTempPassword, hashPassword, validatePasswordComplexity } from '../utils/auth.js'
 import { SAMPLE_USERS, SAMPLE_ADD_REQUESTS, SAMPLE_REMOVE_REQUESTS } from '../data/users.js'
-import { SAMPLE_CHILDREN, SAMPLE_ADD_CHILD_REQUESTS, SAMPLE_REMOVE_CHILD_REQUESTS } from '../data/children.js'
+import { SAMPLE_CHILDREN, SAMPLE_ADD_CHILD_REQUESTS, SAMPLE_REMOVE_CHILD_REQUESTS,
+        SAMPLE_ATTENDANCE_RECORDS, SAMPLE_PAYMENT_RECORDS } from '../data/children.js'
 import { validateName, validateDateOfBirth } from '../utils/validation.js'
 
 export const SECURITY_CODE_TTL_MS = 5 * 60 * 1000
@@ -23,6 +24,10 @@ const initialState = {
   children: [...SAMPLE_CHILDREN],
   addChildRequests: [...SAMPLE_ADD_CHILD_REQUESTS],
   removeChildRequests: [...SAMPLE_REMOVE_CHILD_REQUESTS],
+
+  // ATTENDANCE / PAYMENTS ==============================
+  attendanceRecords: [...SAMPLE_ATTENDANCE_RECORDS],
+  paymentRecords: [...SAMPLE_PAYMENT_RECORDS],
 }
 
 function getCurrentAccount(state) {
@@ -70,8 +75,8 @@ function reducer(state, action) {
             : user
         ),
       }
-    // USER MANAGEMENT =================================
 
+    // USER MANAGEMENT =================================
     case 'UPDATE_USER':
       return {
         ...state,
@@ -129,6 +134,36 @@ function reducer(state, action) {
           (request) => request.id !== action.payload.requestId
         ),
       }
+
+    // ATTENDANCE =============================================
+
+    case 'ADD_ATTENDANCE_RECORD':
+      return {
+        ...state,
+        attendanceRecords: [
+          ...state.attendanceRecords,
+          action.payload,
+        ],
+      }
+
+    // PAYMENTS =================================================
+    case 'ADD_PAYMENT_RECORD':
+      return {
+        ...state,
+        paymentRecords: [
+          ...state.paymentRecords,
+          action.payload,
+        ],
+      }
+
+    case 'UPDATE_PAYMENT_RECORD':
+      return {
+        ...state,
+        paymentRecords: [
+          ...state.paymentRecords,
+          action.payload,
+        ],
+      } 
     default:
       return state
   }
@@ -425,9 +460,208 @@ export function AppProvider({ children }) {
       type: 'APPROVE_REMOVE_CHILD_REQUEST',
       payload: { requestId, childId: request.childId },
     })
-
-    return { ok: true }
   }
+
+  //ATTENDANCE ================================================
+
+  function validateAttendanceInformation(childId, caretakerFirstName, caretakerLastName) {
+    const child = state.children.find((item) => item.id === childId)
+
+    if (!child) {
+      return {
+        ok: false,
+        error: 'Child could not be found.',
+      }
+    }
+
+    if (!child.active) {
+      return {
+        ok: false,
+        error: 'This child is archived and cannot have attendance recorded.',
+      }
+    }
+
+    const firstName = caretakerFirstName.trim().toLowerCase()
+    const lastName = caretakerLastName.trim().toLowerCase()
+
+    const authorizedCaretakerIds = [
+      child.primaryCaretakerId,
+      ...(child.otherCaretakerIds ?? []),
+    ]
+
+    const caretaker = state.users.find(
+      (user) =>
+        authorizedCaretakerIds.includes(user.id) &&
+        user.role === 'caretaker' &&
+        user.active &&
+        user.firstName.toLowerCase() === firstName &&
+        user.lastName.toLowerCase() === lastName
+    )
+
+    if (!caretaker) {
+      return {
+        ok: false,
+        error: 'The person is not an authorized caretaker for this child.',
+      }
+    }
+
+    return {
+      ok: true,
+      child,
+      caretaker,
+    }
+  }
+
+  function recordAttendance(childId, type, caretakerFirstName, caretakerLastName) {
+    if (type !== 'drop-off' && type !== 'pickup') {
+      return {
+        ok: false,
+        error: 'Invalid attendance type.',
+      }
+    }
+
+    const validation = validateAttendanceInformation(childId,
+      caretakerFirstName,
+      caretakerLastName
+    )
+
+    if (!validation.ok) {
+      return validation
+    }
+
+    const { child, caretaker } = validation
+
+    const attendanceRecord = {
+      id: `attendance-${Date.now()}`,
+      type,
+      dateTime: new Date().toISOString(),
+
+      childId: child.id,
+      childFirstName: child.firstName,
+      childLastName: child.lastName,
+
+      caretakerId: caretaker.id,
+      caretakerFirstName: caretaker.firstName,
+      caretakerLastName: caretaker.lastName,
+    }
+
+    dispatch({
+      type: 'ADD_ATTENDANCE_RECORD',
+      payload: attendanceRecord,
+    })
+
+    return {
+      ok: true,
+      record: attendanceRecord,
+    }
+  }
+
+  function getChildAttendance(childId) {
+    return state.attendanceRecords
+      .filter((record) => record.childId === childId)
+      .sort(
+        (a, b) =>
+          new Date(b.dateTime) - new Date(a.dateTime)
+      )
+  }
+
+  function getAttendanceForDate(date) {
+    return state.attendanceRecords
+      .filter((record) => record.dateTime.startsWith(date))
+      .sort(
+        (a, b) =>
+          new Date(a.dateTime) - new Date(b.dateTime)
+      )
+  }
+
+  // PAYMENTS ==================================================
+
+  function getChildPayments(childId) {
+    return state.paymentRecords
+      .filter((record) => record.childId === childId)
+      .sort(
+        (a, b) =>
+          new Date(b.dueOn) - new Date(a.dueOn)
+      )
+  }
+
+  function addPaymentRecord(paymentInformation) {
+    const child = state.children.find(
+      (item) => item.id === paymentInformation.childId
+    )
+
+    if (!child) {
+      return {
+        ok: false,
+        error: 'Child could not be found.',
+      }
+    }
+
+    const caretaker = state.users.find(
+      (user) =>
+        user.id === child.primaryCaretakerId &&
+        user.role === 'caretaker' &&
+        user.active
+    )
+
+    if (!caretaker) {
+      return {
+        ok: false,
+        error: 'The child does not have a valid primary caretaker.',
+      }
+    }
+
+    const amountDue = Number(paymentInformation.amountDue)
+    const amountPaid = Number(paymentInformation.amountPaid)
+
+    if (Number.isNaN(amountDue) || amountDue < 0) {
+      return {
+        ok: false,
+        error: 'Amount due must be a valid non-negative number.',
+      }
+    }
+
+    if (Number.isNaN(amountPaid) || amountPaid < 0) {
+      return {
+        ok: false,
+        error: 'Amount paid must be a valid non-negative number.',
+      }
+    }
+
+  const paymentRecord = {
+    id: `payment-${Date.now()}`,
+
+    childId: child.id,
+    childFirstName: child.firstName,
+    childLastName: child.lastName,
+
+    primaryCaretakerId: caretaker.id,
+    primaryCaretakerFirstName: caretaker.firstName,
+    primaryCaretakerLastName: caretaker.lastName,
+
+    dueOn: paymentInformation.dueOn,
+    amountDue,
+
+    paidOn: paymentInformation.paidOn || null,
+    amountPaid,
+
+    balance: amountDue - amountPaid,
+  }
+
+  dispatch({
+    type: 'ADD_PAYMENT_RECORD',
+    payload: paymentRecord,
+  })
+
+  return {
+    ok: true,
+    record: paymentRecord,
+  }
+}
+
+function updatePaymentRecord(paymentInformation) {
+  return addPaymentRecord(paymentInformation)
+}
 
   const value = {
     admin: state.admin,
@@ -435,6 +669,7 @@ export function AppProvider({ children }) {
     session: state.session,
     currentAccount,
     pendingLogin: state.pendingLogin,
+
     // USER MANAGEMENT =====================
     users: state.users,
     addRequests: state.addRequests,
@@ -442,19 +677,31 @@ export function AppProvider({ children }) {
     updateUser,
     approveAddUserRequest,
     approveRemoveUserRequest,
+    
     // CHILD MANAGEMENT =====================
     children: state.children,
     addChildRequests: state.addChildRequests,
     removeChildRequests: state.removeChildRequests,
     approveAddChildRequest,
     approveRemoveChildRequest,
-    //========================================
+
+    //LOGIN=====================================
     verifyCredentials,
     beginLogin,
     verifySecurityCode,
     logout,
     setNewPassword,
     changePassword,
+
+    //ATTENDANCE / PAYMENTS =================
+    attendanceRecords: state.attendanceRecords,
+    paymentRecords: state.paymentRecords,
+    recordAttendance,
+    getChildAttendance,
+    getAttendanceForDate,
+    getChildPayments,
+    addPaymentRecord,
+    updatePaymentRecord,
   }
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>

@@ -155,7 +155,7 @@ export default function UserProfile() {
           USER ACTIONS
           ============================================================ */}
 
-      <div className="profile-actions">
+      {/* <div className="profile-actions">
         <button
           type="button"
           className="remove-user-button"
@@ -171,7 +171,7 @@ export default function UserProfile() {
         >
           Add User
         </button>
-      </div>
+      </div> */}
     </div>
   )
 }

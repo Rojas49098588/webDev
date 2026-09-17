@@ -11,7 +11,11 @@ export default function StaffHome() {
 
       <div className="staff-home-actions">
         <Link to="/staff/children" className="staff-home-button">
-          Search / Manage Children
+          Manage Children
+        </Link>
+
+        <Link to="/staff/attendance" className="staff-home-button">
+          Attendance
         </Link>
       </div>
     </div>

@@ -17,7 +17,7 @@ export default function AdminLayout({ children }) {
         <span className="title">Smart Children</span>
         <nav className="admin-nav">
           <Link to="/admin">Home</Link>
-          <Link to="/admin/change-password">Change Password</Link>
+          {/* <Link to="/admin/change-password">Change Password</Link> */}
           <span className="admin-user">{admin.username}</span>
           <button type="button" onClick={handleLogout}>
             Logout

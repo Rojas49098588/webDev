@@ -98,11 +98,11 @@ export default function UserManagement() {
 
       <div className="request-buttons">
         <Link to="/admin/users/add" className="request-button">
-          Add User Requests
+          Add User
         </Link>
 
         <Link to="/admin/users/remove" className="request-button">
-          Remove User Requests
+          Remove User
         </Link>
       </div>
     </div>

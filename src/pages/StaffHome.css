@@ -7,7 +7,7 @@
   text-align: center;
   margin-top: -1.5rem;
   padding: 5rem;
-  background: rgb(173, 167, 255);
+  background: rgb(104, 172, 255);
 }
 
 .staff-home-actions {
@@ -20,12 +20,12 @@
   display: inline-block;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
-  background: #4f46e5;
+  background: #55cfff;
   color: rgb(255, 255, 255);
   text-decoration: none;
   font-weight: 600;
 }
 
 .staff-home-button:hover {
-  background: #4338ca;
+  background: #86dafb;
 }

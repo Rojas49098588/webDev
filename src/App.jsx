@@ -3,11 +3,15 @@ import { AppProvider } from './context/AppContext.jsx'
 import ProtectedRoute from './components/routing/ProtectedRoute.jsx'
 import AdminLayout from './components/layout/AdminLayout.jsx'
 import StaffLayout from './components/layout/StaffLayout.jsx'
+
 import LoginPage from './components/LoginPage.jsx'
 import AdminHome from './pages/AdminHome.jsx'
 import StaffHome from './pages/StaffHome.jsx'
+import Attendance from './pages/Attendance.jsx'
+
 import SetPasswordPage from './pages/SetPasswordPage.jsx'
 import ChangePasswordPage from './pages/ChangePasswordPage.jsx'
+
 import UserManagement from './pages/UserManagement.jsx'
 import UserProfile from './pages/UserProfile.jsx'
 import AddUserRequests from './pages/AddUserRequests.jsx'
@@ -105,6 +109,17 @@ export default function App() {
               <ProtectedRoute role="staff">
                 <StaffLayout>
                   <StaffHome />
+                </StaffLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/staff/attendance"
+            element={
+              <ProtectedRoute role="staff">
+                <StaffLayout>
+                  <Attendance />
                 </StaffLayout>
               </ProtectedRoute>
             }

@@ -21,7 +21,7 @@
 }
 
 .staff-nav a {
-  color: #4f46e5;
+  color: rgb(104, 172, 255);
   text-decoration: none;
 }
 
@@ -30,20 +30,20 @@
 }
 
 .staff-user {
-  color: #9636c3;
+  color: #0096d2;
 }
 
 .staff-nav button {
   padding: 0.4rem 0.75rem;
   border: 1px solid #d1d5db;
   border-radius: 6px;
-  background: #4f46e5;
+  background: #55cfff;
   color: rgb(255, 255, 255);
   cursor: pointer;
 }
 
 .staff-nav button:hover {
-  background: #daa3ff;
+  background: #86dafb;
 }
 
 .staff-content {

@@ -42,7 +42,7 @@
 
 .login-card input:focus {
   outline: none;
-  border-color: #4f46e5;
+  border-color: #f9a5e6;
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
 }
 
@@ -61,7 +61,7 @@
   padding: 0.7rem;
   border: none;
   border-radius: 8px;
-  background: #4f46e5;
+  background: #ad53dd;
   color: #ffffff;
   font-size: 1rem;
   font-weight: 600;
@@ -69,7 +69,7 @@
 }
 
 .submit-button:hover {
-  background: #4338ca;
+  background: #f9a5e6;
 }
 
 .login-links {
@@ -80,7 +80,7 @@
 }
 
 .login-links a {
-  color: #4f46e5;
+  color: #ad53dd;
   text-decoration: none;
 }
 
@@ -96,7 +96,7 @@
 .link-button {
   background: none;
   border: none;
-  color: #4f46e5;
+  color: #f9a5e6;
   cursor: pointer;
   font-size: 0.875rem;
   padding: 0;

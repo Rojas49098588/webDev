@@ -75,3 +75,81 @@ export const SAMPLE_REMOVE_CHILD_REQUESTS = [
     requestedByUserId: 'user-1',
   },
 ]
+
+// ============================================================
+// SAMPLE ATTENDANCE RECORDS
+// ============================================================
+
+export const SAMPLE_ATTENDANCE_RECORDS = [
+  {
+    id: 'attendance-1',
+    type: 'drop-off',
+    dateTime: '2026-09-17T08:15:00',
+    childId: 'child-1',
+    childFirstName: 'Alex',
+    childLastName: 'Doe',
+    caretakerId: 'user-1',
+    caretakerFirstName: 'Jane',
+    caretakerLastName: 'Doe',
+  },
+
+  {
+    id: 'attendance-2',
+    type: 'pickup',
+    dateTime: '2026-09-17T16:45:00',
+    childId: 'child-1',
+    childFirstName: 'Alex',
+    childLastName: 'Doe',
+    caretakerId: 'user-1',
+    caretakerFirstName: 'Jane',
+    caretakerLastName: 'Doe',
+  },
+
+  {
+    id: 'attendance-3',
+    type: 'drop-off',
+    dateTime: '2026-09-17T08:30:00',
+    childId: 'child-2',
+    childFirstName: 'Emma',
+    childLastName: 'Doe',
+    caretakerId: 'user-1',
+    caretakerFirstName: 'Jane',
+    caretakerLastName: 'Doe',
+  },
+]
+
+// ============================================================
+// SAMPLE PAYMENT RECORDS
+// ============================================================
+
+export const SAMPLE_PAYMENT_RECORDS = [
+  {
+    id: 'payment-1',
+    childId: 'child-1',
+    childFirstName: 'Alex',
+    childLastName: 'Doe',
+    primaryCaretakerId: 'user-1',
+    primaryCaretakerFirstName: 'Jane',
+    primaryCaretakerLastName: 'Doe',
+    dueOn: '2026-09-01',
+    amountDue: 500,
+    paidOn: '2026-09-03',
+    amountPaid: 500,
+    balance: 0,
+  },
+
+  {
+    id: 'payment-2',
+    childId: 'child-2',
+    childFirstName: 'Emma',
+    childLastName: 'Doe',
+    primaryCaretakerId: 'user-1',
+    primaryCaretakerFirstName: 'Jane',
+    primaryCaretakerLastName: 'Doe',
+    dueOn: '2026-09-01',
+    amountDue: 500,
+    paidOn: null,
+    amountPaid: 0,
+    balance: 500,
+  },
+]

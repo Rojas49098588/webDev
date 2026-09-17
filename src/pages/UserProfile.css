@@ -109,7 +109,7 @@
    USER ACTIONS
    ============================================================ */
 
-.profile-actions {
+/* .profile-actions {
   display: flex;
   justify-content: center;
   gap: 1rem;
@@ -118,4 +118,4 @@
 
 .remove-user-button {
   color: #b91c1c;
-}
+} */
