@@ -8,6 +8,7 @@ export default function Attendance() {
     children,
     recordAttendance,
     getAttendanceForDate,
+    getChildAttendance,
   } = useApp()
 
   const [selectedDate, setSelectedDate] = useState(
@@ -15,6 +16,7 @@ export default function Attendance() {
   )
 
   const [selectedChildId, setSelectedChildId] = useState('')
+  const [historyChildId, setHistoryChildId] = useState('')
   const [attendanceType, setAttendanceType] = useState('drop-off')
   const [caretakerFirstName, setCaretakerFirstName] = useState('')
   const [caretakerLastName, setCaretakerLastName] = useState('')
@@ -24,6 +26,9 @@ export default function Attendance() {
   const activeChildren = children.filter((child) => child.active)
 
   const dailyAttendance = getAttendanceForDate(selectedDate)
+  const childAttendance = historyChildId
+  ? getChildAttendance(historyChildId)
+  : []
 
   function handleSubmit(event) {
     event.preventDefault()
@@ -221,6 +226,73 @@ export default function Attendance() {
             ))
           )}
         </div>
+      </section>
+
+      {/* ============================================================
+          VIEW ATTENDANCE HISTORY FOR A CHILD
+          ============================================================ */}
+      <section className="attendance-section">
+        <h2>Attendance Record for a Child</h2>
+
+        <div className="attendance-date-picker">
+          <label htmlFor="attendance-history-child">
+            Select child
+          </label>
+
+          <select
+            id="attendance-history-child"
+            value={historyChildId}
+            onChange={(event) => setHistoryChildId(event.target.value)}
+          >
+            <option value="">Select a child</option>
+
+            {children.map((child) => (
+              <option key={child.id} value={child.id}>
+                {child.firstName} {child.lastName}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {!historyChildId ? (
+          <p className="attendance-empty">
+            Select a child to view their attendance history.
+          </p>
+        ) : childAttendance.length === 0 ? (
+          <p className="attendance-empty">
+            No attendance records for this child.
+          </p>
+        ) : (
+          <div className="attendance-list">
+            {childAttendance.map((record) => (
+              <div key={record.id} className="attendance-card">
+                <div>
+                  <h3>
+                    {record.type === 'drop-off' ? 'Drop-off' : 'Pickup'}
+                  </h3>
+
+                  <p>
+                    <strong>Date:</strong>{' '}
+                    {new Date(record.dateTime).toLocaleDateString()}
+                  </p>
+
+                  <p>
+                    <strong>Caretaker:</strong>{' '}
+                    {record.caretakerFirstName}{' '}
+                    {record.caretakerLastName}
+                  </p>
+                </div>
+
+                <span className="attendance-time">
+                  {new Date(record.dateTime).toLocaleTimeString([], {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                  })}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
     </div>
   )
