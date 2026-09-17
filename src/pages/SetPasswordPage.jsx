@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext.jsx'
-import '../components/LoginPage.css'
+import AuthSplitLayout from '../components/layout/AuthSplitLayout.jsx'
+import Button from '../components/ui/Button.jsx'
 
 export default function SetPasswordPage() {
   const { setNewPassword, session } = useApp()
@@ -25,10 +26,13 @@ export default function SetPasswordPage() {
   }
 
   return (
-    <div className="login-page">
-      <form className="login-card" onSubmit={handleSubmit} noValidate>
-        <h1>Set a new password</h1>
-        <p className="success-message">You must choose a new password before continuing.</p>
+    <AuthSplitLayout
+      headline="Choose a password you'll remember."
+      tagline="You'll use this every time you sign in to manage your center's records."
+    >
+      <form className="auth-form" onSubmit={handleSubmit} noValidate>
+        <h2>Set a new password</h2>
+        <p className="auth-subtitle">Choose a new password before continuing to your dashboard.</p>
 
         <label htmlFor="new-password">New password</label>
         <input
@@ -38,6 +42,7 @@ export default function SetPasswordPage() {
           onChange={(e) => setPassword(e.target.value)}
           aria-invalid={Boolean(error)}
         />
+        <p className="password-hint">Use 6+ characters with an uppercase letter, a lowercase letter, and a number</p>
 
         <label htmlFor="confirm-password">Confirm new password</label>
         <input
@@ -54,10 +59,8 @@ export default function SetPasswordPage() {
           </p>
         )}
 
-        <button type="submit" className="submit-button">
-          Save password
-        </button>
+        <Button type="submit">Save password</Button>
       </form>
-    </div>
+    </AuthSplitLayout>
   )
 }

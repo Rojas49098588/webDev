@@ -1,0 +1,54 @@
+.user-management-page {
+  max-width: 900px;
+}
+
+.user-management-page h1 {
+  font-size: 28px;
+  margin-bottom: 0.25rem;
+}
+
+.user-management-page > p {
+  color: var(--ink-soft);
+  font-size: 14px;
+  margin: 0 0 1.25rem;
+}
+
+.user-management-page .tabs {
+  margin-bottom: 1.25rem;
+}
+
+.user-search {
+  margin-bottom: 1rem;
+  max-width: 420px;
+}
+
+.user-list {
+  background: var(--surface);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.no-results {
+  padding: 1.5rem;
+  color: var(--ink-faint);
+  font-size: 14px;
+}
+
+.request-error {
+  background: var(--danger-soft);
+  color: var(--danger);
+  border-radius: var(--r-sm);
+  padding: 0.75rem 1rem;
+  font-size: 13.5px;
+  margin-bottom: 1rem;
+}
+
+.request-success {
+  background: var(--success-soft);
+  color: var(--success);
+  border-radius: var(--r-sm);
+  padding: 0.75rem 1rem;
+  font-size: 13.5px;
+  margin-bottom: 1rem;
+}

@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useApp } from '../context/AppContext.jsx'
-import '../components/LoginPage.css'
+import Card from '../components/ui/Card.jsx'
+import Button from '../components/ui/Button.jsx'
+import './ChangePasswordPage.css'
 
 export default function ChangePasswordPage() {
   const { changePassword } = useApp()
@@ -32,49 +34,49 @@ export default function ChangePasswordPage() {
   return (
     <div className="change-password-page">
       <h1>Change password</h1>
-      <form className="login-card" onSubmit={handleSubmit} noValidate>
-        <label htmlFor="current-password">Current password</label>
-        <input
-          id="current-password"
-          type="password"
-          value={current}
-          onChange={(e) => setCurrent(e.target.value)}
-          aria-invalid={Boolean(error)}
-        />
+      <Card className="change-password-card">
+        <form onSubmit={handleSubmit} noValidate>
+          <label htmlFor="current-password">Current password</label>
+          <input
+            id="current-password"
+            type="password"
+            value={current}
+            onChange={(e) => setCurrent(e.target.value)}
+            aria-invalid={Boolean(error)}
+          />
 
-        <label htmlFor="new-password">New password</label>
-        <input
-          id="new-password"
-          type="password"
-          value={next}
-          onChange={(e) => setNext(e.target.value)}
-          aria-invalid={Boolean(error)}
-        />
+          <label htmlFor="new-password">New password</label>
+          <input
+            id="new-password"
+            type="password"
+            value={next}
+            onChange={(e) => setNext(e.target.value)}
+            aria-invalid={Boolean(error)}
+          />
 
-        <label htmlFor="confirm-password">Confirm new password</label>
-        <input
-          id="confirm-password"
-          type="password"
-          value={confirm}
-          onChange={(e) => setConfirm(e.target.value)}
-          aria-invalid={Boolean(error)}
-        />
+          <label htmlFor="confirm-password">Confirm new password</label>
+          <input
+            id="confirm-password"
+            type="password"
+            value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
+            aria-invalid={Boolean(error)}
+          />
 
-        {error && (
-          <p className="field-error" role="alert">
-            {error}
-          </p>
-        )}
-        {success && (
-          <p className="success-message" role="alert">
-            Password updated.
-          </p>
-        )}
+          {error && (
+            <p className="field-error" role="alert">
+              {error}
+            </p>
+          )}
+          {success && (
+            <p className="success-message" role="alert">
+              Password updated.
+            </p>
+          )}
 
-        <button type="submit" className="submit-button">
-          Update password
-        </button>
-      </form>
+          <Button type="submit">Update password</Button>
+        </form>
+      </Card>
     </div>
   )
 }

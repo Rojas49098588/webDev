@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { useApp } from '../context/AppContext.jsx'
-import { Link } from 'react-router-dom'
-import './UserRequests.css'
+import DataRow from '../components/ui/DataRow.jsx'
+import Button from '../components/ui/Button.jsx'
 
-export default function RemoveChildRequests() {
+export default function RemoveChildRequestsTab() {
   const { children, users, removeChildRequests, approveRemoveChildRequest } = useApp()
   const [error, setError] = useState('')
 
@@ -15,60 +15,45 @@ export default function RemoveChildRequests() {
   function handleApprove(requestId) {
     setError('')
     const result = approveRemoveChildRequest(requestId)
-
     if (!result.ok) {
       setError(result.error)
     }
   }
 
   return (
-    <div className="user-requests">
-      <Link to="/staff/children" className="request-back">
-        ← Back to Child Management
-      </Link>
-
-      <h1>Remove Child Requests</h1>
-
-      <p>Children will be archived rather than permanently deleted.</p>
-
+    <>
       {error && (
         <div className="request-error" role="alert">
           {error}
         </div>
       )}
 
-      <div className="request-list">
+      <div className="child-list">
         {removeChildRequests.length === 0 ? (
-          <p>No pending remove requests.</p>
+          <p className="no-results">No pending remove requests.</p>
         ) : (
           removeChildRequests.map((request) => {
             const child = children.find((item) => item.id === request.childId)
-
             if (!child) {
               return null
             }
-
             return (
-              <div key={request.id} className="request-card">
-                <div>
-                  <h2>
-                    {child.firstName} {child.lastName}
-                  </h2>
-
-                  <p>
-                    <strong>Requested by:</strong>{' '}
-                    {resolveUserName(request.requestedByUserId)}
-                  </p>
-                </div>
-
-                <button type="button" onClick={() => handleApprove(request.id)}>
-                  Archive Child
-                </button>
-              </div>
+              <DataRow
+                key={request.id}
+                warn
+                firstName={child.firstName}
+                lastName={child.lastName}
+                fields={[{ label: 'Requested by', value: resolveUserName(request.requestedByUserId) }]}
+                actions={
+                  <Button size="sm" variant="ghost" onClick={() => handleApprove(request.id)}>
+                    Archive child
+                  </Button>
+                }
+              />
             )
           })
         )}
       </div>
-    </div>
+    </>
   )
 }
