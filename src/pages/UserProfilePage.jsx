@@ -136,7 +136,7 @@ export default function UserProfilePage() {
 
           <Card>
             <h2>Actions</h2>
-            <Button variant="danger" onClick={() => navigate('/admin/users/remove')}>
+            <Button variant="danger" onClick={() => navigate('/admin/users?tab=remove-requests')}>
               Remove user
             </Button>
           </Card>

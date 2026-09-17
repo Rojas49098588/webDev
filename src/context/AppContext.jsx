@@ -152,6 +152,9 @@ export function AppProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState)
   const currentAccount = getCurrentAccount(state)
   const isAuthenticated = state.session !== null
+  const actorName = currentAccount
+    ? [currentAccount.firstName, currentAccount.lastName].filter(Boolean).join(' ') || currentAccount.username
+    : 'Someone'
 
   async function verifyCredentials(username, password) {
     try {
@@ -275,7 +278,7 @@ export function AppProvider({ children }) {
     const user = state.users.find((item) => item.id === userId)
     if (user) {
       logActivity(
-        `${currentAccount.firstName} ${currentAccount.lastName} updated ${user.firstName} ${user.lastName}'s contact information`
+        `${actorName} updated ${user.firstName} ${user.lastName}'s contact information`
       )
     }
   }
@@ -338,7 +341,7 @@ export function AppProvider({ children }) {
     })
 
     logActivity(
-      `${currentAccount.firstName} ${currentAccount.lastName} approved adding ${newUser.firstName} ${newUser.lastName}`
+      `${actorName} approved adding ${newUser.firstName} ${newUser.lastName}`
     )
 
     return {
@@ -389,7 +392,7 @@ export function AppProvider({ children }) {
       },
     })
 
-    logActivity(`${currentAccount.firstName} ${currentAccount.lastName} archived ${user.firstName} ${user.lastName}`)
+    logActivity(`${actorName} archived ${user.firstName} ${user.lastName}`)
 
     return {
       ok: true,

@@ -69,6 +69,7 @@ export default function ChildManagementPage() {
               value={search}
               onChange={setSearch}
               placeholder="Search by first name, last name, or date of birth"
+              label="Search children"
             />
           </div>
 

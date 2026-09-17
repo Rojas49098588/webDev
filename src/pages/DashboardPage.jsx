@@ -58,12 +58,12 @@ export default function DashboardPage() {
     ? [
         { to: '/admin/users', label: 'Search users', description: 'Find a profile by name, username, email, or phone' },
         {
-          to: '/admin/users/add',
+          to: '/admin/users?tab=add-requests',
           label: 'Review add requests',
           description: `${addRequests.length} new users awaiting approval`,
         },
         {
-          to: '/admin/users/remove',
+          to: '/admin/users?tab=remove-requests',
           label: 'Review remove requests',
           description: `${removeRequests.length} archive requests pending`,
         },
@@ -71,12 +71,12 @@ export default function DashboardPage() {
     : [
         { to: '/staff/children', label: 'Search children', description: 'Find a profile by name or date of birth' },
         {
-          to: '/staff/children/add',
+          to: '/staff/children?tab=add-requests',
           label: 'Review add requests',
           description: `${addChildRequests.length} new children awaiting approval`,
         },
         {
-          to: '/staff/children/remove',
+          to: '/staff/children?tab=remove-requests',
           label: 'Review remove requests',
           description: `${removeChildRequests.length} archive requests pending`,
         },

@@ -60,6 +60,7 @@ export default function UserManagementPage() {
               value={search}
               onChange={setSearch}
               placeholder="Search by name, username, email, or phone"
+              label="Search users"
             />
           </div>
 
