@@ -1,0 +1,141 @@
+.auth-split {
+  display: flex;
+  min-height: 100vh;
+}
+
+.auth-brand {
+  width: 44%;
+  flex-shrink: 0;
+  background: linear-gradient(160deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 3rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-brand-mark {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.auth-brand-mark span:first-child {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--r-sm);
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.auth-brand h1 {
+  font-family: var(--font-heading);
+  font-size: 34px;
+  color: #fff;
+  max-width: 380px;
+  margin-bottom: 0.75rem;
+}
+
+.auth-brand p {
+  font-size: 14.5px;
+  max-width: 340px;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.auth-form-panel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.auth-form {
+  width: 100%;
+  max-width: 340px;
+}
+
+.auth-form h2 {
+  font-size: 24px;
+  margin-bottom: 0.35rem;
+}
+
+.auth-form .auth-subtitle {
+  color: var(--ink-soft);
+  font-size: 14px;
+  margin: 0 0 1.5rem;
+}
+
+.auth-form label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  margin-top: 1rem;
+}
+
+.auth-form input {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 14px;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  color: var(--ink);
+  margin-top: 0.35rem;
+}
+
+.auth-form .field-error {
+  color: var(--danger);
+  font-size: 13px;
+  margin: 0.75rem 0 0;
+}
+
+.auth-form .success-message {
+  color: var(--ink-soft);
+  font-size: 13px;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 0.6rem 0.8rem;
+  margin: 0 0 1rem;
+}
+
+.auth-form .password-hint {
+  color: var(--ink-faint);
+  font-size: 12px;
+  margin: 0.35rem 0 0;
+}
+
+.auth-form button[type='submit'] {
+  width: 100%;
+  margin-top: 1.5rem;
+}
+
+.auth-form .btn-quiet {
+  display: block;
+  width: 100%;
+  text-align: center;
+  margin-top: 0.75rem;
+}
+
+@media (max-width: 980px) {
+  .auth-brand {
+    display: none;
+  }
+
+  .auth-form-panel {
+    width: 100%;
+  }
+}
