@@ -6,10 +6,8 @@ import LoginPage from './components/LoginPage.jsx'
 import DashboardPage from './pages/DashboardPage.jsx'
 import SetPasswordPage from './pages/SetPasswordPage.jsx'
 import ChangePasswordPage from './pages/ChangePasswordPage.jsx'
-import UserManagement from './pages/UserManagement.jsx'
+import UserManagementPage from './pages/UserManagementPage.jsx'
 import UserProfile from './pages/UserProfile.jsx'
-import AddUserRequests from './pages/AddUserRequests.jsx'
-import RemoveUserRequests from './pages/RemoveUserRequests.jsx'
 import ChildManagementPage from './pages/ChildManagementPage.jsx'
 import ChildProfilePage from './pages/ChildProfilePage.jsx'
 
@@ -54,7 +52,7 @@ export default function App() {
             element={
               <ProtectedRoute role="admin">
                 <AppShell>
-                  <UserManagement />
+                  <UserManagementPage />
                 </AppShell>
               </ProtectedRoute>
             }
@@ -66,28 +64,6 @@ export default function App() {
               <ProtectedRoute role="admin">
                 <AppShell>
                   <UserProfile />
-                </AppShell>
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/admin/users/add"
-            element={
-              <ProtectedRoute role="admin">
-                <AppShell>
-                  <AddUserRequests />
-                </AppShell>
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/admin/users/remove"
-            element={
-              <ProtectedRoute role="admin">
-                <AppShell>
-                  <RemoveUserRequests />
                 </AppShell>
               </ProtectedRoute>
             }
