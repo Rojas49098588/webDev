@@ -3,8 +3,7 @@ import { AppProvider } from './context/AppContext.jsx'
 import ProtectedRoute from './components/routing/ProtectedRoute.jsx'
 import AppShell from './components/layout/AppShell.jsx'
 import LoginPage from './components/LoginPage.jsx'
-import AdminHome from './pages/AdminHome.jsx'
-import StaffHome from './pages/StaffHome.jsx'
+import DashboardPage from './pages/DashboardPage.jsx'
 import SetPasswordPage from './pages/SetPasswordPage.jsx'
 import ChangePasswordPage from './pages/ChangePasswordPage.jsx'
 import UserManagement from './pages/UserManagement.jsx'
@@ -45,7 +44,7 @@ export default function App() {
             element={
               <ProtectedRoute role="admin">
                 <AppShell>
-                  <AdminHome />
+                  <DashboardPage />
                 </AppShell>
               </ProtectedRoute>
             }
@@ -103,7 +102,7 @@ export default function App() {
             element={
               <ProtectedRoute role="staff">
                 <AppShell>
-                  <StaffHome />
+                  <DashboardPage />
                 </AppShell>
               </ProtectedRoute>
             }
