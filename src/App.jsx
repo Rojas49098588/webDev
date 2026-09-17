@@ -7,7 +7,7 @@ import DashboardPage from './pages/DashboardPage.jsx'
 import SetPasswordPage from './pages/SetPasswordPage.jsx'
 import ChangePasswordPage from './pages/ChangePasswordPage.jsx'
 import UserManagementPage from './pages/UserManagementPage.jsx'
-import UserProfile from './pages/UserProfile.jsx'
+import UserProfilePage from './pages/UserProfilePage.jsx'
 import ChildManagementPage from './pages/ChildManagementPage.jsx'
 import ChildProfilePage from './pages/ChildProfilePage.jsx'
 
@@ -63,7 +63,7 @@ export default function App() {
             element={
               <ProtectedRoute role="admin">
                 <AppShell>
-                  <UserProfile />
+                  <UserProfilePage />
                 </AppShell>
               </ProtectedRoute>
             }
