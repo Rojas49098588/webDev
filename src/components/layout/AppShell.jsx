@@ -22,6 +22,9 @@ export default function AppShell({ children }) {
 
   const navItems = session.role === 'admin' ? ADMIN_NAV : STAFF_NAV
 
+  const displayFirstName = currentAccount.firstName || currentAccount.username
+  const displayLastName = currentAccount.lastName || ''
+
   function handleLogout() {
     logout()
     navigate('/login')
@@ -56,11 +59,9 @@ export default function AppShell({ children }) {
         </nav>
 
         <div className="sidebar-footer">
-          <Avatar firstName={currentAccount.firstName} lastName={currentAccount.lastName} />
+          <Avatar firstName={displayFirstName} lastName={displayLastName} />
           <div className="footer-user">
-            <strong>
-              {currentAccount.firstName} {currentAccount.lastName}
-            </strong>
+            <strong>{displayLastName ? `${displayFirstName} ${displayLastName}` : displayFirstName}</strong>
             <span>{session.role === 'admin' ? 'Admin' : 'Staff'}</span>
           </div>
           <button
