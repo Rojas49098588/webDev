@@ -10,10 +10,8 @@ import UserManagement from './pages/UserManagement.jsx'
 import UserProfile from './pages/UserProfile.jsx'
 import AddUserRequests from './pages/AddUserRequests.jsx'
 import RemoveUserRequests from './pages/RemoveUserRequests.jsx'
-import ChildManagement from './pages/ChildManagement.jsx'
+import ChildManagementPage from './pages/ChildManagementPage.jsx'
 import ChildProfile from './pages/ChildProfile.jsx'
-import AddChildRequests from './pages/AddChildRequests.jsx'
-import RemoveChildRequests from './pages/RemoveChildRequests.jsx'
 
 export default function App() {
   return (
@@ -124,7 +122,7 @@ export default function App() {
             element={
               <ProtectedRoute role="staff">
                 <AppShell>
-                  <ChildManagement />
+                  <ChildManagementPage />
                 </AppShell>
               </ProtectedRoute>
             }
@@ -136,28 +134,6 @@ export default function App() {
               <ProtectedRoute role="staff">
                 <AppShell>
                   <ChildProfile />
-                </AppShell>
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/staff/children/add"
-            element={
-              <ProtectedRoute role="staff">
-                <AppShell>
-                  <AddChildRequests />
-                </AppShell>
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/staff/children/remove"
-            element={
-              <ProtectedRoute role="staff">
-                <AppShell>
-                  <RemoveChildRequests />
                 </AppShell>
               </ProtectedRoute>
             }
