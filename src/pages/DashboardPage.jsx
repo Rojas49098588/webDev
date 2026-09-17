@@ -87,7 +87,7 @@ export default function DashboardPage() {
       <div className="dashboard-header">
         <span className="dashboard-date">{getTodayLabel()}</span>
         <h1>
-          {getGreeting()}, {currentAccount.firstName}
+          {getGreeting()}, {currentAccount.firstName || currentAccount.username}
         </h1>
         <p>Here's what's happening at your center today.</p>
       </div>
