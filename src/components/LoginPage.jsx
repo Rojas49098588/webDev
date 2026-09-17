@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext.jsx'
-import './LoginPage.css'
+import AuthSplitLayout from './layout/AuthSplitLayout.jsx'
+import SignInStep from './auth/SignInStep.jsx'
+import SecurityCodeStep from './auth/SecurityCodeStep.jsx'
 
 function maskEmail(email) {
   const [local, domain] = email.split('@')
@@ -9,7 +11,8 @@ function maskEmail(email) {
 }
 
 export default function LoginPage() {
-  const { admin, users, isAuthenticated, session, verifyCredentials, beginLogin, verifySecurityCode, pendingLogin } = useApp()
+  const { admin, users, isAuthenticated, session, verifyCredentials, beginLogin, verifySecurityCode, pendingLogin } =
+    useApp()
   const navigate = useNavigate()
 
   const [step, setStep] = useState('credentials')
@@ -23,9 +26,7 @@ export default function LoginPage() {
   }
 
   const pendingEmail =
-    pendingLogin?.role === 'admin'
-      ? admin.email
-      : users.find((user) => user.id === pendingLogin?.id)?.email
+    pendingLogin?.role === 'admin' ? admin.email : users.find((user) => user.id === pendingLogin?.id)?.email
 
   async function handleCredentialsSubmit(e) {
     e.preventDefault()
@@ -61,73 +62,36 @@ export default function LoginPage() {
 
   if (step === 'code') {
     return (
-      <div className="login-page">
-        <form className="login-card" onSubmit={handleCodeSubmit} noValidate>
-          <h1>Enter security code</h1>
-          <p className="success-message">
-            Code sent to {pendingEmail ? maskEmail(pendingEmail) : 'your email'}: {pendingLogin?.code}
-          </p>
-
-          <label htmlFor="code">Security code</label>
-          <input
-            id="code"
-            type="text"
-            inputMode="numeric"
-            maxLength={4}
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            aria-invalid={Boolean(error)}
-          />
-          {error && (
-            <p className="field-error" role="alert">
-              {error}
-            </p>
-          )}
-
-          <button type="submit" className="submit-button">
-            Verify
-          </button>
-          <button type="button" className="link-button" onClick={handleResend}>
-            Resend code
-          </button>
-        </form>
-      </div>
+      <AuthSplitLayout
+        headline="One more step to keep records safe."
+        tagline="Two-factor sign-in helps protect the children and families in your center's care."
+      >
+        <SecurityCodeStep
+          maskedEmail={pendingEmail ? maskEmail(pendingEmail) : 'your email'}
+          pendingCode={pendingLogin?.code}
+          code={code}
+          setCode={setCode}
+          error={error}
+          onSubmit={handleCodeSubmit}
+          onResend={handleResend}
+        />
+      </AuthSplitLayout>
     )
   }
 
   return (
-    <div className="login-page">
-      <form className="login-card" onSubmit={handleCredentialsSubmit} noValidate>
-        <h1>Sign in</h1>
-
-        <label htmlFor="username">Username</label>
-        <input
-          id="username"
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          aria-invalid={Boolean(error)}
-        />
-
-        <label htmlFor="password">Password</label>
-        <input
-          id="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          aria-invalid={Boolean(error)}
-        />
-
-        {error && (
-          <p className="field-error" role="alert">
-            {error}
-          </p>
-        )}
-
-        <button type="submit" className="submit-button">
-          Log in
-        </button>
-      </form>
-    </div>
+    <AuthSplitLayout
+      headline="Every child accounted for, every day."
+      tagline="Sign in to manage enrollment, caretakers, and daily records for your center."
+    >
+      <SignInStep
+        username={username}
+        setUsername={setUsername}
+        password={password}
+        setPassword={setPassword}
+        error={error}
+        onSubmit={handleCredentialsSubmit}
+      />
+    </AuthSplitLayout>
   )
 }
