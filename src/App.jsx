@@ -11,7 +11,7 @@ import UserProfile from './pages/UserProfile.jsx'
 import AddUserRequests from './pages/AddUserRequests.jsx'
 import RemoveUserRequests from './pages/RemoveUserRequests.jsx'
 import ChildManagementPage from './pages/ChildManagementPage.jsx'
-import ChildProfile from './pages/ChildProfile.jsx'
+import ChildProfilePage from './pages/ChildProfilePage.jsx'
 
 export default function App() {
   return (
@@ -133,7 +133,7 @@ export default function App() {
             element={
               <ProtectedRoute role="staff">
                 <AppShell>
-                  <ChildProfile />
+                  <ChildProfilePage />
                 </AppShell>
               </ProtectedRoute>
             }
