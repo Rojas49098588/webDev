@@ -3,7 +3,7 @@ import Button from '../ui/Button.jsx'
 export default function SignInStep({ username, setUsername, password, setPassword, error, onSubmit }) {
   return (
     <form className="auth-form" onSubmit={onSubmit} noValidate>
-      <h2>Welcome back</h2>
+      <h2>Sign In</h2>
       <p className="auth-subtitle">Sign in with your staff account to continue.</p>
 
       <label htmlFor="username">Username</label>

@@ -137,6 +137,13 @@ function reducer(state, action) {
           (request) => request.id !== action.payload.requestId
         ),
       }
+    case 'DENY_REMOVE_CHILD_REQUEST':
+      return {
+        ...state,
+        removeChildRequests: state.removeChildRequests.filter(
+          (request) => request.id !== action.payload.requestId
+        ),
+      }
 
     // ATTENDANCE =============================================
 
@@ -506,9 +513,29 @@ export function AppProvider({ children }) {
     return { ok: true }
   }
 
+  function denyRemoveChildRequest(requestId) {
+    const request = state.removeChildRequests.find(
+      (item) => item.id === requestId
+    )
+
+    if (!request) {
+      return {
+        ok: false,
+        error: 'Remove-child request could not be found.',
+      }
+    }
+
+    dispatch({
+      type: 'DENY_REMOVE_CHILD_REQUEST',
+      payload: { requestId },
+    })
+
+    return { ok: true }
+  }
+
   //ATTENDANCE ================================================
 
-  function validateAttendanceInformation(childId, caretakerFirstName, caretakerLastName) {
+  function validateAttendanceInformation(childId, caretakerId) {
     const child = state.children.find((item) => item.id === childId)
 
     if (!child) {
@@ -525,9 +552,6 @@ export function AppProvider({ children }) {
       }
     }
 
-    const firstName = caretakerFirstName.trim().toLowerCase()
-    const lastName = caretakerLastName.trim().toLowerCase()
-
     const authorizedCaretakerIds = [
       child.primaryCaretakerId,
       ...(child.otherCaretakerIds ?? []),
@@ -535,11 +559,10 @@ export function AppProvider({ children }) {
 
     const caretaker = state.users.find(
       (user) =>
+        user.id === caretakerId &&
         authorizedCaretakerIds.includes(user.id) &&
         user.role === 'caretaker' &&
-        user.active &&
-        user.firstName.toLowerCase() === firstName &&
-        user.lastName.toLowerCase() === lastName
+        user.active
     )
 
     if (!caretaker) {
@@ -556,7 +579,7 @@ export function AppProvider({ children }) {
     }
   }
 
-  function recordAttendance(childId, type, caretakerFirstName, caretakerLastName) {
+  function recordAttendance(childId, type, caretakerId) {
     if (type !== 'drop-off' && type !== 'pickup') {
       return {
         ok: false,
@@ -564,9 +587,9 @@ export function AppProvider({ children }) {
       }
     }
 
-    const validation = validateAttendanceInformation(childId,
-      caretakerFirstName,
-      caretakerLastName
+    const validation = validateAttendanceInformation(
+      childId,
+      caretakerId
     )
 
     if (!validation.ok) {
@@ -809,6 +832,7 @@ function updatePaymentRecord(paymentInformation) {
     removeChildRequests: state.removeChildRequests,
     approveAddChildRequest,
     approveRemoveChildRequest,
+    denyRemoveChildRequest,
 
     //LOGIN=====================================
     verifyCredentials,

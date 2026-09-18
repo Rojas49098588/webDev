@@ -90,6 +90,26 @@ export const SAMPLE_USERS = [
     passwordHash: '05dd4a1376a72d9a5e0fad32000f7e61651a5cef5c9c9a0c3816c7443dafbf6f',
     mustChangePassword: true,
   },
+
+  {
+    id: 'user-5',
+    firstName: 'Dave',
+    lastName: 'Miller',
+    username: 'dmiller99',
+    email: 'millerd@example.com',
+    phone: '555-789-0123',
+    mailingAddress: '88 Willow Lane, Dallas, TX 75205',
+    role: 'caretaker',
+    active: true,
+
+    connectedChildren: [
+      {
+        id: 'child-3',
+        name: 'Michael Johnson',
+        relationship: 'Caretaker',
+      },
+    ],
+  }
 ]
 
 // ============================================================

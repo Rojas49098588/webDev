@@ -11,6 +11,22 @@ export const SAMPLE_CHILDREN = [
     primaryCaretakerId: 'user-1',
     otherCaretakerIds: [],
     active: true,
+    medications: [
+      {
+        id: 'med-1',
+        name: 'Children’s Tylenol',
+        dosage: '5 mL',
+        frequency: 'As needed',
+        instructions: 'Give for fever over 100.4°F.',
+      },
+      {
+        id: 'med-2',
+        name: 'Allergy medication',
+        dosage: '2.5 mL',
+        frequency: 'Once daily',
+        instructions: 'Give in the morning.',
+      },
+    ],
   },
 
   {
@@ -29,8 +45,18 @@ export const SAMPLE_CHILDREN = [
     lastName: 'Johnson',
     dateOfBirth: '2022-09-05',
     primaryCaretakerId: 'user-3',
-    otherCaretakerIds: [],
+    otherCaretakerIds: ['user-5'],
     active: true,
+
+    medications: [
+      {
+        id: 'med-3',
+        name: 'Inhaler',
+        dosage: '2 puffs',
+        frequency: 'As needed',
+        instructions: 'Use for breathing difficulty.',
+      },
+    ],
   },
 ]
 

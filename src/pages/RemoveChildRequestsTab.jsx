@@ -4,8 +4,8 @@ import DataRow from '../components/ui/DataRow.jsx'
 import Button from '../components/ui/Button.jsx'
 
 export default function RemoveChildRequestsTab() {
-  const { children, users, removeChildRequests, approveRemoveChildRequest } = useApp()
-  const [error, setError] = useState('')
+const {children, users, removeChildRequests, approveRemoveChildRequest, denyRemoveChildRequest,} = useApp()  
+const [error, setError] = useState('')
 
   function resolveUserName(userId) {
     const user = users.find((item) => item.id === userId)
@@ -22,6 +22,24 @@ export default function RemoveChildRequestsTab() {
     }
     setError('')
     const result = approveRemoveChildRequest(requestId)
+    if (!result.ok) {
+      setError(result.error)
+    }
+  }
+
+  function handleDeny(requestId) {
+    const confirmed = window.confirm(
+      'Are you sure you want to deny this removal request?'
+    )
+
+    if (!confirmed) {
+      return
+    }
+
+    setError('')
+
+    const result = denyRemoveChildRequest(requestId)
+
     if (!result.ok) {
       setError(result.error)
     }
@@ -52,9 +70,23 @@ export default function RemoveChildRequestsTab() {
                 lastName={child.lastName}
                 fields={[{ label: 'Requested by', value: resolveUserName(request.requestedByUserId) }]}
                 actions={
-                  <Button size="sm" variant="ghost" onClick={() => handleApprove(request.id)}>
-                    Archive child
-                  </Button>
+                    <>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleDeny(request.id)}
+                      >
+                        Deny
+                      </Button>
+
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleApprove(request.id)}
+                      >
+                        Archive child
+                      </Button>
+                    </>
                 }
               />
             )

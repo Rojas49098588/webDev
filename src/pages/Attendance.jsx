@@ -5,11 +5,12 @@ import './Attendance.css'
 
 export default function Attendance() {
   const {
-    children,
-    recordAttendance,
-    getAttendanceForDate,
-    getChildAttendance,
-  } = useApp()
+  children,
+  users,
+  recordAttendance,
+  getAttendanceForDate,
+  getChildAttendance,
+} = useApp()
 
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().slice(0, 10)
@@ -18,12 +19,30 @@ export default function Attendance() {
   const [selectedChildId, setSelectedChildId] = useState('')
   const [historyChildId, setHistoryChildId] = useState('')
   const [attendanceType, setAttendanceType] = useState('drop-off')
-  const [caretakerFirstName, setCaretakerFirstName] = useState('')
-  const [caretakerLastName, setCaretakerLastName] = useState('')
+  const [selectedCaretakerId, setSelectedCaretakerId] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
   const activeChildren = children.filter((child) => child.active)
+  const selectedChild = children.find(
+  (child) => child.id === selectedChildId
+)
+
+const authorizedCaretakers = selectedChild
+  ? [
+      selectedChild.primaryCaretakerId,
+      ...(selectedChild.otherCaretakerIds ?? []),
+    ]
+      .map((caretakerId) =>
+        users.find((user) => user.id === caretakerId)
+      )
+      .filter(
+        (caretaker) =>
+          caretaker &&
+          caretaker.role === 'caretaker' &&
+          caretaker.active
+      )
+  : []
 
   const dailyAttendance = getAttendanceForDate(selectedDate)
   const childAttendance = historyChildId
@@ -41,16 +60,15 @@ export default function Attendance() {
       return
     }
 
-    if (!caretakerFirstName.trim() || !caretakerLastName.trim()) {
-      setError('Please enter the caretaker\'s first and last name.')
+    if (!selectedCaretakerId) {
+      setError('Please select the person picking up or dropping off the child.')
       return
     }
 
     const result = recordAttendance(
       selectedChildId,
       attendanceType,
-      caretakerFirstName,
-      caretakerLastName
+      selectedCaretakerId
     )
 
     if (!result.ok) {
@@ -64,8 +82,7 @@ export default function Attendance() {
       } was recorded successfully.`
     )
 
-    setCaretakerFirstName('')
-    setCaretakerLastName('')
+    setSelectedCaretakerId('')
 
     // Keep the selected child and attendance type so staff can
     // quickly record another attendance event if needed.
@@ -140,92 +157,37 @@ export default function Attendance() {
           </div>
 
           <div className="attendance-field">
-            <label htmlFor="caretaker-first-name">
-              Caretaker first name
+            <label htmlFor="attendance-caretaker">
+              Person dropping off / picking up
             </label>
 
-            <input
-              id="caretaker-first-name"
-              type="text"
-              value={caretakerFirstName}
-              onChange={(event) => setCaretakerFirstName(event.target.value)}
-            />
-          </div>
+            <select
+              id="attendance-caretaker"
+              value={selectedCaretakerId}
+              onChange={(event) => setSelectedCaretakerId(event.target.value)}
+              disabled={!selectedChildId}
+            >
+              <option value="">
+                {selectedChildId
+                  ? 'Select an authorized caretaker'
+                  : 'Select a child first'}
+              </option>
 
-          <div className="attendance-field">
-            <label htmlFor="caretaker-last-name">
-              Caretaker last name
-            </label>
-
-            <input
-              id="caretaker-last-name"
-              type="text"
-              value={caretakerLastName}
-              onChange={(event) => setCaretakerLastName(event.target.value)}
-            />
+              {authorizedCaretakers.map((caretaker) => (
+                <option key={caretaker.id} value={caretaker.id}>
+                  {caretaker.firstName} {caretaker.lastName}
+                  {caretaker.id === selectedChild.primaryCaretakerId
+                    ? ' — Primary caretaker'
+                    : ''}
+                </option>
+              ))}
+            </select>
           </div>
 
           <button type="submit" className="attendance-submit">
             Record {attendanceType === 'drop-off' ? 'Drop-Off' : 'Pickup'}
           </button>
         </form>
-      </section>
-
-      {/* ============================================================
-          VIEW ATTENDANCE FOR A DAY
-          ============================================================ */}
-
-      <section className="attendance-section">
-        <h2>Attendance for a Given Day</h2>
-
-        <div className="attendance-date-picker">
-          <label htmlFor="attendance-date">
-            Select date
-          </label>
-
-          <input
-            id="attendance-date"
-            type="date"
-            value={selectedDate}
-            onChange={(event) => setSelectedDate(event.target.value)}
-          />
-        </div>
-
-        <div className="attendance-list">
-          {dailyAttendance.length === 0 ? (
-            <p className="attendance-empty">
-              No attendance records for this date.
-            </p>
-          ) : (
-            dailyAttendance.map((record) => (
-              <div key={record.id} className="attendance-card">
-                <div>
-                  <h3>
-                    {record.childFirstName} {record.childLastName}
-                  </h3>
-
-                  <p>
-                    <strong>Activity:</strong>{' '}
-                    {record.type === 'drop-off' ? 'Drop-off' : 'Pickup'}
-                  </p>
-
-                  <p>
-                    <strong>Caretaker:</strong>{' '}
-                    {record.caretakerFirstName}{' '}
-                    {record.caretakerLastName}
-                  </p>
-                </div>
-
-                <span className="attendance-time">
-                  {new Date(record.dateTime).toLocaleTimeString([], {
-                    hour: 'numeric',
-                    minute: '2-digit',
-                  })}
-                </span>
-              </div>
-            ))
-          )}
-        </div>
       </section>
 
       {/* ============================================================
@@ -294,6 +256,64 @@ export default function Attendance() {
           </div>
         )}
       </section>
+
+      {/* ============================================================
+          VIEW ATTENDANCE FOR A DAY
+          ============================================================ */}
+
+      <section className="attendance-section">
+        <h2>Attendance for a Given Day</h2>
+
+        <div className="attendance-date-picker">
+          <label htmlFor="attendance-date">
+            Select date
+          </label>
+
+          <input
+            id="attendance-date"
+            type="date"
+            value={selectedDate}
+            onChange={(event) => setSelectedDate(event.target.value)}
+          />
+        </div>
+
+        <div className="attendance-list">
+          {dailyAttendance.length === 0 ? (
+            <p className="attendance-empty">
+              No attendance records for this date.
+            </p>
+          ) : (
+            dailyAttendance.map((record) => (
+              <div key={record.id} className="attendance-card">
+                <div>
+                  <h3>
+                    {record.childFirstName} {record.childLastName}
+                  </h3>
+
+                  <p>
+                    <strong>Activity:</strong>{' '}
+                    {record.type === 'drop-off' ? 'Drop-off' : 'Pickup'}
+                  </p>
+
+                  <p>
+                    <strong>Caretaker:</strong>{' '}
+                    {record.caretakerFirstName}{' '}
+                    {record.caretakerLastName}
+                  </p>
+                </div>
+
+                <span className="attendance-time">
+                  {new Date(record.dateTime).toLocaleTimeString([], {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                  })}
+                </span>
+              </div>
+            ))
+          )}
+        </div>
+      </section>
+
     </div>
   )
 }

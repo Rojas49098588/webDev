@@ -32,6 +32,16 @@ export default function ChildProfilePage() {
   }
 
   const primaryCaretaker = users.find((user) => user.id === child.primaryCaretakerId)
+  const otherCaretakers = (child.otherCaretakerIds ?? [])
+    .map((caretakerId) =>
+      users.find((user) => user.id === caretakerId)
+    )
+    .filter(
+      (caretaker) =>
+        caretaker &&
+        caretaker.role === 'caretaker' &&
+        caretaker.active
+    )
 
   const payments = getChildPayments(child.id)
   const attendance = getChildAttendance(child.id)
@@ -75,6 +85,40 @@ export default function ChildProfilePage() {
               <span>Status</span>
               <strong>{child.active ? 'Active' : 'Archived'}</strong>
             </div>
+          </Card>
+
+          <Card>
+            <h2>Medications</h2>
+
+            {!child.medications || child.medications.length === 0 ? (
+              <p className="no-results">
+                No medications on record.
+              </p>
+            ) : (
+              <div className="medication-list">
+                {child.medications.map((medication) => (
+                  <div
+                    key={medication.id}
+                    className="medication-card"
+                  >
+                    <div className="medication-header">
+                      <strong>{medication.name}</strong>
+                      <span>{medication.dosage}</span>
+                    </div>
+
+                    <div className="info-row">
+                      <span>Frequency</span>
+                      <strong>{medication.frequency}</strong>
+                    </div>
+
+                    <div className="info-row">
+                      <span>Instructions</span>
+                      <strong>{medication.instructions}</strong>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </Card>
 
           <Card>
@@ -166,9 +210,12 @@ export default function ChildProfilePage() {
                     </div>
 
                     <div className="payment-record-footer">
-                      <button type="button" className="profile-action-secondary">
+                      <Link
+                        to={`/staff/payments?child=${child.id}`}
+                        className="profile-action-secondary"
+                      >
                         Edit
-                      </button>
+                      </Link>
                     </div>
                   </div>
                 ))}
@@ -177,24 +224,45 @@ export default function ChildProfilePage() {
           </Card>
         </div>
 
-        <div className="profile-sidebar">
-          <Card>
-            <h2>Primary caretaker</h2>
-            {primaryCaretaker ? (
+        <Card>
+          <h2>Authorized caretakers</h2>
+
+          {primaryCaretaker ? (
+            <div className="caretaker-list">
               <div className="caretaker-row">
-                <Avatar firstName={primaryCaretaker.firstName} lastName={primaryCaretaker.lastName} />
+                <Avatar
+                  firstName={primaryCaretaker.firstName}
+                  lastName={primaryCaretaker.lastName}
+                />
+
                 <div>
                   <strong>
                     {primaryCaretaker.firstName} {primaryCaretaker.lastName}
                   </strong>
-                  <span>Caretaker · @{primaryCaretaker.username}</span>
+                  <span>Primary caretaker · @{primaryCaretaker.username}</span>
                 </div>
               </div>
-            ) : (
-              <p className="no-results">Not on record.</p>
-            )}
-          </Card>
-        </div>
+
+              {otherCaretakers.map((caretaker) => (
+                <div key={caretaker.id} className="caretaker-row">
+                  <Avatar
+                    firstName={caretaker.firstName}
+                    lastName={caretaker.lastName}
+                  />
+
+                  <div>
+                    <strong>
+                      {caretaker.firstName} {caretaker.lastName}
+                    </strong>
+                    <span>Authorized caretaker · @{caretaker.username}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="no-results">Not on record.</p>
+          )}
+        </Card>
       </div>
     </div>
   )
