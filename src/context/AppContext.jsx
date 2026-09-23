@@ -149,6 +149,29 @@ function reducer(state, action) {
         ...state,
         addChildRequests: [...state.addChildRequests, action.payload],
       }
+    case 'ADD_SECONDARY_CARETAKER':
+      return {
+        ...state,
+        children: state.children.map((child) =>
+          child.id === action.payload.childId
+            ? { ...child, otherCaretakerIds: [...(child.otherCaretakerIds ?? []), action.payload.caretakerId] }
+            : child
+        ),
+      }
+    case 'REMOVE_SECONDARY_CARETAKER':
+      return {
+        ...state,
+        children: state.children.map((child) =>
+          child.id === action.payload.childId
+            ? {
+                ...child,
+                otherCaretakerIds: (child.otherCaretakerIds ?? []).filter(
+                  (caretakerId) => caretakerId !== action.payload.caretakerId
+                ),
+              }
+            : child
+        ),
+      }
 
     // ATTENDANCE =============================================
 
@@ -571,6 +594,43 @@ export function AppProvider({ children }) {
     return { ok: true }
   }
 
+  function addSecondaryCaretaker(childId, caretakerId) {
+    const child = state.children.find((item) => item.id === childId)
+    if (!child || child.primaryCaretakerId !== state.session.id) {
+      return { ok: false, error: 'Only the primary caretaker can add a caretaker to this child.' }
+    }
+
+    const caretaker = state.users.find(
+      (user) => user.id === caretakerId && user.role === 'caretaker' && user.active
+    )
+    if (!caretaker) {
+      return { ok: false, error: 'Caretaker could not be found.' }
+    }
+
+    if (caretakerId === child.primaryCaretakerId || (child.otherCaretakerIds ?? []).includes(caretakerId)) {
+      return { ok: false, error: 'This person is already a caretaker for this child.' }
+    }
+
+    dispatch({ type: 'ADD_SECONDARY_CARETAKER', payload: { childId, caretakerId } })
+    logActivity(
+      `${actorName} added ${caretaker.firstName} ${caretaker.lastName} as a caretaker for ${child.firstName} ${child.lastName}`
+    )
+
+    return { ok: true }
+  }
+
+  function removeSecondaryCaretaker(childId, caretakerId) {
+    const child = state.children.find((item) => item.id === childId)
+    if (!child || child.primaryCaretakerId !== state.session.id) {
+      return { ok: false, error: 'Only the primary caretaker can remove a caretaker from this child.' }
+    }
+
+    dispatch({ type: 'REMOVE_SECONDARY_CARETAKER', payload: { childId, caretakerId } })
+    logActivity(`${actorName} removed a caretaker from ${child.firstName} ${child.lastName}`)
+
+    return { ok: true }
+  }
+
   //ATTENDANCE ================================================
 
   function validateAttendanceInformation(childId, caretakerId) {
@@ -872,6 +932,8 @@ function updatePaymentRecord(paymentInformation) {
     approveRemoveChildRequest,
     denyRemoveChildRequest,
     submitAddChildRequest,
+    addSecondaryCaretaker,
+    removeSecondaryCaretaker,
 
     //LOGIN=====================================
     verifyCredentials,
