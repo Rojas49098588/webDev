@@ -144,6 +144,11 @@ function reducer(state, action) {
           (request) => request.id !== action.payload.requestId
         ),
       }
+    case 'SUBMIT_ADD_CHILD_REQUEST':
+      return {
+        ...state,
+        addChildRequests: [...state.addChildRequests, action.payload],
+      }
 
     // ATTENDANCE =============================================
 
@@ -540,6 +545,32 @@ export function AppProvider({ children }) {
     return { ok: true }
   }
 
+  function submitAddChildRequest({ firstName, lastName, dateOfBirth }) {
+    const nameError = validateName(firstName) || validateName(lastName)
+    if (nameError) {
+      return { ok: false, error: nameError }
+    }
+
+    const dobError = validateDateOfBirth(dateOfBirth)
+    if (dobError) {
+      return { ok: false, error: dobError }
+    }
+
+    const request = {
+      id: `add-child-${Date.now()}`,
+      firstName,
+      lastName,
+      dateOfBirth,
+      primaryCaretakerId: state.session.id,
+      otherCaretakerIds: [],
+    }
+
+    dispatch({ type: 'SUBMIT_ADD_CHILD_REQUEST', payload: request })
+    logActivity(`${actorName} requested to add ${firstName} ${lastName}`)
+
+    return { ok: true }
+  }
+
   //ATTENDANCE ================================================
 
   function validateAttendanceInformation(childId, caretakerId) {
@@ -840,6 +871,7 @@ function updatePaymentRecord(paymentInformation) {
     approveAddChildRequest,
     approveRemoveChildRequest,
     denyRemoveChildRequest,
+    submitAddChildRequest,
 
     //LOGIN=====================================
     verifyCredentials,

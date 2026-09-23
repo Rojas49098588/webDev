@@ -10,6 +10,7 @@ import UserManagementPage from './pages/UserManagementPage.jsx'
 import UserProfilePage from './pages/UserProfilePage.jsx'
 import ChildManagementPage from './pages/ChildManagementPage.jsx'
 import ChildProfilePage from './pages/ChildProfilePage.jsx'
+import CaretakerChildrenPage from './pages/CaretakerChildrenPage.jsx'
 import Attendance from './pages/Attendance.jsx'
 import Payments from './pages/Payments.jsx'
 
@@ -158,6 +159,17 @@ export default function App() {
               <ProtectedRoute role="caretaker">
                 <AppShell>
                   <ChangePasswordPage />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/caretaker/children"
+            element={
+              <ProtectedRoute role="caretaker">
+                <AppShell>
+                  <CaretakerChildrenPage />
                 </AppShell>
               </ProtectedRoute>
             }
