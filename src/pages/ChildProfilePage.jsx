@@ -6,6 +6,7 @@ import Avatar from '../components/ui/Avatar.jsx'
 import Badge from '../components/ui/Badge.jsx'
 import Button from '../components/ui/Button.jsx'
 import './ChildProfilePage.css'
+import './Payments.css'
 
 function calculateAge(dateOfBirth) {
   const dob = new Date(dateOfBirth)
@@ -29,6 +30,7 @@ export default function ChildProfilePage() {
     addSecondaryCaretaker,
     removeSecondaryCaretaker,
     submitRemoveChildRequest,
+    makePayment,
   } = useApp()
 
   const [caretakerSearch, setCaretakerSearch] = useState('')
@@ -36,6 +38,15 @@ export default function ChildProfilePage() {
   const [caretakerSuccess, setCaretakerSuccess] = useState('')
   const [removeChildError, setRemoveChildError] = useState('')
   const [removeChildSuccess, setRemoveChildSuccess] = useState('')
+
+  const [payingRecordId, setPayingRecordId] = useState(null)
+  const [payAmount, setPayAmount] = useState('')
+  const [cardNumber, setCardNumber] = useState('')
+  const [nameOnCard, setNameOnCard] = useState('')
+  const [expiration, setExpiration] = useState('')
+  const [cvv, setCvv] = useState('')
+  const [payError, setPayError] = useState('')
+  const [paySuccess, setPaySuccess] = useState('')
 
   const child = children.find((item) => item.id === id)
   const childrenListPath = session.role === 'caretaker' ? '/caretaker/children' : '/staff/children'
@@ -115,6 +126,34 @@ export default function ChildProfilePage() {
       return
     }
     setRemoveChildSuccess('Removal request submitted.')
+  }
+
+  function startPayment(payment) {
+    setPayingRecordId(payment.id)
+    setPayAmount(String(payment.balance))
+    setCardNumber('')
+    setNameOnCard('')
+    setExpiration('')
+    setCvv('')
+    setPayError('')
+  }
+
+  function cancelPayment() {
+    setPayingRecordId(null)
+  }
+
+  function handlePaySubmit(event, recordId) {
+    event.preventDefault()
+    setPayError('')
+
+    const result = makePayment(recordId, payAmount, { cardNumber, nameOnCard, expiration, cvv })
+    if (!result.ok) {
+      setPayError(result.error)
+      return
+    }
+
+    setPaySuccess('Payment submitted.')
+    setPayingRecordId(null)
   }
 
   return (
@@ -240,6 +279,12 @@ export default function ChildProfilePage() {
               )}
             </div>
 
+            {paySuccess && (
+              <div className="payments-success" role="status">
+                {paySuccess}
+              </div>
+            )}
+
             {payments.length === 0 ? (
               <p className="no-results">No payment records yet.</p>
             ) : (
@@ -273,6 +318,89 @@ export default function ChildProfilePage() {
                           Edit
                         </Link>
                       </div>
+                    )}
+
+                    {isCaretakerOwner && payment.balance > 0 && payingRecordId !== payment.id && (
+                      <div className="payment-record-footer">
+                        <Button size="sm" onClick={() => startPayment(payment)}>
+                          Pay now
+                        </Button>
+                      </div>
+                    )}
+
+                    {isCaretakerOwner && payingRecordId === payment.id && (
+                      <form className="payment-form" onSubmit={(event) => handlePaySubmit(event, payment.id)}>
+                        {payError && (
+                          <div className="payments-error" role="alert">
+                            {payError}
+                          </div>
+                        )}
+
+                        <div className="payment-field">
+                          <label htmlFor={`pay-amount-${payment.id}`}>Payment amount</label>
+                          <input
+                            id={`pay-amount-${payment.id}`}
+                            type="number"
+                            min="0.01"
+                            step="0.01"
+                            max={payment.balance}
+                            value={payAmount}
+                            onChange={(event) => setPayAmount(event.target.value)}
+                          />
+                        </div>
+
+                        <div className="payment-field">
+                          <label htmlFor={`pay-name-${payment.id}`}>Name on card</label>
+                          <input
+                            id={`pay-name-${payment.id}`}
+                            type="text"
+                            value={nameOnCard}
+                            onChange={(event) => setNameOnCard(event.target.value)}
+                          />
+                        </div>
+
+                        <div className="payment-field">
+                          <label htmlFor={`pay-card-${payment.id}`}>Card number</label>
+                          <input
+                            id={`pay-card-${payment.id}`}
+                            type="text"
+                            inputMode="numeric"
+                            value={cardNumber}
+                            onChange={(event) => setCardNumber(event.target.value)}
+                          />
+                        </div>
+
+                        <div className="payment-field">
+                          <label htmlFor={`pay-exp-${payment.id}`}>Expiration (MM/YY)</label>
+                          <input
+                            id={`pay-exp-${payment.id}`}
+                            type="text"
+                            placeholder="MM/YY"
+                            value={expiration}
+                            onChange={(event) => setExpiration(event.target.value)}
+                          />
+                        </div>
+
+                        <div className="payment-field">
+                          <label htmlFor={`pay-cvv-${payment.id}`}>CVV</label>
+                          <input
+                            id={`pay-cvv-${payment.id}`}
+                            type="text"
+                            inputMode="numeric"
+                            value={cvv}
+                            onChange={(event) => setCvv(event.target.value)}
+                          />
+                        </div>
+
+                        <div className="payment-form-actions">
+                          <button type="submit" className="payment-submit">
+                            Submit payment
+                          </button>
+                          <button type="button" className="payment-cancel" onClick={cancelPayment}>
+                            Cancel
+                          </button>
+                        </div>
+                      </form>
                     )}
                   </div>
                 ))}

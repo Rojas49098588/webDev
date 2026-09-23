@@ -4,7 +4,13 @@ import { generateSecurityCode, generateTempPassword, hashPassword, validatePassw
 import { SAMPLE_USERS, SAMPLE_ADD_REQUESTS, SAMPLE_REMOVE_REQUESTS } from '../data/users.js'
 import { SAMPLE_CHILDREN, SAMPLE_ADD_CHILD_REQUESTS, SAMPLE_REMOVE_CHILD_REQUESTS,
         SAMPLE_ATTENDANCE_RECORDS, SAMPLE_PAYMENT_RECORDS } from '../data/children.js'
-import { validateName, validateDateOfBirth } from '../utils/validation.js'
+import {
+  validateName,
+  validateDateOfBirth,
+  validateCardNumber,
+  validateExpiration,
+  validateCVV,
+} from '../utils/validation.js'
 
 export const SECURITY_CODE_TTL_MS = 5 * 60 * 1000
 
@@ -935,6 +941,44 @@ function updatePaymentRecord(paymentInformation) {
   }
 }
 
+  function makePayment(recordId, amount, card) {
+    const record = state.paymentRecords.find((item) => item.id === recordId)
+    if (!record) {
+      return { ok: false, error: 'Payment record could not be found.' }
+    }
+
+    const child = state.children.find((item) => item.id === record.childId)
+    if (!child || child.primaryCaretakerId !== state.session.id) {
+      return { ok: false, error: 'Only the primary caretaker can make this payment.' }
+    }
+
+    const cardError =
+      validateCardNumber(card.cardNumber) ||
+      validateExpiration(card.expiration) ||
+      validateCVV(card.cvv) ||
+      (!card.nameOnCard.trim() ? 'Enter the name on the card.' : null)
+    if (cardError) {
+      return { ok: false, error: cardError }
+    }
+
+    const paymentAmount = Number(amount)
+    if (Number.isNaN(paymentAmount) || paymentAmount <= 0 || paymentAmount > record.balance) {
+      return { ok: false, error: 'Enter a payment amount between $0.01 and the remaining balance.' }
+    }
+
+    const updatedRecord = {
+      ...record,
+      amountPaid: record.amountPaid + paymentAmount,
+      balance: record.balance - paymentAmount,
+      paidOn: new Date().toISOString().slice(0, 10),
+    }
+
+    dispatch({ type: 'UPDATE_PAYMENT_RECORD', payload: updatedRecord })
+    logActivity(`${actorName} paid $${paymentAmount.toFixed(2)} for ${child.firstName} ${child.lastName}`)
+
+    return { ok: true, record: updatedRecord }
+  }
+
   const value = {
     admin: state.admin,
     isAuthenticated,
@@ -982,6 +1026,7 @@ function updatePaymentRecord(paymentInformation) {
     getChildPayments,
     addPaymentRecord,
     updatePaymentRecord,
+    makePayment,
   }
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>
