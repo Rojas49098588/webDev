@@ -212,6 +212,13 @@ export function AppProvider({ children }) {
         return { ok: true, role: 'staff', id: staffMatch.id }
       }
 
+      const caretakerMatch = state.users.find(
+        (user) => user.role === 'caretaker' && user.active && user.username === username
+      )
+      if (caretakerMatch && caretakerMatch.passwordHash && enteredHash === caretakerMatch.passwordHash) {
+        return { ok: true, role: 'caretaker', id: caretakerMatch.id }
+      }
+
       return { ok: false }
     } catch {
       return { ok: false }

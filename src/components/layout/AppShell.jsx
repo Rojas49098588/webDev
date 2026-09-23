@@ -17,12 +17,19 @@ const ADMIN_NAV = [
   { to: '/admin/change-password', label: 'Change password', icon: '⚿', exact: true },
 ]
 
+const CARETAKER_NAV = [
+  { to: '/caretaker', label: 'Home', icon: '⌂', exact: true },
+  { to: '/caretaker/children', label: 'My Children', icon: '◑', exact: false },
+  { to: '/caretaker/change-password', label: 'Change password', icon: '⚿', exact: true },
+]
+
 export default function AppShell({ children }) {
   const { currentAccount, session, logout } = useApp()
   const navigate = useNavigate()
   const location = useLocation()
 
-  const navItems = session.role === 'admin' ? ADMIN_NAV : STAFF_NAV
+  const navItems =
+    session.role === 'admin' ? ADMIN_NAV : session.role === 'staff' ? STAFF_NAV : CARETAKER_NAV
 
   const displayFirstName = currentAccount.firstName || currentAccount.username
   const displayLastName = currentAccount.lastName || ''
@@ -64,7 +71,7 @@ export default function AppShell({ children }) {
           <Avatar firstName={displayFirstName} lastName={displayLastName} />
           <div className="footer-user">
             <strong>{displayLastName ? `${displayFirstName} ${displayLastName}` : displayFirstName}</strong>
-            <span>{session.role === 'admin' ? 'Admin' : 'Staff'}</span>
+            <span>{session.role === 'admin' ? 'Admin' : session.role === 'staff' ? 'Staff' : 'Caretaker'}</span>
           </div>
           <button
             type="button"

@@ -27,6 +27,13 @@ export const SAMPLE_USERS = [
         relationship: 'Primary caretaker',
       },
     ],
+
+    // Demo caretaker credentials for local testing: username "jdoe15",
+    // password "Caretaker123!". This is the precomputed SHA-256 hex digest
+    // of "Caretaker123!":
+    //   node -e "console.log(require('crypto').createHash('sha256').update('Caretaker123!').digest('hex'))"
+    passwordHash: 'a68104cdff1acf1acf38b953a9b7a337957a9fd8a677f1fe88cc371f4cb7e41d',
+    mustChangePassword: true,
   },
 
   {

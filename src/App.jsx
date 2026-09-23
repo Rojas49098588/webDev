@@ -139,6 +139,30 @@ export default function App() {
             }
           />
 
+          {/* CARETAKER ROUTES ============================ */}
+
+          <Route
+            path="/caretaker"
+            element={
+              <ProtectedRoute role="caretaker">
+                <AppShell>
+                  <DashboardPage />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/caretaker/change-password"
+            element={
+              <ProtectedRoute role="caretaker">
+                <AppShell>
+                  <ChangePasswordPage />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </BrowserRouter>
