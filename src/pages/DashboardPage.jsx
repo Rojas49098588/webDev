@@ -46,9 +46,16 @@ export default function DashboardPage() {
   const myActiveChildren = children.filter(
     (child) => child.active && child.primaryCaretakerId === session.id
   )
+  const myPendingRemoveRequests = removeChildRequests.filter((request) => {
+    if (request.requestedByUserId !== session.id) {
+      return false
+    }
+    const child = children.find((item) => item.id === request.childId)
+    return child?.primaryCaretakerId === session.id
+  })
   const myPendingRequestsCount =
     addChildRequests.filter((request) => request.primaryCaretakerId === session.id).length +
-    removeChildRequests.filter((request) => request.requestedByUserId === session.id).length
+    myPendingRemoveRequests.length
   const myOutstandingBalance = paymentRecords
     .filter((record) => record.primaryCaretakerId === session.id)
     .reduce((total, record) => total + record.balance, 0)

@@ -37,9 +37,13 @@ export default function CaretakerChildrenPage() {
   const myPendingAddRequests = addChildRequests.filter(
     (request) => request.primaryCaretakerId === session.id
   )
-  const myPendingRemoveRequests = removeChildRequests.filter(
-    (request) => request.requestedByUserId === session.id
-  )
+  const myPendingRemoveRequests = removeChildRequests.filter((request) => {
+    if (request.requestedByUserId !== session.id) {
+      return false
+    }
+    const child = children.find((item) => item.id === request.childId)
+    return child?.primaryCaretakerId === session.id
+  })
 
   function handleSubmitRequest(event) {
     event.preventDefault()

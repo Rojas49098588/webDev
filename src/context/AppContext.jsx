@@ -590,6 +590,10 @@ export function AppProvider({ children }) {
       return { ok: false, error: dobError }
     }
 
+    if (state.addChildRequests.some((request) => request.primaryCaretakerId === state.session.id)) {
+      return { ok: false, error: 'You already have a pending request to admit a child.' }
+    }
+
     const request = {
       id: `add-child-${Date.now()}`,
       firstName,
@@ -649,6 +653,9 @@ export function AppProvider({ children }) {
     }
     if (child.primaryCaretakerId !== state.session.id) {
       return { ok: false, error: 'Only the primary caretaker can request this child’s removal.' }
+    }
+    if (state.removeChildRequests.some((request) => request.childId === childId)) {
+      return { ok: false, error: 'A removal request for this child is already pending.' }
     }
 
     const request = {
