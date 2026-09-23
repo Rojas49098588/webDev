@@ -172,6 +172,11 @@ function reducer(state, action) {
             : child
         ),
       }
+    case 'SUBMIT_REMOVE_CHILD_REQUEST':
+      return {
+        ...state,
+        removeChildRequests: [...state.removeChildRequests, action.payload],
+      }
 
     // ATTENDANCE =============================================
 
@@ -631,6 +636,27 @@ export function AppProvider({ children }) {
     return { ok: true }
   }
 
+  function submitRemoveChildRequest(childId) {
+    const child = state.children.find((item) => item.id === childId)
+    if (!child) {
+      return { ok: false, error: 'Child could not be found.' }
+    }
+    if (child.primaryCaretakerId !== state.session.id) {
+      return { ok: false, error: 'Only the primary caretaker can request this child’s removal.' }
+    }
+
+    const request = {
+      id: `remove-child-${Date.now()}`,
+      childId,
+      requestedByUserId: state.session.id,
+    }
+
+    dispatch({ type: 'SUBMIT_REMOVE_CHILD_REQUEST', payload: request })
+    logActivity(`${actorName} requested to remove ${child.firstName} ${child.lastName}`)
+
+    return { ok: true }
+  }
+
   //ATTENDANCE ================================================
 
   function validateAttendanceInformation(childId, caretakerId) {
@@ -934,6 +960,7 @@ function updatePaymentRecord(paymentInformation) {
     submitAddChildRequest,
     addSecondaryCaretaker,
     removeSecondaryCaretaker,
+    submitRemoveChildRequest,
 
     //LOGIN=====================================
     verifyCredentials,

@@ -28,11 +28,14 @@ export default function ChildProfilePage() {
     getChildAttendance,
     addSecondaryCaretaker,
     removeSecondaryCaretaker,
+    submitRemoveChildRequest,
   } = useApp()
 
   const [caretakerSearch, setCaretakerSearch] = useState('')
   const [caretakerError, setCaretakerError] = useState('')
   const [caretakerSuccess, setCaretakerSuccess] = useState('')
+  const [removeChildError, setRemoveChildError] = useState('')
+  const [removeChildSuccess, setRemoveChildSuccess] = useState('')
 
   const child = children.find((item) => item.id === id)
   const childrenListPath = session.role === 'caretaker' ? '/caretaker/children' : '/staff/children'
@@ -95,6 +98,23 @@ export default function ChildProfilePage() {
     if (!result.ok) {
       setCaretakerError(result.error)
     }
+  }
+
+  function handleRequestRemoveChild() {
+    const confirmed = window.confirm(
+      'Request to remove this child? A staff member will review this request.'
+    )
+    if (!confirmed) {
+      return
+    }
+    setRemoveChildError('')
+    setRemoveChildSuccess('')
+    const result = submitRemoveChildRequest(child.id)
+    if (!result.ok) {
+      setRemoveChildError(result.error)
+      return
+    }
+    setRemoveChildSuccess('Removal request submitted.')
   }
 
   return (
@@ -261,6 +281,7 @@ export default function ChildProfilePage() {
           </Card>
         </div>
 
+        <div className="profile-sidebar">
         <Card>
           <h2>Authorized caretakers</h2>
 
@@ -357,6 +378,32 @@ export default function ChildProfilePage() {
             </div>
           )}
         </Card>
+
+        {isCaretakerOwner && (
+          <Card>
+            <h2>Actions</h2>
+
+            {removeChildError && (
+              <div className="request-error" role="alert">
+                {removeChildError}
+              </div>
+            )}
+            {removeChildSuccess && (
+              <div className="request-success" role="status">
+                {removeChildSuccess}
+              </div>
+            )}
+
+            <p className="section-description">
+              Request to remove this child from the center. A staff member will review your request.
+            </p>
+
+            <Button variant="danger" onClick={handleRequestRemoveChild} disabled={Boolean(removeChildSuccess)}>
+              Request to remove this child
+            </Button>
+          </Card>
+        )}
+        </div>
       </div>
     </div>
   )
