@@ -22,7 +22,7 @@ export default function SetPasswordPage() {
       setError(result.error)
       return
     }
-    navigate(session.role === 'admin' ? '/admin' : '/staff')
+    navigate(session.role === 'admin' ? '/admin' : session.role === 'staff' ? '/staff' : '/caretaker')
   }
 
   return (

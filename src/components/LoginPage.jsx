@@ -10,6 +10,12 @@ function maskEmail(email) {
   return `${local[0]}***@${domain}`
 }
 
+function roleHome(role) {
+  if (role === 'admin') return '/admin'
+  if (role === 'staff') return '/staff'
+  return '/caretaker'
+}
+
 export default function LoginPage() {
   const { admin, users, isAuthenticated, session, verifyCredentials, beginLogin, verifySecurityCode, pendingLogin } =
     useApp()
@@ -22,7 +28,7 @@ export default function LoginPage() {
   const [error, setError] = useState('')
 
   if (isAuthenticated) {
-    return <Navigate to={session.role === 'admin' ? '/admin' : '/staff'} replace />
+    return <Navigate to={roleHome(session.role)} replace />
   }
 
   const pendingEmail =
@@ -51,7 +57,7 @@ export default function LoginPage() {
       setError(result.reason === 'expired' ? 'Code expired. Request a new one.' : 'Invalid code')
       return
     }
-    navigate(result.role === 'admin' ? '/admin' : '/staff')
+    navigate(roleHome(result.role))
   }
 
   function handleResend() {

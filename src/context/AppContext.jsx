@@ -4,7 +4,13 @@ import { generateSecurityCode, generateTempPassword, hashPassword, validatePassw
 import { SAMPLE_USERS, SAMPLE_ADD_REQUESTS, SAMPLE_REMOVE_REQUESTS } from '../data/users.js'
 import { SAMPLE_CHILDREN, SAMPLE_ADD_CHILD_REQUESTS, SAMPLE_REMOVE_CHILD_REQUESTS,
         SAMPLE_ATTENDANCE_RECORDS, SAMPLE_PAYMENT_RECORDS } from '../data/children.js'
-import { validateName, validateDateOfBirth } from '../utils/validation.js'
+import {
+  validateName,
+  validateDateOfBirth,
+  validateCardNumber,
+  validateExpiration,
+  validateCVV,
+} from '../utils/validation.js'
 
 export const SECURITY_CODE_TTL_MS = 5 * 60 * 1000
 
@@ -144,6 +150,39 @@ function reducer(state, action) {
           (request) => request.id !== action.payload.requestId
         ),
       }
+    case 'SUBMIT_ADD_CHILD_REQUEST':
+      return {
+        ...state,
+        addChildRequests: [...state.addChildRequests, action.payload],
+      }
+    case 'ADD_SECONDARY_CARETAKER':
+      return {
+        ...state,
+        children: state.children.map((child) =>
+          child.id === action.payload.childId
+            ? { ...child, otherCaretakerIds: [...(child.otherCaretakerIds ?? []), action.payload.caretakerId] }
+            : child
+        ),
+      }
+    case 'REMOVE_SECONDARY_CARETAKER':
+      return {
+        ...state,
+        children: state.children.map((child) =>
+          child.id === action.payload.childId
+            ? {
+                ...child,
+                otherCaretakerIds: (child.otherCaretakerIds ?? []).filter(
+                  (caretakerId) => caretakerId !== action.payload.caretakerId
+                ),
+              }
+            : child
+        ),
+      }
+    case 'SUBMIT_REMOVE_CHILD_REQUEST':
+      return {
+        ...state,
+        removeChildRequests: [...state.removeChildRequests, action.payload],
+      }
 
     // ATTENDANCE =============================================
 
@@ -210,6 +249,13 @@ export function AppProvider({ children }) {
       )
       if (staffMatch && staffMatch.passwordHash && enteredHash === staffMatch.passwordHash) {
         return { ok: true, role: 'staff', id: staffMatch.id }
+      }
+
+      const caretakerMatch = state.users.find(
+        (user) => user.role === 'caretaker' && user.active && user.username === username
+      )
+      if (caretakerMatch && caretakerMatch.passwordHash && enteredHash === caretakerMatch.passwordHash) {
+        return { ok: true, role: 'caretaker', id: caretakerMatch.id }
       }
 
       return { ok: false }
@@ -533,6 +579,97 @@ export function AppProvider({ children }) {
     return { ok: true }
   }
 
+  function submitAddChildRequest({ firstName, lastName, dateOfBirth }) {
+    const nameError = validateName(firstName) || validateName(lastName)
+    if (nameError) {
+      return { ok: false, error: nameError }
+    }
+
+    const dobError = validateDateOfBirth(dateOfBirth)
+    if (dobError) {
+      return { ok: false, error: dobError }
+    }
+
+    if (state.addChildRequests.some((request) => request.primaryCaretakerId === state.session.id)) {
+      return { ok: false, error: 'You already have a pending request to admit a child.' }
+    }
+
+    const request = {
+      id: `add-child-${Date.now()}`,
+      firstName,
+      lastName,
+      dateOfBirth,
+      primaryCaretakerId: state.session.id,
+      otherCaretakerIds: [],
+    }
+
+    dispatch({ type: 'SUBMIT_ADD_CHILD_REQUEST', payload: request })
+    logActivity(`${actorName} requested to add ${firstName} ${lastName}`)
+
+    return { ok: true }
+  }
+
+  function addSecondaryCaretaker(childId, caretakerId) {
+    const child = state.children.find((item) => item.id === childId)
+    if (!child || child.primaryCaretakerId !== state.session.id) {
+      return { ok: false, error: 'Only the primary caretaker can add a caretaker to this child.' }
+    }
+
+    const caretaker = state.users.find(
+      (user) => user.id === caretakerId && user.role === 'caretaker' && user.active
+    )
+    if (!caretaker) {
+      return { ok: false, error: 'Caretaker could not be found.' }
+    }
+
+    if (caretakerId === child.primaryCaretakerId || (child.otherCaretakerIds ?? []).includes(caretakerId)) {
+      return { ok: false, error: 'This person is already a caretaker for this child.' }
+    }
+
+    dispatch({ type: 'ADD_SECONDARY_CARETAKER', payload: { childId, caretakerId } })
+    logActivity(
+      `${actorName} added ${caretaker.firstName} ${caretaker.lastName} as a caretaker for ${child.firstName} ${child.lastName}`
+    )
+
+    return { ok: true }
+  }
+
+  function removeSecondaryCaretaker(childId, caretakerId) {
+    const child = state.children.find((item) => item.id === childId)
+    if (!child || child.primaryCaretakerId !== state.session.id) {
+      return { ok: false, error: 'Only the primary caretaker can remove a caretaker from this child.' }
+    }
+
+    dispatch({ type: 'REMOVE_SECONDARY_CARETAKER', payload: { childId, caretakerId } })
+    logActivity(`${actorName} removed a caretaker from ${child.firstName} ${child.lastName}`)
+
+    return { ok: true }
+  }
+
+  function submitRemoveChildRequest(childId) {
+    const child = state.children.find((item) => item.id === childId)
+    if (!child) {
+      return { ok: false, error: 'Child could not be found.' }
+    }
+    if (child.primaryCaretakerId !== state.session.id) {
+      return { ok: false, error: 'Only the primary caretaker can request this child’s removal.' }
+    }
+    if (state.removeChildRequests.some((request) => request.childId === childId)) {
+      return { ok: false, error: 'A removal request for this child is already pending.' }
+    }
+
+    const request = {
+      id: `remove-child-${Date.now()}`,
+      childId,
+      requestedByUserId: state.session.id,
+    }
+
+    dispatch({ type: 'SUBMIT_REMOVE_CHILD_REQUEST', payload: request })
+    logActivity(`${actorName} requested to remove ${child.firstName} ${child.lastName}`)
+
+    return { ok: true }
+  }
+
   //ATTENDANCE ================================================
 
   function validateAttendanceInformation(childId, caretakerId) {
@@ -811,6 +948,44 @@ function updatePaymentRecord(paymentInformation) {
   }
 }
 
+  function makePayment(recordId, amount, card) {
+    const record = state.paymentRecords.find((item) => item.id === recordId)
+    if (!record) {
+      return { ok: false, error: 'Payment record could not be found.' }
+    }
+
+    const child = state.children.find((item) => item.id === record.childId)
+    if (!child || child.primaryCaretakerId !== state.session.id) {
+      return { ok: false, error: 'Only the primary caretaker can make this payment.' }
+    }
+
+    const cardError =
+      validateCardNumber(card.cardNumber) ||
+      validateExpiration(card.expiration) ||
+      validateCVV(card.cvv) ||
+      (!card.nameOnCard.trim() ? 'Enter the name on the card.' : null)
+    if (cardError) {
+      return { ok: false, error: cardError }
+    }
+
+    const paymentAmount = Number(amount)
+    if (Number.isNaN(paymentAmount) || paymentAmount <= 0 || paymentAmount > record.balance) {
+      return { ok: false, error: 'Enter a payment amount between $0.01 and the remaining balance.' }
+    }
+
+    const updatedRecord = {
+      ...record,
+      amountPaid: record.amountPaid + paymentAmount,
+      balance: record.balance - paymentAmount,
+      paidOn: new Date().toISOString().slice(0, 10),
+    }
+
+    dispatch({ type: 'UPDATE_PAYMENT_RECORD', payload: updatedRecord })
+    logActivity(`${actorName} paid $${paymentAmount.toFixed(2)} for ${child.firstName} ${child.lastName}`)
+
+    return { ok: true, record: updatedRecord }
+  }
+
   const value = {
     admin: state.admin,
     isAuthenticated,
@@ -833,6 +1008,10 @@ function updatePaymentRecord(paymentInformation) {
     approveAddChildRequest,
     approveRemoveChildRequest,
     denyRemoveChildRequest,
+    submitAddChildRequest,
+    addSecondaryCaretaker,
+    removeSecondaryCaretaker,
+    submitRemoveChildRequest,
 
     //LOGIN=====================================
     verifyCredentials,
@@ -854,6 +1033,7 @@ function updatePaymentRecord(paymentInformation) {
     getChildPayments,
     addPaymentRecord,
     updatePaymentRecord,
+    makePayment,
   }
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>

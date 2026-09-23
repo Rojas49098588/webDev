@@ -50,6 +50,13 @@
   --primary-light: #7BAFFB;
 }
 
+[data-theme='caretaker'] {
+  --primary: #0E8478;
+  --primary-dark: #0A6459;
+  --primary-soft: #DFF3F0;
+  --primary-light: #4FB4A6;
+}
+
 /* ============================================================
    GLOBAL BASE STYLES
    ============================================================ */

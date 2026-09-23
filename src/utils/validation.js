@@ -30,3 +30,35 @@ export function validateDateOfBirth(dateString) {
   }
   return null
 }
+
+export function validateCardNumber(cardNumber) {
+  const digits = (cardNumber || '').replace(/\s+/g, '')
+  if (!/^\d{13,19}$/.test(digits)) {
+    return 'Enter a valid card number'
+  }
+  return null
+}
+
+export function validateExpiration(expiration) {
+  const match = /^(\d{2})\/(\d{2})$/.exec(expiration || '')
+  if (!match) {
+    return 'Enter expiration as MM/YY'
+  }
+  const month = Number(match[1])
+  const year = 2000 + Number(match[2])
+  if (month < 1 || month > 12) {
+    return 'Enter a valid expiration month'
+  }
+  const expiresAt = new Date(year, month, 1)
+  if (expiresAt.getTime() <= Date.now()) {
+    return 'Card has expired'
+  }
+  return null
+}
+
+export function validateCVV(cvv) {
+  if (!/^\d{3,4}$/.test(cvv || '')) {
+    return 'Enter a valid CVV'
+  }
+  return null
+}

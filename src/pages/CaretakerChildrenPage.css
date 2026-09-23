@@ -1,0 +1,77 @@
+.caretaker-request-form,
+.caretaker-pending-requests {
+  margin-top: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.caretaker-request-form h2,
+.caretaker-pending-requests h2 {
+  font-size: 16px;
+  margin: 0 0 0.25rem;
+}
+
+.caretaker-request-form > p {
+  margin: 0 0 1rem;
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+
+.caretaker-form {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.caretaker-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.caretaker-form-field label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.caretaker-form-field input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13.5px;
+}
+
+.caretaker-form-field input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft);
+}
+
+.caretaker-form-actions {
+  grid-column: 1 / -1;
+  display: flex;
+}
+
+.request-success {
+  background: var(--success-soft);
+  color: var(--success);
+  border-radius: var(--r-sm);
+  padding: 0.75rem 1rem;
+  font-size: 13.5px;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 700px) {
+  .caretaker-form {
+    grid-template-columns: 1fr;
+  }
+}

@@ -10,6 +10,8 @@ import UserManagementPage from './pages/UserManagementPage.jsx'
 import UserProfilePage from './pages/UserProfilePage.jsx'
 import ChildManagementPage from './pages/ChildManagementPage.jsx'
 import ChildProfilePage from './pages/ChildProfilePage.jsx'
+import CaretakerChildrenPage from './pages/CaretakerChildrenPage.jsx'
+import CaretakerProfilePage from './pages/CaretakerProfilePage.jsx'
 import Attendance from './pages/Attendance.jsx'
 import Payments from './pages/Payments.jsx'
 
@@ -134,6 +136,63 @@ export default function App() {
               <ProtectedRoute role="staff">
                 <AppShell>
                   <ChildProfilePage />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+
+          {/* CARETAKER ROUTES ============================ */}
+
+          <Route
+            path="/caretaker"
+            element={
+              <ProtectedRoute role="caretaker">
+                <AppShell>
+                  <DashboardPage />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/caretaker/change-password"
+            element={
+              <ProtectedRoute role="caretaker">
+                <AppShell>
+                  <ChangePasswordPage />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/caretaker/children"
+            element={
+              <ProtectedRoute role="caretaker">
+                <AppShell>
+                  <CaretakerChildrenPage />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/caretaker/children/:id"
+            element={
+              <ProtectedRoute role="caretaker">
+                <AppShell>
+                  <ChildProfilePage />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/caretaker/caretakers/:id"
+            element={
+              <ProtectedRoute role="caretaker">
+                <AppShell>
+                  <CaretakerProfilePage />
                 </AppShell>
               </ProtectedRoute>
             }
