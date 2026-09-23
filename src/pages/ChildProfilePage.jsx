@@ -267,9 +267,9 @@ export default function ChildProfilePage() {
               </div>
 
               {session.role === 'staff' && (
-                <button type="button" className="profile-action">
+                <Link to={`/staff/payments?child=${child.id}`} className="profile-action">
                   + Add payment
-                </button>
+                </Link>
               )}
             </div>
 
