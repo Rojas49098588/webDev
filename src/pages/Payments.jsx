@@ -1,21 +1,18 @@
 import { useState } from 'react'
 import { useApp } from '../context/AppContext.jsx'
+import SearchInput from '../components/ui/SearchInput.jsx'
 import './Payments.css'
 
 export default function Payments() {
-  const {
-    children,
-    getChildPayments,
-    addPaymentRecord,
-    updatePaymentRecord,
-} = useApp()
+  const {children, getChildPayments, addPaymentRecord,} = useApp()
 
   const [selectedChildId, setSelectedChildId] = useState('')
-  const [editingRecord, setEditingRecord] = useState(null)
+  const [childSearch, setChildSearch] = useState('')
+
+  const [notes, setNotes] = useState('')
 
   const [dueOn, setDueOn] = useState('')
   const [amountDue, setAmountDue] = useState('')
-  const [paidOn, setPaidOn] = useState('')
   const [amountPaid, setAmountPaid] = useState('')
 
   const [error, setError] = useState('')
@@ -25,27 +22,30 @@ export default function Payments() {
     (child) => child.id === selectedChildId
   )
 
+  const searchText = childSearch.toLowerCase().trim()
+
+  const filteredChildren = children.filter((child) => {
+    if (!searchText) {
+      return true
+    }
+
+    return (
+      child.firstName.toLowerCase().includes(searchText) ||
+      child.lastName.toLowerCase().includes(searchText) ||
+      child.dateOfBirth.includes(searchText)
+    )
+  })
+
   const childPayments = selectedChildId
     ? getChildPayments(selectedChildId)
     : []
 
   function clearForm() {
-  setEditingRecord(null)
   setDueOn('')
   setAmountDue('')
-  setPaidOn('')
   setAmountPaid('')
+  setNotes('')
   setError('')
-}
-
-function handleEdit(record) {
-  setEditingRecord(record)
-  setDueOn(record.dueOn)
-  setAmountDue(String(record.amountDue))
-  setPaidOn(record.paidOn || '')
-  setAmountPaid(String(record.amountPaid))
-  setError('')
-  setSuccess('')
 }
 
 function handleSubmit(event) {
@@ -68,28 +68,18 @@ function handleSubmit(event) {
     childId: selectedChildId,
     dueOn,
     amountDue: Number(amountDue),
-    paidOn: paidOn || null,
     amountPaid: Number(amountPaid || 0),
+    notes: notes.trim(),
   }
 
-  const result = editingRecord
-  ? updatePaymentRecord({
-      ...paymentInformation,
-      id: editingRecord.id,
-    })
-  : addPaymentRecord(paymentInformation)
+  const result = addPaymentRecord(paymentInformation)
 
   if (!result.ok) {
     setError(result.error)
     return
   }
 
-  setSuccess(
-    editingRecord
-      ? 'Payment record updated successfully.'
-      : 'Payment record added successfully.'
-  )
-
+  setSuccess('Payment record added successfully.')
   clearForm()
 }
 
@@ -102,42 +92,66 @@ function handleSubmit(event) {
         </div>
       </div>
 
-      <section className="payments-section">
-        <h2>Find a Child</h2>
+        <section className="payments-section">
+          <div className="payments-section-header">
+            <div>
+              <h2>Find a Child</h2>
+              <p>Search for a child to view their payment records.</p>
+            </div>
+          </div>
 
-        <div className="payments-child-picker">
-          <label htmlFor="payment-child">
-            Child
-          </label>
+          <div className="payments-child-search">
+            <SearchInput
+              id="payment-child-search"
+              value={childSearch}
+              onChange={setChildSearch}
+              placeholder="Search by first name, last name, or date of birth"
+              label="Search children"
+            />
+          </div>
 
-          <select
-            id="payment-child"
-            value={selectedChildId}
-            onChange={(event) => setSelectedChildId(event.target.value)}
-          >
-            <option value="">Select a child</option>
+          <div className="payment-child-results">
+            {filteredChildren.length === 0 ? (
+              <p className="payments-empty">
+                No children match your search.
+              </p>
+            ) : (
+              filteredChildren.map((child) => (
+                <button
+                  key={child.id}
+                  type="button"
+                  className={`payment-child-result ${
+                    selectedChildId === child.id
+                      ? 'selected'
+                      : ''
+                  }`}
+                  onClick={() => {
+                    setSelectedChildId(child.id)
+                    setError('')
+                    setSuccess('')
+                  }}
+                >
+                  <strong>
+                    {child.firstName} {child.lastName}
+                  </strong>
 
-            {children.map((child) => (
-              <option key={child.id} value={child.id}>
-                {child.firstName} {child.lastName}
-              </option>
-            ))}
-          </select>
-        </div>
-      </section>
+                  <span>
+                    Date of birth: {child.dateOfBirth}
+                  </span>
+                </button>
+              ))
+            )}
+          </div>
+        </section>
 
       {selectedChild && (
         <section className="payments-section">
             <div className="payment-form-header">
                 <div>
-                    <h2>{editingRecord ? 'Update Payment' : 'Add Payment'}</h2>
-                    <p>
-                    {editingRecord
-                        ? 'Update the selected payment record.'
-                        : 'Add a new payment record for this child.'}
-                    </p>
+                    <h2>Add Payment</h2>
+                    <p>Add a new payment record for this child.</p>
                 </div>
-                </div>
+            </div>
 
                 {error && (
                 <div className="payments-error" role="alert">
@@ -165,59 +179,37 @@ function handleSubmit(event) {
                 </div>
 
                 <div className="payment-field">
-                    <label htmlFor="payment-amount-due">
+                  <label htmlFor="payment-amount-due">
                     Amount due
-                    </label>
-                    <input
+                  </label>
+                  <input
                     id="payment-amount-due"
                     type="number"
                     min="0"
                     step="0.01"
                     value={amountDue}
                     onChange={(event) => setAmountDue(event.target.value)}
-                    />
+                  />
                 </div>
 
-                <div className="payment-field">
-                    <label htmlFor="payment-paid-on">
-                    Paid on
-                    </label>
-                    <input
-                    id="payment-paid-on"
-                    type="date"
-                    value={paidOn}
-                    onChange={(event) => setPaidOn(event.target.value)}
-                    />
-                </div>
-
-                <div className="payment-field">
-                    <label htmlFor="payment-amount-paid">
-                    Amount paid
-                    </label>
-                    <input
-                    id="payment-amount-paid"
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value={amountPaid}
-                    onChange={(event) => setAmountPaid(event.target.value)}
-                    />
+                <div className="payment-field payment-notes-field">
+                  <label htmlFor="payment-notes">
+                    Notes
+                  </label>
+                  <textarea
+                    id="payment-notes"
+                    value={notes}
+                    onChange={(event) => setNotes(event.target.value)}
+                    placeholder="Add any notes about this payment"
+                    rows="3"
+                  />
                 </div>
 
                 <div className="payment-form-actions">
                     <button type="submit" className="payment-submit">
-                    {editingRecord ? 'Update Payment' : 'Add Payment'}
+                    Add Payment
                     </button>
 
-                    {editingRecord && (
-                    <button
-                        type="button"
-                        className="payment-cancel"
-                        onClick={clearForm}
-                    >
-                        Cancel
-                    </button>
-                    )}
                 </div>
                 </form>
           <div className="payments-section-header">
@@ -257,15 +249,6 @@ function handleSubmit(event) {
 
                     <div>
                       <span className="payment-label">
-                        Paid on
-                      </span>
-                      <strong>
-                        {record.paidOn || 'Not paid'}
-                      </strong>
-                    </div>
-
-                    <div>
-                      <span className="payment-label">
                         Amount paid
                       </span>
                       <strong>${record.amountPaid.toFixed(2)}</strong>
@@ -279,18 +262,16 @@ function handleSubmit(event) {
                         ${record.balance.toFixed(2)}
                       </strong>
                     </div>
-                  </div>
 
-                  <div className="payment-card-actions">
-                    <button
-                        type="button"
-                        className="payment-edit"
-                        onClick={() => handleEdit(record)}
-                    >
-                        Update
-                    </button>
+                    <div>
+                      <span className="payment-label">
+                        Notes
+                      </span>
+                      <strong>
+                        {record.notes || 'No notes'}
+                      </strong>
                     </div>
-
+                  </div>
                 </div>
               ))}
             </div>

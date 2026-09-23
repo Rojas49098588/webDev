@@ -226,3 +226,56 @@
     grid-column: auto;
   }
 }
+
+/* ============================================================
+   DAILY ATTENDANCE TABLE
+   ============================================================ */
+
+.attendance-table-wrapper {
+  margin-top: 1.25rem;
+  overflow-x: auto;
+}
+
+.attendance-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.attendance-table th,
+.attendance-table td {
+  padding: 0.9rem 1.25rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.attendance-table th {
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.attendance-table td {
+  color: var(--ink);
+  font-size: 13.5px;
+}
+
+.attendance-table th:nth-child(1),
+.attendance-table td:nth-child(1) {
+  width: 25%;
+}
+
+.attendance-table th:nth-child(2),
+.attendance-table td:nth-child(2) {
+  width: 20%;
+}
+
+.attendance-table th:nth-child(3),
+.attendance-table td:nth-child(3) {
+  width: 35%;
+}
+
+.attendance-table th:nth-child(4),
+.attendance-table td:nth-child(4) {
+  width: 20%;
+}

@@ -42,39 +42,53 @@
 }
 
 /* ============================================================
-   CHILD PICKER
+   CHILD SEARCH
    ============================================================ */
 
-.payments-child-picker {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  max-width: 300px;
+.payments-child-search {
+  max-width: 500px;
   margin-top: 1.25rem;
 }
 
-.payments-child-picker label {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink);
+.payment-child-results {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
 }
 
-.payments-child-picker select {
-  box-sizing: border-box;
+.payment-child-result {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
   width: 100%;
-  padding: 0.65rem 0.75rem;
+  padding: 0.85rem 1rem;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 9px;
   background: var(--surface);
   color: var(--ink);
   font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.payment-child-result:hover {
+  border-color: var(--ink-faint);
+}
+
+.payment-child-result.selected {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-soft);
+}
+
+.payment-child-result strong {
   font-size: 13.5px;
 }
 
-.payments-child-picker select:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--primary-soft);
+.payment-child-result span {
+  color: var(--ink-soft);
+  font-size: 12.5px;
 }
 
 /* ============================================================

@@ -3,7 +3,6 @@ import { Link, useParams } from 'react-router-dom'
 import { useApp } from '../context/AppContext.jsx'
 import Card from '../components/ui/Card.jsx'
 import Avatar from '../components/ui/Avatar.jsx'
-import Badge from '../components/ui/Badge.jsx'
 import Button from '../components/ui/Button.jsx'
 import './ChildProfilePage.css'
 import './Payments.css'
@@ -174,7 +173,6 @@ export default function ChildProfilePage() {
                 Born {child.dateOfBirth} · Age {calculateAge(child.dateOfBirth)}
               </span>
             </div>
-            <Badge variant={child.active ? 'green' : 'amber'}>{child.active ? 'Active' : 'Archived'}</Badge>
           </Card>
 
           <Card>
@@ -190,10 +188,6 @@ export default function ChildProfilePage() {
             <div className="info-row">
               <span>Date of birth</span>
               <strong>{child.dateOfBirth}</strong>
-            </div>
-            <div className="info-row">
-              <span>Status</span>
-              <strong>{child.active ? 'Active' : 'Archived'}</strong>
             </div>
           </Card>
 

@@ -277,41 +277,50 @@ const authorizedCaretakers = selectedChild
           />
         </div>
 
-        <div className="attendance-list">
-          {dailyAttendance.length === 0 ? (
-            <p className="attendance-empty">
-              No attendance records for this date.
-            </p>
-          ) : (
-            dailyAttendance.map((record) => (
-              <div key={record.id} className="attendance-card">
-                <div>
-                  <h3>
-                    {record.childFirstName} {record.childLastName}
-                  </h3>
+        {dailyAttendance.length === 0 ? (
+          <p className="attendance-empty">
+            No attendance records for this date.
+          </p>
+        ) : (
+          <div className="attendance-table-wrapper">
+            <table className="attendance-table">
+              <thead>
+                <tr>
+                  <th>Child</th>
+                  <th>Activity</th>
+                  <th>Caretaker</th>
+                  <th>Time</th>
+                </tr>
+              </thead>
 
-                  <p>
-                    <strong>Activity:</strong>{' '}
-                    {record.type === 'drop-off' ? 'Drop-off' : 'Pickup'}
-                  </p>
+              <tbody>
+                {dailyAttendance.map((record) => (
+                  <tr key={record.id}>
+                    <td>
+                      {record.childFirstName} {record.childLastName}
+                    </td>
 
-                  <p>
-                    <strong>Caretaker:</strong>{' '}
-                    {record.caretakerFirstName}{' '}
-                    {record.caretakerLastName}
-                  </p>
-                </div>
+                    <td>
+                      {record.type === 'drop-off' ? 'Drop-off' : 'Pickup'}
+                    </td>
 
-                <span className="attendance-time">
-                  {new Date(record.dateTime).toLocaleTimeString([], {
-                    hour: 'numeric',
-                    minute: '2-digit',
-                  })}
-                </span>
-              </div>
-            ))
-          )}
-        </div>
+                    <td>
+                      {record.caretakerFirstName}{' '}
+                      {record.caretakerLastName}
+                    </td>
+
+                    <td>
+                      {new Date(record.dateTime).toLocaleTimeString([], {
+                        hour: 'numeric',
+                        minute: '2-digit',
+                      })}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </section>
 
     </div>

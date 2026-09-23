@@ -75,11 +75,18 @@
 
 .sidebar-footer {
   display: flex;
-  align-items: center;
-  gap: 0.6rem;
+  flex-direction: column;
+  gap: 0.75rem;
   border-top: 1px solid var(--border);
   margin-top: 0.75rem;
   padding-top: 1rem;
+}
+
+.footer-account {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
 }
 
 .footer-user {
@@ -103,12 +110,26 @@
 }
 
 .footer-logout {
-  background: transparent;
-  border: none;
-  color: var(--ink-faint);
-  font-size: 16px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  color: var(--ink-soft);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
-  padding: 0.25rem;
+}
+
+.footer-logout:hover {
+  color: var(--danger);
+  border-color: var(--danger);
+  background: var(--danger-soft);
 }
 
 .footer-logout:hover {
@@ -135,6 +156,27 @@
 
   .nav-item {
     justify-content: center;
+  }
+
+  .footer-account {
+    justify-content: center;
+  }
+
+  .footer-logout {
+    width: auto;
+    padding: 0.5rem;
+    border: none;
+    background: transparent;
+    font-size: 16px;
+  }
+
+  .footer-logout {
+    font-size: 0;
+  }
+
+  .footer-logout::before {
+    content: '⏻';
+    font-size: 16px;
   }
 
   .main {

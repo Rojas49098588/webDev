@@ -4,7 +4,7 @@ import DataRow from '../components/ui/DataRow.jsx'
 import Button from '../components/ui/Button.jsx'
 
 export default function AddChildRequestsTab() {
-  const { addChildRequests, users, approveAddChildRequest } = useApp()
+  const {addChildRequests, users, approveAddChildRequest, denyAddChildRequest,} = useApp()
   const [error, setError] = useState('')
 
   function resolveCaretakerName(userId) {
@@ -23,6 +23,24 @@ export default function AddChildRequestsTab() {
 
     setError('')
     const result = approveAddChildRequest(requestId)
+    if (!result.ok) {
+      setError(result.error)
+    }
+  }
+
+  function handleDeny(requestId) {
+    const confirmed = window.confirm(
+      'Are you sure you want to deny this add request?'
+    )
+
+    if (!confirmed) {
+      return
+    }
+
+    setError('')
+
+    const result = denyAddChildRequest(requestId)
+
     if (!result.ok) {
       setError(result.error)
     }
@@ -50,9 +68,22 @@ export default function AddChildRequestsTab() {
                 { label: 'Primary caretaker', value: resolveCaretakerName(request.primaryCaretakerId) },
               ]}
               actions={
-                <Button size="sm" onClick={() => handleApprove(request.id)}>
-                  Approve
-                </Button>
+                <>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => handleDeny(request.id)}
+                  >
+                    Deny
+                  </Button>
+
+                  <Button
+                    size="sm"
+                    onClick={() => handleApprove(request.id)}
+                  >
+                    Approve
+                  </Button>
+                </>
               }
             />
           ))

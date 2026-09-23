@@ -4,7 +4,6 @@ import { useApp } from '../context/AppContext.jsx'
 import Tabs from '../components/ui/Tabs.jsx'
 import SearchInput from '../components/ui/SearchInput.jsx'
 import DataRow from '../components/ui/DataRow.jsx'
-import Badge from '../components/ui/Badge.jsx'
 import AddChildRequestsTab from './AddChildRequestsTab.jsx'
 import RemoveChildRequestsTab from './RemoveChildRequestsTab.jsx'
 import './ChildManagementPage.css'
@@ -85,7 +84,6 @@ export default function ChildManagementPage() {
                   lastName={child.lastName}
                   secondary={`Age ${calculateAge(child.dateOfBirth)}`}
                   fields={[{ label: 'Date of birth', value: child.dateOfBirth }]}
-                  badge={<Badge variant="green">Active</Badge>}
                 />
               ))
             )}

@@ -35,6 +35,14 @@ export default function AppShell({ children }) {
   const displayLastName = currentAccount.lastName || ''
 
   function handleLogout() {
+    const confirmed = window.confirm(
+      'Are you sure you want to log out?'
+    )
+
+    if (!confirmed) {
+      return
+    }
+
     logout()
     navigate('/login')
   }
@@ -68,19 +76,31 @@ export default function AppShell({ children }) {
         </nav>
 
         <div className="sidebar-footer">
-          <Avatar firstName={displayFirstName} lastName={displayLastName} />
-          <div className="footer-user">
-            <strong>{displayLastName ? `${displayFirstName} ${displayLastName}` : displayFirstName}</strong>
-            <span>{session.role === 'admin' ? 'Admin' : session.role === 'staff' ? 'Staff' : 'Caretaker'}</span>
+          <div className="footer-account">
+            <Avatar firstName={displayFirstName} lastName={displayLastName} />
+
+            <div className="footer-user">
+              <strong>
+                {displayLastName
+                  ? `${displayFirstName} ${displayLastName}`
+                  : displayFirstName}
+              </strong>
+              <span>
+                {session.role === 'admin'
+                  ? 'Admin'
+                  : session.role === 'staff'
+                    ? 'Staff'
+                    : 'Caretaker'}
+              </span>
+            </div>
           </div>
+
           <button
             type="button"
             className="footer-logout"
             onClick={handleLogout}
-            title="Log out"
-            aria-label="Log out"
           >
-            ⏻
+            ⏻ Log out
           </button>
         </div>
       </aside>

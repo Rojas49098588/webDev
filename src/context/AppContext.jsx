@@ -131,6 +131,13 @@ function reducer(state, action) {
           (request) => request.id !== action.payload.requestId
         ),
       }
+    case 'DENY_ADD_CHILD_REQUEST':
+      return {
+        ...state,
+        addChildRequests: state.addChildRequests.filter(
+          (request) => request.id !== action.payload.requestId
+        ),
+      }
     case 'APPROVE_REMOVE_CHILD_REQUEST':
       return {
         ...state,
@@ -527,6 +534,26 @@ export function AppProvider({ children }) {
     return { ok: true }
   }
 
+  function denyAddChildRequest(requestId) {
+    const request = state.addChildRequests.find(
+      (item) => item.id === requestId
+    )
+
+    if (!request) {
+      return {
+        ok: false,
+        error: 'Add-child request could not be found.',
+      }
+    }
+
+    dispatch({
+      type: 'DENY_ADD_CHILD_REQUEST',
+      payload: { requestId },
+    })
+
+    return { ok: true }
+  }
+
   // REMOVE CHILD REQUESTS =========================================
 
   function approveRemoveChildRequest(requestId) {
@@ -832,36 +859,36 @@ export function AppProvider({ children }) {
       }
     }
 
-  const paymentRecord = {
-    id: `payment-${Date.now()}`,
+    const paymentRecord = {
+      id: `payment-${Date.now()}`,
 
-    childId: child.id,
-    childFirstName: child.firstName,
-    childLastName: child.lastName,
+      childId: child.id,
+      childFirstName: child.firstName,
+      childLastName: child.lastName,
 
-    primaryCaretakerId: caretaker.id,
-    primaryCaretakerFirstName: caretaker.firstName,
-    primaryCaretakerLastName: caretaker.lastName,
+      primaryCaretakerId: caretaker.id,
+      primaryCaretakerFirstName: caretaker.firstName,
+      primaryCaretakerLastName: caretaker.lastName,
 
-    dueOn: paymentInformation.dueOn,
-    amountDue,
+      dueOn: paymentInformation.dueOn,
+      amountDue,
+      
+      amountPaid,
+      notes: paymentInformation.notes || '',
 
-    paidOn: paymentInformation.paidOn || null,
-    amountPaid,
+      balance: amountDue - amountPaid,
+    }
 
-    balance: amountDue - amountPaid,
+    dispatch({
+      type: 'ADD_PAYMENT_RECORD',
+      payload: paymentRecord,
+    })
+
+    return {
+      ok: true,
+      record: paymentRecord,
+    }
   }
-
-  dispatch({
-    type: 'ADD_PAYMENT_RECORD',
-    payload: paymentRecord,
-  })
-
-  return {
-    ok: true,
-    record: paymentRecord,
-  }
-}
 
 function updatePaymentRecord(paymentInformation) {
   const existingRecord = state.paymentRecords.find(
@@ -1006,6 +1033,7 @@ function updatePaymentRecord(paymentInformation) {
     addChildRequests: state.addChildRequests,
     removeChildRequests: state.removeChildRequests,
     approveAddChildRequest,
+    denyAddChildRequest,
     approveRemoveChildRequest,
     denyRemoveChildRequest,
     submitAddChildRequest,
