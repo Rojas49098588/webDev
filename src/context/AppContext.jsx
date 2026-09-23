@@ -512,13 +512,29 @@ export function AppProvider({ children }) {
       return { ok: false, error: dobError }
     }
 
+    const primaryCaretaker = state.users.find(
+      (user) => user.id === request.primaryCaretakerId && user.role === 'caretaker' && user.active
+    )
+    if (!primaryCaretaker) {
+      return { ok: false, error: 'The primary caretaker on this request could not be found.' }
+    }
+
+    const otherCaretakerIds = request.otherCaretakerIds ?? []
+    const hasInvalidOtherCaretaker = otherCaretakerIds.some(
+      (caretakerId) =>
+        !state.users.some((user) => user.id === caretakerId && user.role === 'caretaker' && user.active)
+    )
+    if (hasInvalidOtherCaretaker) {
+      return { ok: false, error: 'One of the other caretakers on this request could not be found.' }
+    }
+
     const newChild = {
       id: `child-${Date.now()}`,
       firstName: request.firstName,
       lastName: request.lastName,
       dateOfBirth: request.dateOfBirth,
       primaryCaretakerId: request.primaryCaretakerId,
-      otherCaretakerIds: request.otherCaretakerIds ?? [],
+      otherCaretakerIds,
       active: true,
     }
 

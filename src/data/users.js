@@ -111,11 +111,24 @@ export const SAMPLE_USERS = [
 
     connectedChildren: [
       {
-        id: 'child-3',
-        name: 'Michael Johnson',
+        id: 'child-1',
+        name: 'Alex Doe',
         relationship: 'Caretaker',
       },
     ],
+
+    // Demo secondary-caretaker credentials for local testing: username
+    // "dmiller99", password "Secondary123!". Dave is an authorized (but not
+    // primary) caretaker on child-1 (Alex Doe) — the same child whose
+    // primary caretaker, Jane Doe, is the "jdoe15" demo login above. Log in
+    // as jdoe15 to see full primary-caretaker access to Alex, then as
+    // dmiller99 to see the contrast on the exact same child: "My Children"
+    // comes back empty, and there's no in-app path to Alex's profile at all
+    // (only the primary caretaker can search/view/manage a child). This is
+    // the precomputed SHA-256 hex digest of "Secondary123!":
+    //   node -e "console.log(require('crypto').createHash('sha256').update('Secondary123!').digest('hex'))"
+    passwordHash: '8253b08a67063ce7d73eb7b798509380a27427548354ff2e182da01e025c99a9',
+    mustChangePassword: true,
   }
 ]
 

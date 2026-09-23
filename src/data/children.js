@@ -9,7 +9,7 @@ export const SAMPLE_CHILDREN = [
     lastName: 'Doe',
     dateOfBirth: '2023-06-10',
     primaryCaretakerId: 'user-1',
-    otherCaretakerIds: [],
+    otherCaretakerIds: ['user-5'],
     active: true,
     medications: [
       {
@@ -45,7 +45,7 @@ export const SAMPLE_CHILDREN = [
     lastName: 'Johnson',
     dateOfBirth: '2022-09-05',
     primaryCaretakerId: 'user-3',
-    otherCaretakerIds: ['user-5'],
+    otherCaretakerIds: [],
     active: true,
 
     medications: [
