@@ -13,6 +13,7 @@ import ChildProfilePage from './pages/ChildProfilePage.jsx'
 import CaretakerChildrenPage from './pages/CaretakerChildrenPage.jsx'
 import CaretakerProfilePage from './pages/CaretakerProfilePage.jsx'
 import Attendance from './pages/Attendance.jsx'
+import AttendanceRecords from './pages/AttendanceRecords.jsx'
 import Payments from './pages/Payments.jsx'
 
 export default function App() {
@@ -92,6 +93,17 @@ export default function App() {
               <ProtectedRoute role="staff">
                 <AppShell>
                   <Attendance />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/staff/attendance/records"
+            element={
+              <ProtectedRoute role="staff">
+                <AppShell>
+                  <AttendanceRecords />
                 </AppShell>
               </ProtectedRoute>
             }

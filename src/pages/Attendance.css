@@ -136,56 +136,6 @@
 }
 
 /* ============================================================
-   RECORD LIST
-   ============================================================ */
-
-.attendance-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  margin-top: 1.25rem;
-}
-
-.attendance-card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.9rem 1rem;
-  border: 1px solid var(--border);
-  border-radius: 9px;
-  background: var(--surface);
-}
-
-.attendance-card h3 {
-  margin: 0 0 0.4rem;
-  font-size: 14px;
-}
-
-.attendance-card p {
-  margin: 0.2rem 0;
-  font-size: 12.5px;
-  color: var(--ink-soft);
-}
-
-.attendance-card p strong {
-  color: var(--ink);
-}
-
-.attendance-time {
-  color: var(--primary);
-  font-size: 13px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.attendance-empty {
-  margin: 1.25rem 0 0;
-  color: var(--ink-faint);
-  font-size: 13.5px;
-}
-
-/* ============================================================
    MESSAGES
    ============================================================ */
 
@@ -278,4 +228,58 @@
 .attendance-table th:nth-child(4),
 .attendance-table td:nth-child(4) {
   width: 20%;
+}
+
+/* ============================================================
+   ATTENDANCE RECORDS LINK
+   ============================================================ */
+
+.attendance-records-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.attendance-records-link h2 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.attendance-records-link p {
+  margin: 0.25rem 0 0;
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+
+.attendance-records-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid var(--primary);
+  border-radius: 8px;
+  background: var(--primary);
+  color: white;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.attendance-records-button:hover {
+  opacity: 0.9;
+}
+
+@media (max-width: 700px) {
+  .attendance-records-link {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }

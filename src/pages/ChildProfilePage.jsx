@@ -219,7 +219,8 @@ export default function ChildProfilePage() {
               </div>
             )}
           </Card>
-
+        
+        {session.role !== 'staff' && (
           <Card>
             <div className="section-heading">
               <div>
@@ -258,7 +259,9 @@ export default function ChildProfilePage() {
               </div>
             )}
           </Card>
+          )}
 
+        {session.role !== 'staff' && (
           <Card>
             <div className="section-heading">
               <div>
@@ -401,6 +404,8 @@ export default function ChildProfilePage() {
               </div>
             )}
           </Card>
+        )}
+        
         </div>
 
         <div className="profile-sidebar">
