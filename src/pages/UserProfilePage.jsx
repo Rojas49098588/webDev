@@ -72,10 +72,10 @@ export default function UserProfilePage() {
               <span>Last name</span>
               <strong>{user.lastName}</strong>
             </div>
-            <div className="info-row">
+            {/* <div className="info-row">
               <span>Username</span>
               <strong>{user.username}</strong>
-            </div>
+            </div> */}
 
             <div className="info-row">
               <span>Email</span>

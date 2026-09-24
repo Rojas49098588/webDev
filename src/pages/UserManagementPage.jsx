@@ -76,7 +76,7 @@ export default function UserManagementPage() {
                   lastName={user.lastName}
                   secondary={`@${user.username}`}
                   badge={
-                    <Badge variant={user.role === 'staff' ? 'amber' : 'violet'}>
+                    <Badge variant={user.role === 'staff' ? 'blue' : 'green'}>
                       {user.role === 'staff' ? 'Staff' : 'Caretaker'}
                     </Badge>
                   }

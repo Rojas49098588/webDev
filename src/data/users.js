@@ -155,7 +155,6 @@ export const SAMPLE_ADD_REQUESTS = [
     phone: '555-567-8901',
     mailingAddress: '200 Maple Street, Dallas, TX 75205',
     role: 'staff',
-    groupNumber: 18,
   },
 ]
 
