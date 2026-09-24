@@ -88,7 +88,9 @@ export default function CaretakerPaymentsPage() {
       return
     }
 
-    setPaySuccess('Payment submitted.')
+    setPaySuccess(
+      `Payment of $${Number(payAmount).toFixed(2)} was approved. Remaining balance: $${result.record.balance.toFixed(2)}.`
+    )
     setPayingRecordId(null)
   }
 
@@ -173,6 +175,12 @@ export default function CaretakerPaymentsPage() {
             </div>
           </div>
 
+          {paySuccess && (
+            <div className="payments-success" role="status">
+              {paySuccess}
+            </div>
+          )}
+
           {payments.length === 0 ? (
             <p className="no-results">
               No payment records found for this child.
@@ -203,6 +211,11 @@ export default function CaretakerPaymentsPage() {
                     <strong>
                       ${payment.amountPaid.toFixed(2)}
                     </strong>
+                  </div>
+
+                  <div className="info-row">
+                    <span>Paid on</span>
+                    <strong>{payment.paidOn || 'Not paid yet'}</strong>
                   </div>
 
                   {payment.notes && (

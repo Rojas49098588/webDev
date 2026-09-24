@@ -10,6 +10,8 @@ import {
   validateCardNumber,
   validateExpiration,
   validateCVV,
+  validateEmail,
+  validatePhone,
 } from '../utils/validation.js'
 
 export const SECURITY_CODE_TTL_MS = 5 * 60 * 1000
@@ -102,6 +104,11 @@ function reducer(state, action) {
               }
             : user
         ),
+      }
+    case 'SUBMIT_ADD_REQUEST':
+      return {
+        ...state,
+        addRequests: [...state.addRequests, action.payload],
       }
     case 'APPROVE_ADD_REQUEST':
       return {
@@ -399,6 +406,58 @@ export function AppProvider({ children }) {
   }
 
   // ADD USER REQUESTS ========================================
+
+  function submitAccountRequest({ role, firstName, lastName, email, phone, mailingAddress }) {
+    if (role !== 'staff' && role !== 'caretaker') {
+      return { ok: false, error: 'Choose an account type.' }
+    }
+
+    const firstNameError = validateName(firstName)
+    if (firstNameError) {
+      return { ok: false, error: `First name: ${firstNameError}` }
+    }
+    const lastNameError = validateName(lastName)
+    if (lastNameError) {
+      return { ok: false, error: `Last name: ${lastNameError}` }
+    }
+
+    const emailError = validateEmail(email)
+    if (emailError) {
+      return { ok: false, error: emailError }
+    }
+
+    const phoneError = validatePhone(phone)
+    if (phoneError) {
+      return { ok: false, error: phoneError }
+    }
+
+    if (role === 'caretaker' && !(mailingAddress || '').trim()) {
+      return { ok: false, error: 'Enter a mailing address.' }
+    }
+
+    const normalizedEmail = email.trim().toLowerCase()
+    const emailTaken =
+      state.users.some((user) => user.active && user.email?.toLowerCase() === normalizedEmail) ||
+      state.addRequests.some((request) => request.email?.toLowerCase() === normalizedEmail)
+    if (emailTaken) {
+      return { ok: false, error: 'An account or pending request already uses this email address.' }
+    }
+
+    const digits = phone.replace(/\D/g, '')
+    const request = {
+      id: `add-${Date.now()}`,
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
+      email: email.trim(),
+      phone: `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`,
+      mailingAddress: role === 'caretaker' ? mailingAddress.trim() : '',
+      role,
+    }
+
+    dispatch({ type: 'SUBMIT_ADD_REQUEST', payload: request })
+
+    return { ok: true }
+  }
 
   async function approveAddUserRequest(requestId) {
     const request = state.addRequests.find(
@@ -1088,7 +1147,7 @@ function updatePaymentRecord(paymentInformation) {
       validateCardNumber(card.cardNumber) ||
       validateExpiration(card.expiration) ||
       validateCVV(card.cvv) ||
-      (!card.nameOnCard.trim() ? 'Enter the name on the card.' : null)
+      (validateName(card.nameOnCard) ? `Name on card: ${validateName(card.nameOnCard)}` : null)
     if (cardError) {
       return { ok: false, error: cardError }
     }
@@ -1123,6 +1182,7 @@ function updatePaymentRecord(paymentInformation) {
     addRequests: state.addRequests,
     removeRequests: state.removeRequests,
     updateUser,
+    submitAccountRequest,
     approveAddUserRequest,
     approveRemoveUserRequest,
     

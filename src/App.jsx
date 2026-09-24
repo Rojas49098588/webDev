@@ -3,6 +3,7 @@ import { AppProvider } from './context/AppContext.jsx'
 import ProtectedRoute from './components/routing/ProtectedRoute.jsx'
 import AppShell from './components/layout/AppShell.jsx'
 import LoginPage from './components/LoginPage.jsx'
+import RequestAccountPage from './pages/RequestAccountPage.jsx'
 import DashboardPage from './pages/DashboardPage.jsx'
 import SetPasswordPage from './pages/SetPasswordPage.jsx'
 import ChangePasswordPage from './pages/ChangePasswordPage.jsx'
@@ -25,6 +26,7 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/request-account" element={<RequestAccountPage />} />
           <Route
             path="/set-password"
             element={

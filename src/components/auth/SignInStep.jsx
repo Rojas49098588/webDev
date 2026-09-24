@@ -1,10 +1,11 @@
+import { Link } from 'react-router-dom'
 import Button from '../ui/Button.jsx'
 
 export default function SignInStep({ username, setUsername, password, setPassword, error, onSubmit }) {
   return (
     <form className="auth-form" onSubmit={onSubmit} noValidate>
       <h2>Sign In</h2>
-      <p className="auth-subtitle">Sign in with your staff account to continue.</p>
+      <p className="auth-subtitle">Sign in with your account to continue.</p>
 
       <label htmlFor="username">Username</label>
       <input
@@ -31,6 +32,10 @@ export default function SignInStep({ username, setUsername, password, setPasswor
       )}
 
       <Button type="submit">Sign in</Button>
+
+      <Link to="/request-account" className="auth-link">
+        New here? Request an account
+      </Link>
     </form>
   )
 }

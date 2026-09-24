@@ -62,3 +62,18 @@ export function validateCVV(cvv) {
   }
   return null
 }
+
+export function validateEmail(email) {
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((email || '').trim())) {
+    return 'Enter a valid email address (name@example.com)'
+  }
+  return null
+}
+
+export function validatePhone(phone) {
+  const digits = (phone || '').replace(/\D/g, '')
+  if (!/^[1-9]\d{9}$/.test(digits)) {
+    return 'Phone number must be exactly 10 digits and cannot start with 0'
+  }
+  return null
+}
