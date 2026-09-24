@@ -48,13 +48,7 @@ export const SAMPLE_USERS = [
     groupNumber: 12,
     active: true,
 
-    connectedChildren: [
-      {
-        id: 'child-1',
-        name: 'Alex Doe',
-        relationship: 'Staff',
-      },
-    ],
+    connectedChildren: [],
   },
 
   {

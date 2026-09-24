@@ -9,14 +9,17 @@ export default function AddUserRequestsTab() {
   const [success, setSuccess] = useState('')
 
   async function handleApprove(requestId) {
+    const confirmed = window.confirm(
+      'Are you sure you want to approve this user?'
+    )
+
+    if (!confirmed) {
+      return
+    }
+
     setError('')
     setSuccess('')
     const result = await approveAddUserRequest(requestId)
-    if (!result.ok) {
-      setError(result.error)
-      return
-    }
-    setSuccess(`User approved. Username: ${result.username}, initial password: ${result.initialPassword}`)
   }
 
   return (
@@ -45,7 +48,7 @@ export default function AddUserRequestsTab() {
                 { label: 'Role', value: request.role === 'staff' ? 'Staff' : 'Caretaker' },
                 { label: 'Email', value: request.email },
                 { label: 'Phone', value: request.phone },
-                ...(request.role === 'staff' ? [{ label: 'Group', value: request.groupNumber }] : []),
+                // ...(request.role === 'staff' ? [{ label: 'Group', value: request.groupNumber }] : []),
               ]}
               actions={
                 <Button size="sm" onClick={() => handleApprove(request.id)}>

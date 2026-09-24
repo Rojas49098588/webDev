@@ -6,13 +6,28 @@ import Button from '../components/ui/Button.jsx'
 export default function RemoveUserRequestsTab() {
   const { users, removeRequests, approveRemoveUserRequest } = useApp()
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
 
   function handleApprove(requestId) {
+    const confirmed = window.confirm(
+      'Are you sure you want to archive this user? This action cannot be undone.'
+    )
+
+    if (!confirmed) {
+      return
+    }
+
     setError('')
+    setSuccess('')
+
     const result = approveRemoveUserRequest(requestId)
+
     if (!result.ok) {
       setError(result.error)
+      return
     }
+
+    setSuccess('User archived successfully.')
   }
 
   return (
@@ -20,6 +35,11 @@ export default function RemoveUserRequestsTab() {
       {error && (
         <div className="request-error" role="alert">
           {error}
+        </div>
+      )}
+      {success && (
+        <div className="request-success" role="status">
+          {success}
         </div>
       )}
 
