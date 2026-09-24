@@ -15,6 +15,8 @@ import CaretakerProfilePage from './pages/CaretakerProfilePage.jsx'
 import Attendance from './pages/Attendance.jsx'
 import AttendanceRecords from './pages/AttendanceRecords.jsx'
 import Payments from './pages/Payments.jsx'
+import CaretakerAttendancePage from './pages/CaretakerAttendancePage.jsx'
+import CaretakerPaymentsPage from './pages/CaretakerPaymentsPage.jsx'
 
 export default function App() {
   return (
@@ -205,6 +207,28 @@ export default function App() {
               <ProtectedRoute role="caretaker">
                 <AppShell>
                   <CaretakerProfilePage />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/caretaker/attendance"
+            element={
+              <ProtectedRoute role="caretaker">
+                <AppShell>
+                  <CaretakerAttendancePage />
+                </AppShell>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/caretaker/payments"
+            element={
+              <ProtectedRoute role="caretaker">
+                <AppShell>
+                  <CaretakerPaymentsPage />
                 </AppShell>
               </ProtectedRoute>
             }

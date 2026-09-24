@@ -5,7 +5,7 @@ import Card from '../components/ui/Card.jsx'
 import Avatar from '../components/ui/Avatar.jsx'
 import Button from '../components/ui/Button.jsx'
 import './ChildProfilePage.css'
-import './Payments.css'
+// import './Payments.css'
 
 function calculateAge(dateOfBirth) {
   const dob = new Date(dateOfBirth)
@@ -24,12 +24,12 @@ export default function ChildProfilePage() {
     session,
     children,
     users,
-    getChildPayments,
-    getChildAttendance,
+    // getChildPayments,
+    // getChildAttendance,
     addSecondaryCaretaker,
     removeSecondaryCaretaker,
     submitRemoveChildRequest,
-    makePayment,
+    // makePayment,
   } = useApp()
 
   const [caretakerSearch, setCaretakerSearch] = useState('')
@@ -38,14 +38,14 @@ export default function ChildProfilePage() {
   const [removeChildError, setRemoveChildError] = useState('')
   const [removeChildSuccess, setRemoveChildSuccess] = useState('')
 
-  const [payingRecordId, setPayingRecordId] = useState(null)
-  const [payAmount, setPayAmount] = useState('')
-  const [cardNumber, setCardNumber] = useState('')
-  const [nameOnCard, setNameOnCard] = useState('')
-  const [expiration, setExpiration] = useState('')
-  const [cvv, setCvv] = useState('')
-  const [payError, setPayError] = useState('')
-  const [paySuccess, setPaySuccess] = useState('')
+  // const [payingRecordId, setPayingRecordId] = useState(null)
+  // const [payAmount, setPayAmount] = useState('')
+  // const [cardNumber, setCardNumber] = useState('')
+  // const [nameOnCard, setNameOnCard] = useState('')
+  // const [expiration, setExpiration] = useState('')
+  // const [cvv, setCvv] = useState('')
+  // const [payError, setPayError] = useState('')
+  // const [paySuccess, setPaySuccess] = useState('')
 
   const child = children.find((item) => item.id === id)
   const childrenListPath = session.role === 'caretaker' ? '/caretaker/children' : '/staff/children'
@@ -67,8 +67,8 @@ export default function ChildProfilePage() {
     .map((caretakerId) => users.find((user) => user.id === caretakerId))
     .filter((caretaker) => caretaker && caretaker.role === 'caretaker' && caretaker.active)
 
-  const payments = getChildPayments(child.id)
-  const attendance = getChildAttendance(child.id)
+  // const payments = getChildPayments(child.id)
+  // const attendance = getChildAttendance(child.id)
 
   const excludedCaretakerIds = new Set([child.primaryCaretakerId, ...(child.otherCaretakerIds ?? [])])
   const caretakerSearchText = caretakerSearch.toLowerCase().trim()
@@ -127,33 +127,33 @@ export default function ChildProfilePage() {
     setRemoveChildSuccess('Removal request submitted.')
   }
 
-  function startPayment(payment) {
-    setPayingRecordId(payment.id)
-    setPayAmount(String(payment.balance))
-    setCardNumber('')
-    setNameOnCard('')
-    setExpiration('')
-    setCvv('')
-    setPayError('')
-  }
+  // function startPayment(payment) {
+  //   setPayingRecordId(payment.id)
+  //   setPayAmount(String(payment.balance))
+  //   setCardNumber('')
+  //   setNameOnCard('')
+  //   setExpiration('')
+  //   setCvv('')
+  //   setPayError('')
+  // }
 
-  function cancelPayment() {
-    setPayingRecordId(null)
-  }
+  // function cancelPayment() {
+  //   setPayingRecordId(null)
+  // }
 
-  function handlePaySubmit(event, recordId) {
-    event.preventDefault()
-    setPayError('')
+  // function handlePaySubmit(event, recordId) {
+  //   event.preventDefault()
+  //   setPayError('')
 
-    const result = makePayment(recordId, payAmount, { cardNumber, nameOnCard, expiration, cvv })
-    if (!result.ok) {
-      setPayError(result.error)
-      return
-    }
+  //   const result = makePayment(recordId, payAmount, { cardNumber, nameOnCard, expiration, cvv })
+  //   if (!result.ok) {
+  //     setPayError(result.error)
+  //     return
+  //   }
 
-    setPaySuccess('Payment submitted.')
-    setPayingRecordId(null)
-  }
+  //   setPaySuccess('Payment submitted.')
+  //   setPayingRecordId(null)
+  // }
 
   return (
     <div className="child-profile-page">
@@ -220,7 +220,7 @@ export default function ChildProfilePage() {
             )}
           </Card>
         
-        {session.role !== 'staff' && (
+        {/* {session.role !== 'staff' && (
           <Card>
             <div className="section-heading">
               <div>
@@ -259,9 +259,9 @@ export default function ChildProfilePage() {
               </div>
             )}
           </Card>
-          )}
+          )} */}
 
-        {session.role !== 'staff' && (
+        {/* {session.role !== 'staff' && (
           <Card>
             <div className="section-heading">
               <div>
@@ -404,7 +404,7 @@ export default function ChildProfilePage() {
               </div>
             )}
           </Card>
-        )}
+        )} */}
         
         </div>
 

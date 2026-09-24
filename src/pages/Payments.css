@@ -288,3 +288,31 @@
     grid-column: auto;
   }
 }
+
+/* ============================================================
+   CARETAKER SPECIFIC ACTIONS / MESSAGES
+   ============================================================ */
+
+.payments-section-header {
+  margin-bottom: 1.25rem;
+}
+
+.caretaker-payments-section-header + .payment-records {
+  margin-top: 1.25rem;
+}
+
+.caretaker-payments-section-header h2 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.caretaker-payments-section-header p {
+  margin: 0.2rem 0 0;
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+
+.caretaker-payment-child-search {
+  max-width: 500px;
+  margin-top: 1.25rem;
+}

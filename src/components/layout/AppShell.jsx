@@ -20,6 +20,8 @@ const ADMIN_NAV = [
 const CARETAKER_NAV = [
   { to: '/caretaker', label: 'Home', icon: '⌂', exact: true },
   { to: '/caretaker/children', label: 'My Children', icon: '◑', exact: false },
+  { to: '/caretaker/attendance', label: 'My Children\'s Attendance', icon: '◷', exact: false },
+  { to: '/caretaker/payments', label: 'My Payments', icon: '$', exact: false },
   { to: '/caretaker/change-password', label: 'Change password', icon: '⚿', exact: true },
 ]
 
