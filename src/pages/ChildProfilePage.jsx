@@ -5,7 +5,6 @@ import Card from '../components/ui/Card.jsx'
 import Avatar from '../components/ui/Avatar.jsx'
 import Button from '../components/ui/Button.jsx'
 import './ChildProfilePage.css'
-// import './Payments.css'
 
 function calculateAge(dateOfBirth) {
   const dob = new Date(dateOfBirth)
@@ -24,12 +23,13 @@ export default function ChildProfilePage() {
     session,
     children,
     users,
-    // getChildPayments,
-    // getChildAttendance,
-    // addSecondaryCaretaker,
     removeSecondaryCaretaker,
+    removeAuthorizedCaretaker,
     submitRemoveChildRequest,
   } = useApp()
+
+  const [caretakerError, setCaretakerError] = useState('')
+  const [caretakerSuccess, setCaretakerSuccess] = useState('')
 
   const [removeChildError, setRemoveChildError] = useState('')
   const [removeChildSuccess, setRemoveChildSuccess] = useState('')
@@ -50,34 +50,31 @@ export default function ChildProfilePage() {
   }
 
   const primaryCaretaker = users.find((user) => user.id === child.primaryCaretakerId)
-  const otherCaretakers = (child.otherCaretakerIds ?? [])
-    .map((caretakerId) => users.find((user) => user.id === caretakerId))
-    .filter((caretaker) => caretaker && caretaker.role === 'caretaker' && caretaker.active)
-  const authorizedCaretakers = child.authorizedCaretakers ?? []
+  const otherCaretakers = [
+    ...(child.otherCaretakerIds ?? [])
+      .map((caretakerId) => users.find((user) => user.id === caretakerId))
+      .filter((caretaker) => caretaker && caretaker.role === 'caretaker' && caretaker.active)
+      .map((caretaker) => ({ ...caretaker, hasAccount: true })),
+    ...(child.authorizedCaretakers ?? []).map((caretaker) => ({ ...caretaker, hasAccount: false })),
+  ]
 
-  // function handleAddCaretaker(caretakerId) {
-  //   setCaretakerError('')
-  //   setCaretakerSuccess('')
-  //   const result = addSecondaryCaretaker(child.id, caretakerId)
-  //   if (!result.ok) {
-  //     setCaretakerError(result.error)
-  //     return
-  //   }
-  //   setCaretakerSuccess('Caretaker added.')
-  //   setCaretakerSearch('')
-  // }
-
-  function handleRemoveCaretaker(caretakerId) {
-    const confirmed = window.confirm('Remove this caretaker from this child?')
+  function handleRemoveCaretaker(caretaker) {
+    const confirmed = window.confirm(
+      `Are you sure you want to remove ${caretaker.firstName} ${caretaker.lastName} as a caretaker for ${child.firstName} ${child.lastName}?`
+    )
     if (!confirmed) {
       return
     }
     setCaretakerError('')
     setCaretakerSuccess('')
-    const result = removeSecondaryCaretaker(child.id, caretakerId)
+    const result = caretaker.hasAccount
+      ? removeSecondaryCaretaker(child.id, caretaker.id)
+      : removeAuthorizedCaretaker(child.id, caretaker.id)
     if (!result.ok) {
       setCaretakerError(result.error)
+      return
     }
+    setCaretakerSuccess(`${caretaker.firstName} ${caretaker.lastName} was removed as a caretaker.`)
   }
 
   function handleRequestRemoveChild() {
@@ -96,34 +93,6 @@ export default function ChildProfilePage() {
     }
     setRemoveChildSuccess('Removal request submitted.')
   }
-
-  // function startPayment(payment) {
-  //   setPayingRecordId(payment.id)
-  //   setPayAmount(String(payment.balance))
-  //   setCardNumber('')
-  //   setNameOnCard('')
-  //   setExpiration('')
-  //   setCvv('')
-  //   setPayError('')
-  // }
-
-  // function cancelPayment() {
-  //   setPayingRecordId(null)
-  // }
-
-  // function handlePaySubmit(event, recordId) {
-  //   event.preventDefault()
-  //   setPayError('')
-
-  //   const result = makePayment(recordId, payAmount, { cardNumber, nameOnCard, expiration, cvv })
-  //   if (!result.ok) {
-  //     setPayError(result.error)
-  //     return
-  //   }
-
-  //   setPaySuccess('Payment submitted.')
-  //   setPayingRecordId(null)
-  // }
 
   return (
     <div className="child-profile-page">
@@ -194,9 +163,16 @@ export default function ChildProfilePage() {
 
         <div className="profile-sidebar">
         <Card>
-          <h2>Authorized caretakers</h2>
+          <div className="section-heading">
+            <h2>Authorized caretakers</h2>
+            {isCaretakerOwner && (
+              <Link to="/caretaker/add-caretaker" className="profile-action">
+                + Add caretaker
+              </Link>
+            )}
+          </div>
 
-          {/* {caretakerError && (
+          {caretakerError && (
             <div className="request-error" role="alert">
               {caretakerError}
             </div>
@@ -205,7 +181,7 @@ export default function ChildProfilePage() {
             <div className="request-success" role="status">
               {caretakerSuccess}
             </div>
-          )} */}
+          )}
 
           {primaryCaretaker ? (
             <div className="caretaker-list">
@@ -236,7 +212,9 @@ export default function ChildProfilePage() {
                         {caretaker.firstName} {caretaker.lastName}
                       </strong>
                     )}
-                    <span>Authorized caretaker · @{caretaker.username}</span>
+                    <span>
+                      Authorized caretaker{caretaker.hasAccount ? ` · @${caretaker.username}` : ''}
+                    </span>
                   </div>
 
                   {isCaretakerOwner && (
@@ -244,66 +222,17 @@ export default function ChildProfilePage() {
                       size="sm"
                       variant="ghost"
                       className="caretaker-row-remove"
-                      onClick={() => handleRemoveCaretaker(caretaker.id)}
+                      onClick={() => handleRemoveCaretaker(caretaker)}
                     >
                       Remove
                     </Button>
                   )}
                 </div>
               ))}
-
-              {authorizedCaretakers.map((caretaker) => (
-                <div key={caretaker.id} className="caretaker-row">
-                  <Avatar
-                    firstName={caretaker.firstName}
-                    lastName={caretaker.lastName}
-                  />
-
-                  <div>
-                    <strong>
-                      {caretaker.firstName} {caretaker.lastName}
-                    </strong>
-                    <span>Authorized caretaker </span>
-                  </div>
-                </div>
-              ))}
             </div>
           ) : (
             <p className="no-results">Not on record.</p>
           )}
-
-          {/* {isCaretakerOwner && (
-            <div className="add-caretaker">
-              <h3>Add a caretaker</h3>
-
-              <input
-                type="text"
-                value={caretakerSearch}
-                onChange={(event) => setCaretakerSearch(event.target.value)}
-                placeholder="Search by name, username, or email"
-                aria-label="Search for a caretaker to add"
-              />
-
-              {caretakerSearchText && (
-                <div className="add-caretaker-results">
-                  {caretakerCandidates.length === 0 ? (
-                    <p className="no-results">No matching caretaker found.</p>
-                  ) : (
-                    caretakerCandidates.map((candidate) => (
-                      <div key={candidate.id} className="add-caretaker-result">
-                        <span>
-                          {candidate.firstName} {candidate.lastName} · @{candidate.username}
-                        </span>
-                        <Button size="sm" onClick={() => handleAddCaretaker(candidate.id)}>
-                          Add
-                        </Button>
-                      </div>
-                    ))
-                  )}
-                </div>
-              )}
-            </div>
-          )} */}
         </Card>
 
         {isCaretakerOwner && (

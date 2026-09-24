@@ -172,18 +172,6 @@ function reducer(state, action) {
         ...state,
         addChildRequests: [...state.addChildRequests, action.payload],
       }
-    ///FIX FIX
-    ///FIX
-    //FIXME this is a dupe! please FIX IT
-    case 'ADD_SECONDARY_CARETAKER':
-      return {
-        ...state,
-        children: state.children.map((child) =>
-          child.id === action.payload.childId
-            ? { ...child, otherCaretakerIds: [...(child.otherCaretakerIds ?? []), action.payload.caretakerId] }
-            : child
-        ),
-      }
     case 'ADD_AUTHORIZED_CARETAKER':
       return {
         ...state,
@@ -195,6 +183,20 @@ function reducer(state, action) {
                   ...(child.authorizedCaretakers ?? []),
                   action.payload.caretaker,
                 ],
+              }
+            : child
+        ),
+      }
+    case 'REMOVE_AUTHORIZED_CARETAKER':
+      return {
+        ...state,
+        children: state.children.map((child) =>
+          child.id === action.payload.childId
+            ? {
+                ...child,
+                authorizedCaretakers: (child.authorizedCaretakers ?? []).filter(
+                  (caretaker) => caretaker.id !== action.payload.caretakerId
+                ),
               }
             : child
         ),
@@ -741,32 +743,7 @@ export function AppProvider({ children }) {
     return { ok: true }
   }
 
-  function addSecondaryCaretaker(childId, caretakerId) {
-    const child = state.children.find((item) => item.id === childId)
-    if (!child || child.primaryCaretakerId !== state.session.id) {
-      return { ok: false, error: 'Only the primary caretaker can add a caretaker to this child.' }
-    }
-
-    const caretaker = state.users.find(
-      (user) => user.id === caretakerId && user.role === 'caretaker' && user.active
-    )
-    if (!caretaker) {
-      return { ok: false, error: 'Caretaker could not be found.' }
-    }
-
-    if (caretakerId === child.primaryCaretakerId || (child.otherCaretakerIds ?? []).includes(caretakerId)) {
-      return { ok: false, error: 'This person is already a caretaker for this child.' }
-    }
-
-    dispatch({ type: 'ADD_SECONDARY_CARETAKER', payload: { childId, caretakerId } })
-    logActivity(
-      `${actorName} added ${caretaker.firstName} ${caretaker.lastName} as a caretaker for ${child.firstName} ${child.lastName}`
-    )
-
-    return { ok: true }
-  }
-
-  function addAuthorizedCaretaker(childId, firstName, lastName) {
+  function addAuthorizedCaretaker(childId, { firstName, lastName, email, phone, mailingAddress }) {
     const child = state.children.find((item) => item.id === childId)
 
     if (!child || child.primaryCaretakerId !== state.session.id) {
@@ -790,6 +767,18 @@ export function AppProvider({ children }) {
       }
     }
 
+    const contactError =
+      validateEmail(email) ||
+      validatePhone(phone) ||
+      (!(mailingAddress || '').trim() ? 'Enter a mailing address.' : null)
+
+    if (contactError) {
+      return {
+        ok: false,
+        error: contactError,
+      }
+    }
+
     const alreadyExists = (child.authorizedCaretakers ?? []).some(
       (caretaker) =>
         caretaker.firstName.toLowerCase() === trimmedFirstName.toLowerCase() &&
@@ -803,10 +792,14 @@ export function AppProvider({ children }) {
       }
     }
 
+    const digits = phone.replace(/\D/g, '')
     const caretaker = {
       id: `authorized-${Date.now()}`,
       firstName: trimmedFirstName,
       lastName: trimmedLastName,
+      email: email.trim(),
+      phone: `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`,
+      mailingAddress: mailingAddress.trim(),
     }
 
     dispatch({
@@ -825,6 +818,25 @@ export function AppProvider({ children }) {
       ok: true,
       caretaker,
     }
+  }
+
+  function removeAuthorizedCaretaker(childId, caretakerId) {
+    const child = state.children.find((item) => item.id === childId)
+    if (!child || child.primaryCaretakerId !== state.session.id) {
+      return { ok: false, error: 'Only the primary caretaker can remove a caretaker from this child.' }
+    }
+
+    const caretaker = (child.authorizedCaretakers ?? []).find((item) => item.id === caretakerId)
+    if (!caretaker) {
+      return { ok: false, error: 'Caretaker could not be found.' }
+    }
+
+    dispatch({ type: 'REMOVE_AUTHORIZED_CARETAKER', payload: { childId, caretakerId } })
+    logActivity(
+      `${actorName} removed ${caretaker.firstName} ${caretaker.lastName} as a caretaker for ${child.firstName} ${child.lastName}`
+    )
+
+    return { ok: true, caretaker }
   }
 
   function removeSecondaryCaretaker(childId, caretakerId) {
@@ -887,13 +899,14 @@ export function AppProvider({ children }) {
       ...(child.otherCaretakerIds ?? []),
     ]
 
-    const caretaker = state.users.find(
-      (user) =>
-        user.id === caretakerId &&
-        authorizedCaretakerIds.includes(user.id) &&
-        user.role === 'caretaker' &&
-        user.active
-    )
+    const caretaker =
+      state.users.find(
+        (user) =>
+          user.id === caretakerId &&
+          authorizedCaretakerIds.includes(user.id) &&
+          user.role === 'caretaker' &&
+          user.active
+      ) ?? (child.authorizedCaretakers ?? []).find((item) => item.id === caretakerId)
 
     if (!caretaker) {
       return {
@@ -1204,8 +1217,8 @@ function updatePaymentRecord(paymentInformation) {
     approveRemoveChildRequest,
     denyRemoveChildRequest,
     submitAddChildRequest,
-    addSecondaryCaretaker,
     addAuthorizedCaretaker,
+    removeAuthorizedCaretaker,
     removeSecondaryCaretaker,
     submitRemoveChildRequest,
 

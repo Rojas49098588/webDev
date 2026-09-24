@@ -40,6 +40,7 @@ const authorizedCaretakers = selectedChild
           caretaker.role === 'caretaker' &&
           caretaker.active
       )
+      .concat(selectedChild.authorizedCaretakers ?? [])
   : []
 
   const dailyAttendance = getAttendanceForDate(selectedDate)

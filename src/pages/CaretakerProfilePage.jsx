@@ -9,16 +9,17 @@ export default function CaretakerProfilePage() {
   const { id } = useParams()
   const { session, children, users } = useApp()
 
-  const caretaker = users.find((user) => user.id === id && user.role === 'caretaker')
+  const myChildren = children.filter((child) => child.primaryCaretakerId === session.id)
 
-  const isAuthorized =
-    Boolean(caretaker) &&
-    children.some(
-      (child) =>
-        child.primaryCaretakerId === session.id && (child.otherCaretakerIds ?? []).includes(caretaker.id)
-    )
+  const accountCaretaker = myChildren.some((child) => (child.otherCaretakerIds ?? []).includes(id))
+    ? users.find((user) => user.id === id && user.role === 'caretaker')
+    : null
+  const addedCaretaker = myChildren
+    .flatMap((child) => child.authorizedCaretakers ?? [])
+    .find((item) => item.id === id)
+  const caretaker = accountCaretaker ?? addedCaretaker
 
-  if (!caretaker || !isAuthorized) {
+  if (!caretaker) {
     return (
       <div className="user-profile-page">
         <h1>Not authorized</h1>
@@ -41,7 +42,7 @@ export default function CaretakerProfilePage() {
             <h1>
               {caretaker.firstName} {caretaker.lastName}
             </h1>
-            <span className="profile-meta">@{caretaker.username}</span>
+            {caretaker.username && <span className="profile-meta">@{caretaker.username}</span>}
           </div>
           <Badge variant="violet">Caretaker</Badge>
         </Card>

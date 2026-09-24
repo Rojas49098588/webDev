@@ -80,6 +80,19 @@
   font-size: 12.5px;
 }
 
+.authorized-caretaker-info a {
+  text-decoration: none;
+}
+
+.authorized-caretaker-info a:hover strong {
+  color: var(--primary);
+}
+
+.authorized-caretaker-remove {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
 .authorized-caretaker-info small {
   margin-top: 0.15rem;
   color: var(--ink-faint);
