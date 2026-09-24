@@ -279,9 +279,15 @@ export default function CaretakerPaymentsPage() {
                           type="text"
                           inputMode="numeric"
                           value={cardNumber}
-                          onChange={(event) =>
-                            setCardNumber(event.target.value)
-                          }
+                          onChange={(event) => {
+                            const value = event.target.value
+                              .replace(/\D/g, '')
+                              .slice(0, 16)
+
+                            const formatted = value.replace(/(\d{4})(?=\d)/g, '$1 ')
+
+                            setCardNumber(formatted)
+                          }}
                         />
                       </div>
 
@@ -295,9 +301,18 @@ export default function CaretakerPaymentsPage() {
                             type="text"
                             placeholder="MM/YY"
                             value={expiration}
-                            onChange={(event) =>
-                              setExpiration(event.target.value)
-                            }
+                            onChange={(event) => {
+                              const value = event.target.value
+                                .replace(/\D/g, '')
+                                .slice(0, 4)
+
+                              const formatted =
+                                value.length > 2
+                                  ? `${value.slice(0, 2)}/${value.slice(2)}`
+                                  : value
+
+                              setExpiration(formatted)
+                            }}
                           />
                         </div>
 

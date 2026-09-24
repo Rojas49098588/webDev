@@ -114,16 +114,6 @@ export default function DashboardPage() {
         description: 'Find a profile by first or last name',
       },
       {
-        to: '/caretaker/attendance',
-        label: 'View attendance',
-        description: 'View attendance history for your children',
-      },
-      {
-        to: '/caretaker/payments',
-        label: 'View payments',
-        description: 'View payment history and make a payment',
-      },
-      {
         to: '/caretaker/children',
         label: 'Request to admit a child',
         description: 'Submit a new child for staff review',

@@ -257,21 +257,21 @@
   border-top: 1px solid var(--border);
 }
 
-.payments-error,
-.payments-success {
+.payment-error,
+.payment-success {
   margin-bottom: 1rem;
   padding: 0.75rem 0.9rem;
   border-radius: 8px;
   font-size: 13px;
 }
 
-.payments-error {
+.payment-error {
   border: 1px solid var(--danger-border);
   background: var(--danger-soft);
   color: var(--danger);
 }
 
-.payments-success {
+.payment-success {
   border: 1px solid var(--success-border);
   background: var(--success-soft);
   color: var(--success);
