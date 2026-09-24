@@ -119,9 +119,9 @@ export default function DashboardPage() {
         description: 'Submit a new child for staff review',
       },
       {
-        to: '/caretaker/children',
-        label: 'Review pending child requests',
-        description: `${myPendingRequestsCount} requests awaiting staff review`,
+        to: '/caretaker/add-caretaker',
+        label: 'Manage Caretakers',
+        description: 'Add or remove authorized caretakers',
       },
       // {
       //   to: '/caretaker/attendance',
