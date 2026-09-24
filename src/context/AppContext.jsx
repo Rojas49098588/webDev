@@ -713,8 +713,17 @@ export function AppProvider({ children }) {
       return { ok: false, error: dobError }
     }
 
-    if (state.addChildRequests.some((request) => request.primaryCaretakerId === state.session.id)) {
-      return { ok: false, error: 'You already have a pending request to admit a child.' }
+    const isSameChild = (item) =>
+      item.primaryCaretakerId === state.session.id &&
+      item.firstName.trim().toLowerCase() === firstName.trim().toLowerCase() &&
+      item.lastName.trim().toLowerCase() === lastName.trim().toLowerCase() &&
+      item.dateOfBirth === dateOfBirth
+
+    if (state.addChildRequests.some(isSameChild)) {
+      return { ok: false, error: `You already have a pending request to admit ${firstName} ${lastName}.` }
+    }
+    if (state.children.some((child) => child.active && isSameChild(child))) {
+      return { ok: false, error: `${firstName} ${lastName} is already enrolled under your account.` }
     }
 
     const request = {
