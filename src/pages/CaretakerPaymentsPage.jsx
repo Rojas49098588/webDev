@@ -226,7 +226,7 @@ export default function CaretakerPaymentsPage() {
 
                   {payingRecordId === payment.id && (
                     <form
-                      className="payment-form"
+                      className="caretaker-payment-form"
                       onSubmit={(event) =>
                         handlePaySubmit(event, payment.id)
                       }
