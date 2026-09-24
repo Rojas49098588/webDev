@@ -26,26 +26,13 @@ export default function ChildProfilePage() {
     users,
     // getChildPayments,
     // getChildAttendance,
-    addSecondaryCaretaker,
+    // addSecondaryCaretaker,
     removeSecondaryCaretaker,
     submitRemoveChildRequest,
-    // makePayment,
   } = useApp()
 
-  const [caretakerSearch, setCaretakerSearch] = useState('')
-  const [caretakerError, setCaretakerError] = useState('')
-  const [caretakerSuccess, setCaretakerSuccess] = useState('')
   const [removeChildError, setRemoveChildError] = useState('')
   const [removeChildSuccess, setRemoveChildSuccess] = useState('')
-
-  // const [payingRecordId, setPayingRecordId] = useState(null)
-  // const [payAmount, setPayAmount] = useState('')
-  // const [cardNumber, setCardNumber] = useState('')
-  // const [nameOnCard, setNameOnCard] = useState('')
-  // const [expiration, setExpiration] = useState('')
-  // const [cvv, setCvv] = useState('')
-  // const [payError, setPayError] = useState('')
-  // const [paySuccess, setPaySuccess] = useState('')
 
   const child = children.find((item) => item.id === id)
   const childrenListPath = session.role === 'caretaker' ? '/caretaker/children' : '/staff/children'
@@ -66,36 +53,19 @@ export default function ChildProfilePage() {
   const otherCaretakers = (child.otherCaretakerIds ?? [])
     .map((caretakerId) => users.find((user) => user.id === caretakerId))
     .filter((caretaker) => caretaker && caretaker.role === 'caretaker' && caretaker.active)
+  const authorizedCaretakers = child.authorizedCaretakers ?? []
 
-  // const payments = getChildPayments(child.id)
-  // const attendance = getChildAttendance(child.id)
-
-  const excludedCaretakerIds = new Set([child.primaryCaretakerId, ...(child.otherCaretakerIds ?? [])])
-  const caretakerSearchText = caretakerSearch.toLowerCase().trim()
-  const caretakerCandidates = caretakerSearchText
-    ? users.filter(
-        (user) =>
-          user.role === 'caretaker' &&
-          user.active &&
-          !excludedCaretakerIds.has(user.id) &&
-          (user.firstName.toLowerCase().includes(caretakerSearchText) ||
-            user.lastName.toLowerCase().includes(caretakerSearchText) ||
-            user.username.toLowerCase().includes(caretakerSearchText) ||
-            user.email.toLowerCase().includes(caretakerSearchText))
-      )
-    : []
-
-  function handleAddCaretaker(caretakerId) {
-    setCaretakerError('')
-    setCaretakerSuccess('')
-    const result = addSecondaryCaretaker(child.id, caretakerId)
-    if (!result.ok) {
-      setCaretakerError(result.error)
-      return
-    }
-    setCaretakerSuccess('Caretaker added.')
-    setCaretakerSearch('')
-  }
+  // function handleAddCaretaker(caretakerId) {
+  //   setCaretakerError('')
+  //   setCaretakerSuccess('')
+  //   const result = addSecondaryCaretaker(child.id, caretakerId)
+  //   if (!result.ok) {
+  //     setCaretakerError(result.error)
+  //     return
+  //   }
+  //   setCaretakerSuccess('Caretaker added.')
+  //   setCaretakerSearch('')
+  // }
 
   function handleRemoveCaretaker(caretakerId) {
     const confirmed = window.confirm('Remove this caretaker from this child?')
@@ -220,199 +190,13 @@ export default function ChildProfilePage() {
             )}
           </Card>
         
-        {/* {session.role !== 'staff' && (
-          <Card>
-            <div className="section-heading">
-              <div>
-                <h2>Attendance history</h2>
-                <p className="section-description">Drop-off and pickup records for this child.</p>
-              </div>
-            </div>
-
-            {attendance.length === 0 ? (
-              <p className="no-results">No attendance records yet.</p>
-            ) : (
-              <div className="attendance-records">
-                {attendance.map((record) => {
-                  const dateTime = new Date(record.dateTime)
-
-                  return (
-                    <div key={record.id} className="attendance-record">
-                      <div>
-                        <strong>{record.type === 'drop-off' ? 'Drop-off' : 'Pickup'}</strong>
-
-                        <span>
-                          {dateTime.toLocaleDateString()} ·{' '}
-                          {dateTime.toLocaleTimeString([], {
-                            hour: 'numeric',
-                            minute: '2-digit',
-                          })}
-                        </span>
-                      </div>
-
-                      <span className="attendance-caretaker">
-                        {record.caretakerFirstName} {record.caretakerLastName}
-                      </span>
-                    </div>
-                  )
-                })}
-              </div>
-            )}
-          </Card>
-          )} */}
-
-        {/* {session.role !== 'staff' && (
-          <Card>
-            <div className="section-heading">
-              <div>
-                <h2>Payment records</h2>
-                <p className="section-description">Payment history for this child.</p>
-              </div>
-
-              {session.role === 'staff' && (
-                <Link to={`/staff/payments?child=${child.id}`} className="profile-action">
-                  + Add payment
-                </Link>
-              )}
-            </div>
-
-            {paySuccess && (
-              <div className="payments-success" role="status">
-                {paySuccess}
-              </div>
-            )}
-
-            {payments.length === 0 ? (
-              <p className="no-results">No payment records yet.</p>
-            ) : (
-              <div className="payment-records">
-                {payments.map((payment) => (
-                  <div key={payment.id} className="payment-record">
-                    <div className="payment-record-header">
-                      <strong>Due {payment.dueOn}</strong>
-
-                      <span>{payment.balance === 0 ? 'Paid' : `$${payment.balance.toFixed(2)} remaining`}</span>
-                    </div>
-
-                    <div className="info-row">
-                      <span>Amount due</span>
-                      <strong>${payment.amountDue.toFixed(2)}</strong>
-                    </div>
-
-                    <div className="info-row">
-                      <span>Amount paid</span>
-                      <strong>${payment.amountPaid.toFixed(2)}</strong>
-                    </div>
-
-                    <div className="info-row">
-                      <span>Paid on</span>
-                      <strong>{payment.paidOn || 'Not paid'}</strong>
-                    </div>
-
-                    {session.role === 'staff' && (
-                      <div className="payment-record-footer">
-                        <Link to={`/staff/payments?child=${child.id}`} className="profile-action-secondary">
-                          Edit
-                        </Link>
-                      </div>
-                    )}
-
-                    {isCaretakerOwner && payment.balance > 0 && payingRecordId !== payment.id && (
-                      <div className="payment-record-footer">
-                        <Button size="sm" onClick={() => startPayment(payment)}>
-                          Pay now
-                        </Button>
-                      </div>
-                    )}
-
-                    {isCaretakerOwner && payingRecordId === payment.id && (
-                      <form className="payment-form" onSubmit={(event) => handlePaySubmit(event, payment.id)}>
-                        {payError && (
-                          <div className="payments-error" role="alert">
-                            {payError}
-                          </div>
-                        )}
-
-                        <div className="payment-field">
-                          <label htmlFor={`pay-amount-${payment.id}`}>Payment amount</label>
-                          <input
-                            id={`pay-amount-${payment.id}`}
-                            type="number"
-                            min="0.01"
-                            step="0.01"
-                            max={payment.balance}
-                            value={payAmount}
-                            onChange={(event) => setPayAmount(event.target.value)}
-                          />
-                        </div>
-
-                        <div className="payment-field">
-                          <label htmlFor={`pay-name-${payment.id}`}>Name on card</label>
-                          <input
-                            id={`pay-name-${payment.id}`}
-                            type="text"
-                            value={nameOnCard}
-                            onChange={(event) => setNameOnCard(event.target.value)}
-                          />
-                        </div>
-
-                        <div className="payment-field">
-                          <label htmlFor={`pay-card-${payment.id}`}>Card number</label>
-                          <input
-                            id={`pay-card-${payment.id}`}
-                            type="text"
-                            inputMode="numeric"
-                            value={cardNumber}
-                            onChange={(event) => setCardNumber(event.target.value)}
-                          />
-                        </div>
-
-                        <div className="payment-field">
-                          <label htmlFor={`pay-exp-${payment.id}`}>Expiration (MM/YY)</label>
-                          <input
-                            id={`pay-exp-${payment.id}`}
-                            type="text"
-                            placeholder="MM/YY"
-                            value={expiration}
-                            onChange={(event) => setExpiration(event.target.value)}
-                          />
-                        </div>
-
-                        <div className="payment-field">
-                          <label htmlFor={`pay-cvv-${payment.id}`}>CVV</label>
-                          <input
-                            id={`pay-cvv-${payment.id}`}
-                            type="text"
-                            inputMode="numeric"
-                            value={cvv}
-                            onChange={(event) => setCvv(event.target.value)}
-                          />
-                        </div>
-
-                        <div className="payment-form-actions">
-                          <button type="submit" className="payment-submit">
-                            Submit payment
-                          </button>
-                          <button type="button" className="payment-cancel" onClick={cancelPayment}>
-                            Cancel
-                          </button>
-                        </div>
-                      </form>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-          </Card>
-        )} */}
-        
         </div>
 
         <div className="profile-sidebar">
         <Card>
           <h2>Authorized caretakers</h2>
 
-          {caretakerError && (
+          {/* {caretakerError && (
             <div className="request-error" role="alert">
               {caretakerError}
             </div>
@@ -421,7 +205,7 @@ export default function ChildProfilePage() {
             <div className="request-success" role="status">
               {caretakerSuccess}
             </div>
-          )}
+          )} */}
 
           {primaryCaretaker ? (
             <div className="caretaker-list">
@@ -467,12 +251,28 @@ export default function ChildProfilePage() {
                   )}
                 </div>
               ))}
+
+              {authorizedCaretakers.map((caretaker) => (
+                <div key={caretaker.id} className="caretaker-row">
+                  <Avatar
+                    firstName={caretaker.firstName}
+                    lastName={caretaker.lastName}
+                  />
+
+                  <div>
+                    <strong>
+                      {caretaker.firstName} {caretaker.lastName}
+                    </strong>
+                    <span>Authorized caretaker </span>
+                  </div>
+                </div>
+              ))}
             </div>
           ) : (
             <p className="no-results">Not on record.</p>
           )}
 
-          {isCaretakerOwner && (
+          {/* {isCaretakerOwner && (
             <div className="add-caretaker">
               <h3>Add a caretaker</h3>
 
@@ -503,12 +303,12 @@ export default function ChildProfilePage() {
                 </div>
               )}
             </div>
-          )}
+          )} */}
         </Card>
 
         {isCaretakerOwner && (
           <Card>
-            <h2>Actions</h2>
+            <h2>Remove Child</h2>
 
             {removeChildError && (
               <div className="request-error" role="alert">
@@ -522,7 +322,7 @@ export default function ChildProfilePage() {
             )}
 
             <p className="section-description">
-              Request to remove this child from the center. A staff member will review your request.
+              If you need to remove this child from the center, submit a removal request for staff to review.
             </p>
 
             <Button variant="danger" onClick={handleRequestRemoveChild} disabled={Boolean(removeChildSuccess)}>

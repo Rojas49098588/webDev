@@ -27,7 +27,10 @@ const initialState = {
 
   // CHILD MANAGEMENT ===================================
 
-  children: [...SAMPLE_CHILDREN],
+  children: SAMPLE_CHILDREN.map((child) => ({
+    ...child,
+    authorizedCaretakers: child.authorizedCaretakers ?? [],
+  })),
   addChildRequests: [...SAMPLE_ADD_CHILD_REQUESTS],
   removeChildRequests: [...SAMPLE_REMOVE_CHILD_REQUESTS],
 
@@ -162,12 +165,30 @@ function reducer(state, action) {
         ...state,
         addChildRequests: [...state.addChildRequests, action.payload],
       }
+    ///FIX FIX
+    ///FIX
+    //FIXME this is a dupe! please FIX IT
     case 'ADD_SECONDARY_CARETAKER':
       return {
         ...state,
         children: state.children.map((child) =>
           child.id === action.payload.childId
             ? { ...child, otherCaretakerIds: [...(child.otherCaretakerIds ?? []), action.payload.caretakerId] }
+            : child
+        ),
+      }
+    case 'ADD_AUTHORIZED_CARETAKER':
+      return {
+        ...state,
+        children: state.children.map((child) =>
+          child.id === action.payload.childId
+            ? {
+                ...child,
+                authorizedCaretakers: [
+                  ...(child.authorizedCaretakers ?? []),
+                  action.payload.caretaker,
+                ],
+              }
             : child
         ),
       }
@@ -677,6 +698,67 @@ export function AppProvider({ children }) {
     return { ok: true }
   }
 
+  function addAuthorizedCaretaker(childId, firstName, lastName) {
+    const child = state.children.find((item) => item.id === childId)
+
+    if (!child || child.primaryCaretakerId !== state.session.id) {
+      return {
+        ok: false,
+        error: 'Only the primary caretaker can add a caretaker to this child.',
+      }
+    }
+
+    const trimmedFirstName = firstName.trim()
+    const trimmedLastName = lastName.trim()
+
+    const nameError =
+      validateName(trimmedFirstName) ||
+      validateName(trimmedLastName)
+
+    if (nameError) {
+      return {
+        ok: false,
+        error: nameError,
+      }
+    }
+
+    const alreadyExists = (child.authorizedCaretakers ?? []).some(
+      (caretaker) =>
+        caretaker.firstName.toLowerCase() === trimmedFirstName.toLowerCase() &&
+        caretaker.lastName.toLowerCase() === trimmedLastName.toLowerCase()
+    )
+
+    if (alreadyExists) {
+      return {
+        ok: false,
+        error: 'This caretaker is already authorized for this child.',
+      }
+    }
+
+    const caretaker = {
+      id: `authorized-${Date.now()}`,
+      firstName: trimmedFirstName,
+      lastName: trimmedLastName,
+    }
+
+    dispatch({
+      type: 'ADD_AUTHORIZED_CARETAKER',
+      payload: {
+        childId,
+        caretaker,
+      },
+    })
+
+    logActivity(
+      `${actorName} added ${trimmedFirstName} ${trimmedLastName} as an authorized caretaker for ${child.firstName} ${child.lastName}`
+    )
+
+    return {
+      ok: true,
+      caretaker,
+    }
+  }
+
   function removeSecondaryCaretaker(childId, caretakerId) {
     const child = state.children.find((item) => item.id === childId)
     if (!child || child.primaryCaretakerId !== state.session.id) {
@@ -1054,6 +1136,7 @@ function updatePaymentRecord(paymentInformation) {
     denyRemoveChildRequest,
     submitAddChildRequest,
     addSecondaryCaretaker,
+    addAuthorizedCaretaker,
     removeSecondaryCaretaker,
     submitRemoveChildRequest,
 

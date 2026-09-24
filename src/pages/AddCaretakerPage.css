@@ -1,0 +1,171 @@
+.add-caretaker-page {
+  max-width: 900px;
+}
+
+.add-caretaker-page > h1 {
+  margin-bottom: 0.25rem;
+}
+
+.add-caretaker-page > p {
+  margin: 0 0 1.5rem;
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
+/* ============================================================
+   SECTIONS
+   ============================================================ */
+
+.add-caretaker-section {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.add-caretaker-section-header {
+  margin-bottom: 1.25rem;
+}
+
+.add-caretaker-section-header h2 {
+  margin: 0 0 0.3rem;
+  font-size: 17px;
+}
+
+.add-caretaker-section-header p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 13.5px;
+}
+
+/* ============================================================
+   AUTHORIZED CARETAKERS
+   ============================================================ */
+
+.authorized-caretaker-list {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--border);
+}
+
+.authorized-caretaker-row {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.authorized-caretaker-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.authorized-caretaker-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.authorized-caretaker-info strong {
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.authorized-caretaker-info span {
+  color: var(--ink-soft);
+  font-size: 12.5px;
+}
+
+.authorized-caretaker-info small {
+  margin-top: 0.15rem;
+  color: var(--ink-faint);
+  font-size: 12.5px;
+}
+
+/* ============================================================
+   ADD FORM
+   ============================================================ */
+
+.add-caretaker-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
+}
+
+.add-caretaker-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.add-caretaker-field label {
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.add-caretaker-field input,
+.add-caretaker-field select {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.7rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13.5px;
+}
+
+.add-caretaker-field input:focus,
+.add-caretaker-field select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft);
+}
+
+.add-caretaker-form-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  margin-top: 0.25rem;
+}
+
+/* ============================================================
+   MESSAGES
+   ============================================================ */
+
+.request-error,
+.request-success {
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--r-sm);
+  font-size: 13.5px;
+}
+
+.request-error {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.request-success {
+  background: var(--success-soft);
+  color: var(--success);
+}
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 700px) {
+  .add-caretaker-form {
+    grid-template-columns: 1fr;
+  }
+
+  .add-caretaker-form-actions {
+    grid-column: auto;
+  }
+}
