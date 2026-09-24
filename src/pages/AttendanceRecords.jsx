@@ -63,11 +63,11 @@ export default function AttendanceRecords() {
             id="attendance-child-search"
             value={childSearch}
             onChange={(value) => {
-                setChildSearch(value)
+            setChildSearch(value)
 
-                if (!value.trim()) {
-                    setSelectedChildId('')
-                }
+            if (!value.trim()) {
+                setSelectedChildId('')
+            }
             }}
             placeholder="Search by first name, last name, or date of birth"
             label="Search children"

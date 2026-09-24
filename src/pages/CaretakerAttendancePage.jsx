@@ -29,6 +29,7 @@ export default function CaretakerAttendancePage() {
     return (
       child.firstName.toLowerCase().includes(searchText) ||
       child.lastName.toLowerCase().includes(searchText)
+      (searchText.length === 4 && birthYear === searchText)
     )
   })
 
@@ -54,7 +55,7 @@ export default function CaretakerAttendancePage() {
           <div>
             <h2>Search My Children</h2>
             <p>
-              Search by first name or last name.
+              Search by first name, last name, or birth year.
             </p>
           </div>
         </div>
