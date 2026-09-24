@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import { useApp } from '../context/AppContext.jsx'
 import AuthSplitLayout from '../components/layout/AuthSplitLayout.jsx'
 import Button from '../components/ui/Button.jsx'
+import AddressFields from '../components/ui/AddressFields.jsx'
+import { EMPTY_ADDRESS } from '../utils/address.js'
 
 const EMPTY_FORM = {
   role: 'caretaker',
@@ -10,7 +12,7 @@ const EMPTY_FORM = {
   lastName: '',
   email: '',
   phone: '',
-  mailingAddress: '',
+  mailingAddress: EMPTY_ADDRESS,
 }
 
 export default function RequestAccountPage() {
@@ -98,15 +100,12 @@ export default function RequestAccountPage() {
           <p className="password-hint">10 digits, cannot start with 0</p>
 
           {form.role === 'caretaker' && (
-            <>
-              <label htmlFor="request-address">Mailing address</label>
-              <input
-                id="request-address"
-                type="text"
-                value={form.mailingAddress}
-                onChange={(e) => updateField('mailingAddress', e.target.value)}
-              />
-            </>
+            <AddressFields
+              idPrefix="request-address"
+              value={form.mailingAddress}
+              onChange={(address) => updateField('mailingAddress', address)}
+              stacked
+            />
           )}
 
           {error && (

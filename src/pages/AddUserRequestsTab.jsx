@@ -3,6 +3,21 @@ import { useApp } from '../context/AppContext.jsx'
 import DataRow from '../components/ui/DataRow.jsx'
 import Button from '../components/ui/Button.jsx'
 
+// Lets a long email wrap after the "@" instead of mid-word.
+function breakAfterAt(email) {
+  const at = email.indexOf('@')
+  if (at === -1) {
+    return email
+  }
+  return (
+    <>
+      {email.slice(0, at + 1)}
+      <wbr />
+      {email.slice(at + 1)}
+    </>
+  )
+}
+
 export default function AddUserRequestsTab() {
   const { addRequests, approveAddUserRequest } = useApp()
   const [error, setError] = useState('')
@@ -45,9 +60,10 @@ export default function AddUserRequestsTab() {
               firstName={request.firstName}
               lastName={request.lastName}
               fields={[
-                { label: 'Role', value: request.role === 'staff' ? 'Staff' : 'Caretaker' },
-                { label: 'Email', value: request.email },
+                { label: 'Role', value: request.role === 'staff' ? 'Staff' : 'Caretaker', grow: 0.7 },
+                { label: 'Email', value: breakAfterAt(request.email), grow: 1.7 },
                 { label: 'Phone', value: request.phone },
+                { label: 'Address', value: request.mailingAddress || '—', grow: 1.6 },
                 // ...(request.role === 'staff' ? [{ label: 'Group', value: request.groupNumber }] : []),
               ]}
               actions={

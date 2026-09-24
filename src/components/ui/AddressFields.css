@@ -1,0 +1,41 @@
+.address-fields {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.address-fields .address-street {
+  grid-column: 1 / -1;
+}
+
+.address-fields > div {
+  min-width: 0;
+}
+
+.address-fields select {
+  text-overflow: ellipsis;
+}
+
+/* Narrow forms (e.g. the sign-in panel): street and city full width,
+   state and ZIP side by side. The host form supplies vertical spacing. */
+.address-fields--stacked {
+  grid-template-columns: 1fr 1fr;
+  row-gap: 0;
+  column-gap: 0.75rem;
+}
+
+.address-fields--stacked .address-city {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 700px) {
+  .address-fields {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .address-fields .address-city {
+    grid-column: 1 / -1;
+  }
+}

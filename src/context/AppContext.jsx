@@ -12,7 +12,9 @@ import {
   validateCVV,
   validateEmail,
   validatePhone,
+  formatPhone,
 } from '../utils/validation.js'
+import { validateAddress, formatAddress, isAddressEmpty } from '../utils/address.js'
 
 export const SECURITY_CODE_TTL_MS = 5 * 60 * 1000
 
@@ -390,21 +392,44 @@ export function AppProvider({ children }) {
 
   // USER MANAGEMENT FUNCTIONS ================================
 
-  function updateUser(userId, updatedInformation) {
+  function updateUser(userId, { email, phone, mailingAddress }) {
+    const user = state.users.find((item) => item.id === userId)
+    if (!user) {
+      return { ok: false, error: 'User could not be found.' }
+    }
+
+    const emailError = validateEmail(email)
+    if (emailError) {
+      return { ok: false, error: emailError }
+    }
+
+    const phoneError = validatePhone(phone)
+    if (phoneError) {
+      return { ok: false, error: phoneError }
+    }
+
+    // Staff accounts don't require a mailing address; caretakers do.
+    const skipAddress = user.role === 'staff' && isAddressEmpty(mailingAddress)
+    const addressError = skipAddress ? null : validateAddress(mailingAddress)
+    if (addressError) {
+      return { ok: false, error: addressError }
+    }
+
     dispatch({
       type: 'UPDATE_USER',
       payload: {
         id: userId,
-        ...updatedInformation,
+        email: email.trim(),
+        phone: formatPhone(phone),
+        mailingAddress: skipAddress ? '' : formatAddress(mailingAddress),
       },
     })
 
-    const user = state.users.find((item) => item.id === userId)
-    if (user) {
-      logActivity(
-        `${actorName} updated ${user.firstName} ${user.lastName}'s contact information`
-      )
-    }
+    logActivity(
+      `${actorName} updated ${user.firstName} ${user.lastName}'s contact information`
+    )
+
+    return { ok: true }
   }
 
   // ADD USER REQUESTS ========================================
@@ -433,8 +458,11 @@ export function AppProvider({ children }) {
       return { ok: false, error: phoneError }
     }
 
-    if (role === 'caretaker' && !(mailingAddress || '').trim()) {
-      return { ok: false, error: 'Enter a mailing address.' }
+    if (role === 'caretaker') {
+      const addressError = validateAddress(mailingAddress)
+      if (addressError) {
+        return { ok: false, error: addressError }
+      }
     }
 
     const normalizedEmail = email.trim().toLowerCase()
@@ -445,14 +473,13 @@ export function AppProvider({ children }) {
       return { ok: false, error: 'An account or pending request already uses this email address.' }
     }
 
-    const digits = phone.replace(/\D/g, '')
     const request = {
       id: `add-${Date.now()}`,
       firstName: firstName.trim(),
       lastName: lastName.trim(),
       email: email.trim(),
-      phone: `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`,
-      mailingAddress: role === 'caretaker' ? mailingAddress.trim() : '',
+      phone: formatPhone(phone),
+      mailingAddress: role === 'caretaker' ? formatAddress(mailingAddress) : '',
       role,
     }
 
@@ -774,7 +801,7 @@ export function AppProvider({ children }) {
     const contactError =
       validateEmail(email) ||
       validatePhone(phone) ||
-      (!(mailingAddress || '').trim() ? 'Enter a mailing address.' : null)
+      validateAddress(mailingAddress)
 
     if (contactError) {
       return {
@@ -796,14 +823,13 @@ export function AppProvider({ children }) {
       }
     }
 
-    const digits = phone.replace(/\D/g, '')
     const caretaker = {
       id: `authorized-${Date.now()}`,
       firstName: trimmedFirstName,
       lastName: trimmedLastName,
       email: email.trim(),
-      phone: `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`,
-      mailingAddress: mailingAddress.trim(),
+      phone: formatPhone(phone),
+      mailingAddress: formatAddress(mailingAddress),
     }
 
     dispatch({

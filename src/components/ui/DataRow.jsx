@@ -15,7 +15,7 @@ export default function DataRow({ firstName, lastName, secondary, fields = [], b
       </div>
 
       {fields.map((field) => (
-        <div key={field.label} className="row-field">
+        <div key={field.label} className="row-field" style={field.grow ? { flexGrow: field.grow } : undefined}>
           <span className="row-field-label">{field.label}</span>
           <span className="row-field-value">{field.value}</span>
         </div>

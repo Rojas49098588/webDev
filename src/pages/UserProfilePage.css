@@ -87,6 +87,64 @@
   min-height: 60px;
 }
 
+.address-edit {
+  flex: 1;
+  min-width: 0;
+}
+
+.address-edit .address-fields {
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+}
+
+.address-edit .address-fields .address-city {
+  grid-column: 1 / -1;
+}
+
+.address-edit .address-edit-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  text-align: left;
+}
+
+.address-edit .address-edit-field label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.address-edit .address-edit-field input,
+.address-edit .address-edit-field select {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 14px;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  color: var(--ink);
+  text-align: left;
+}
+
+.profile-error,
+.profile-success {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--r-sm);
+  font-size: 13.5px;
+}
+
+.profile-error {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.profile-success {
+  background: var(--success-soft);
+  color: var(--success);
+}
+
 .edit-actions {
   display: flex;
   gap: 0.6rem;

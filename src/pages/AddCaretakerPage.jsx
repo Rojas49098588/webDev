@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import { useApp } from '../context/AppContext.jsx'
 import Button from '../components/ui/Button.jsx'
 import Avatar from '../components/ui/Avatar.jsx'
+import AddressFields from '../components/ui/AddressFields.jsx'
+import { EMPTY_ADDRESS } from '../utils/address.js'
 import './AddCaretakerPage.css'
 
 const EMPTY_FORM = {
@@ -10,7 +12,7 @@ const EMPTY_FORM = {
   lastName: '',
   email: '',
   phone: '',
-  mailingAddress: '',
+  mailingAddress: EMPTY_ADDRESS,
 }
 
 export default function AddCaretakerPage() {
@@ -318,18 +320,12 @@ export default function AddCaretakerPage() {
             />
           </div>
 
-          <div className="add-caretaker-field">
-            <label htmlFor="caretaker-address">
-              Mailing address
-            </label>
-
-            <input
-              id="caretaker-address"
-              type="text"
-              value={form.mailingAddress}
-              onChange={(event) => updateField('mailingAddress', event.target.value)}
-            />
-          </div>
+          <AddressFields
+            idPrefix="caretaker-address"
+            value={form.mailingAddress}
+            onChange={(address) => updateField('mailingAddress', address)}
+            fieldClassName="add-caretaker-field"
+          />
 
           <div className="add-caretaker-form-actions">
             <Button type="submit">

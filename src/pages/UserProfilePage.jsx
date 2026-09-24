@@ -5,6 +5,8 @@ import Card from '../components/ui/Card.jsx'
 import Avatar from '../components/ui/Avatar.jsx'
 import Badge from '../components/ui/Badge.jsx'
 import Button from '../components/ui/Button.jsx'
+import AddressFields from '../components/ui/AddressFields.jsx'
+import { parseAddress } from '../utils/address.js'
 import './UserProfilePage.css'
 
 export default function UserProfilePage() {
@@ -17,7 +19,9 @@ export default function UserProfilePage() {
   const [editing, setEditing] = useState(false)
   const [email, setEmail] = useState(user?.email ?? '')
   const [phone, setPhone] = useState(user?.phone ?? '')
-  const [mailingAddress, setMailingAddress] = useState(user?.mailingAddress ?? '')
+  const [mailingAddress, setMailingAddress] = useState(() => parseAddress(user?.mailingAddress))
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
 
   if (!user) {
     return (
@@ -28,15 +32,28 @@ export default function UserProfilePage() {
     )
   }
 
+  function handleEdit() {
+    setEmail(user.email)
+    setPhone(user.phone)
+    setMailingAddress(parseAddress(user.mailingAddress))
+    setError('')
+    setSuccess('')
+    setEditing(true)
+  }
+
   function handleSave() {
-    updateUser(user.id, { email, phone, mailingAddress })
+    const result = updateUser(user.id, { email, phone, mailingAddress })
+    if (!result.ok) {
+      setError(result.error)
+      return
+    }
+    setError('')
+    setSuccess('Contact information updated.')
     setEditing(false)
   }
 
   function handleCancel() {
-    setEmail(user.email)
-    setPhone(user.phone)
-    setMailingAddress(user.mailingAddress)
+    setError('')
     setEditing(false)
   }
 
@@ -96,11 +113,29 @@ export default function UserProfilePage() {
             <div className="info-row info-row-address">
               <span>Mailing address</span>
               {editing ? (
-                <textarea value={mailingAddress} onChange={(e) => setMailingAddress(e.target.value)} />
+                <div className="address-edit">
+                  <AddressFields
+                    idPrefix="profile-address"
+                    value={mailingAddress}
+                    onChange={setMailingAddress}
+                    fieldClassName="address-edit-field"
+                  />
+                </div>
               ) : (
                 <strong>{user.mailingAddress}</strong>
               )}
             </div>
+
+            {error && (
+              <div className="profile-error" role="alert">
+                {error}
+              </div>
+            )}
+            {success && !editing && (
+              <div className="profile-success" role="status">
+                {success}
+              </div>
+            )}
 
             {editing ? (
               <div className="edit-actions">
@@ -110,7 +145,7 @@ export default function UserProfilePage() {
                 </Button>
               </div>
             ) : (
-              <Button variant="ghost" onClick={() => setEditing(true)}>
+              <Button variant="ghost" onClick={handleEdit}>
                 Edit contact information
               </Button>
             )}

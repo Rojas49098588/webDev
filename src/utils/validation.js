@@ -77,3 +77,8 @@ export function validatePhone(phone) {
   }
   return null
 }
+
+export function formatPhone(phone) {
+  const digits = (phone || '').replace(/\D/g, '')
+  return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`
+}
