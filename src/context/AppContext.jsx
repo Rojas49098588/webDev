@@ -617,6 +617,7 @@ export function AppProvider({ children }) {
       dateOfBirth: request.dateOfBirth,
       primaryCaretakerId: request.primaryCaretakerId,
       otherCaretakerIds,
+      medications: request.medications ?? [],
       active: true,
     }
 
@@ -704,7 +705,9 @@ export function AppProvider({ children }) {
     return { ok: true }
   }
 
-  function submitAddChildRequest({ firstName, lastName, dateOfBirth }) {
+  // CHILD MANAGEMENT FUNCTIONS ================================
+
+  function submitAddChildRequest({firstName, lastName, dateOfBirth, medication,}) {
     const nameError = validateName(firstName) || validateName(lastName)
     if (nameError) {
       return { ok: false, error: nameError }
@@ -735,6 +738,7 @@ export function AppProvider({ children }) {
       dateOfBirth,
       primaryCaretakerId: state.session.id,
       otherCaretakerIds: [],
+      medications: medication ? [medication] : [],
     }
 
     dispatch({ type: 'SUBMIT_ADD_CHILD_REQUEST', payload: request })

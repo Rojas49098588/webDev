@@ -15,6 +15,10 @@ export default function CaretakerChildrenPage() {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [dateOfBirth, setDateOfBirth] = useState('')
+  const [medicationName, setMedicationName] = useState('')
+  const [medicationDosage, setMedicationDosage] = useState('')
+  const [medicationFrequency, setMedicationFrequency] = useState('')
+  const [medicationInstructions, setMedicationInstructions] = useState('')
   const [formError, setFormError] = useState('')
   const [formSuccess, setFormSuccess] = useState('')
 
@@ -50,16 +54,28 @@ export default function CaretakerChildrenPage() {
     setFormError('')
     setFormSuccess('')
 
-    const result = submitAddChildRequest({ firstName, lastName, dateOfBirth })
-    if (!result.ok) {
-      setFormError(result.error)
-      return
-    }
+    const result = submitAddChildRequest({
+      firstName,
+      lastName,
+      dateOfBirth,
+      medication: medicationName.trim()
+        ? {
+            name: medicationName,
+            dosage: medicationDosage,
+            frequency: medicationFrequency,
+            instructions: medicationInstructions,
+          }
+        : null,
+    })
 
     setFormSuccess('Request submitted. A staff member will review it soon.')
     setFirstName('')
     setLastName('')
     setDateOfBirth('')
+    setMedicationName('')
+    setMedicationDosage('')
+    setMedicationFrequency('')
+    setMedicationInstructions('')
   }
 
   return (
@@ -138,6 +154,51 @@ export default function CaretakerChildrenPage() {
               value={dateOfBirth}
               onChange={(e) => setDateOfBirth(e.target.value)}
             />
+          </div>
+
+          <div className="caretaker-medication-section">
+            <h3>Medication</h3>
+            <p>Add medication information if the child needs medication while at the center.</p>
+
+            <div className="caretaker-form-field">
+              <label htmlFor="request-medication-name">Medication name</label>
+              <input
+                id="request-medication-name"
+                type="text"
+                value={medicationName}
+                onChange={(e) => setMedicationName(e.target.value)}
+              />
+            </div>
+
+            <div className="caretaker-form-field">
+              <label htmlFor="request-medication-dosage">Dosage</label>
+              <input
+                id="request-medication-dosage"
+                type="text"
+                value={medicationDosage}
+                onChange={(e) => setMedicationDosage(e.target.value)}
+              />
+            </div>
+
+            <div className="caretaker-form-field">
+              <label htmlFor="request-medication-frequency">Frequency</label>
+              <input
+                id="request-medication-frequency"
+                type="text"
+                value={medicationFrequency}
+                onChange={(e) => setMedicationFrequency(e.target.value)}
+              />
+            </div>
+
+            <div className="caretaker-form-field">
+              <label htmlFor="request-medication-instructions">Instructions</label>
+              <input
+                id="request-medication-instructions"
+                type="text"
+                value={medicationInstructions}
+                onChange={(e) => setMedicationInstructions(e.target.value)}
+              />
+            </div>
           </div>
 
           <div className="caretaker-form-actions">

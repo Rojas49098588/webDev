@@ -106,6 +106,25 @@
   color: var(--ink-soft);
 }
 
+.removal-pending {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.9rem 1rem;
+  background: var(--warning-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+}
+
+.removal-pending strong {
+  font-size: 13.5px;
+  color: var(--ink);
+}
+
+.section-description + button {
+  margin-top: 1rem;
+}
+
 .profile-action,
 .profile-action-secondary {
   border: none;

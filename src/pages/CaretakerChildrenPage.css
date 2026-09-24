@@ -75,3 +75,55 @@
     grid-template-columns: 1fr;
   }
 }
+
+.caretaker-medication-section {
+  grid-column: 1 / -1;
+  margin-top: 0.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+.caretaker-medication-section h3 {
+  margin: 0 0 0.3rem;
+  font-size: 15px;
+}
+
+.caretaker-medication-section > p {
+  margin: 0 0 1rem;
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+
+.caretaker-medication-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.caretaker-medication-section h3,
+.caretaker-medication-section > p {
+  grid-column: 1 / -1;
+}
+
+.caretaker-medication-section .caretaker-form-field:last-child {
+  grid-column: 1 / -1;
+}
+
+.caretaker-medication-section textarea {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.7rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13.5px;
+  resize: vertical;
+}
+
+.caretaker-medication-section textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft);
+}

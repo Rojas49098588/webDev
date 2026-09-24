@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router-dom'
+import { Link, useLocation, useParams } from 'react-router-dom'
 import { useApp } from '../context/AppContext.jsx'
 import Card from '../components/ui/Card.jsx'
 import Avatar from '../components/ui/Avatar.jsx'
@@ -7,6 +7,7 @@ import './UserProfilePage.css'
 
 export default function CaretakerProfilePage() {
   const { id } = useParams()
+  const location = useLocation()
   const { session, children, users } = useApp()
 
   const myChildren = children.filter((child) => child.primaryCaretakerId === session.id)
@@ -31,8 +32,13 @@ export default function CaretakerProfilePage() {
 
   return (
     <div className="user-profile-page">
-      <Link to="/caretaker/children" className="profile-back">
-        ← Back to My Children
+      <Link
+        to={location.state?.from || '/caretaker/children'}
+        className="profile-back"
+      >
+        ← {location.state?.from === '/caretaker/add-caretaker'
+          ? 'Back to Caretakers'
+          : 'Back to My Children'}
       </Link>
 
       <div className="profile-main">

@@ -170,6 +170,75 @@
 }
 
 /* ============================================================
+   CONFIRMATION DIALOG
+   ============================================================ */
+
+.caretaker-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: rgba(33, 27, 54, 0.35);
+  z-index: 1000;
+}
+
+.caretaker-confirm-dialog {
+  width: min(500px, 100%);
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.caretaker-confirm-dialog h2 {
+  margin: 0 0 0.4rem;
+  font-size: 18px;
+}
+
+.caretaker-confirm-dialog > p {
+  margin: 0 0 1.25rem;
+  color: var(--ink-soft);
+  font-size: 13.5px;
+}
+
+.caretaker-confirm-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--surface-alt);
+}
+
+.caretaker-confirm-details > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.caretaker-confirm-details span {
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+
+.caretaker-confirm-details strong {
+  color: var(--ink);
+  font-size: 13px;
+  text-align: right;
+}
+
+.caretaker-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+/* ============================================================
    MOBILE
    ============================================================ */
 

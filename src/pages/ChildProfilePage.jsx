@@ -23,6 +23,7 @@ export default function ChildProfilePage() {
     session,
     children,
     users,
+    removeChildRequests,
     removeSecondaryCaretaker,
     removeAuthorizedCaretaker,
     submitRemoveChildRequest,
@@ -39,6 +40,7 @@ export default function ChildProfilePage() {
   const childrenListLabel = session.role === 'caretaker' ? 'My Children' : 'Children'
 
   const isCaretakerOwner = session.role === 'caretaker' && child?.primaryCaretakerId === session.id
+  const hasPendingRemovalRequest = removeChildRequests.some((request) => request.childId === id)
 
   if (!child || (session.role === 'caretaker' && !isCaretakerOwner)) {
     return (
@@ -202,7 +204,10 @@ export default function ChildProfilePage() {
 
                   <div>
                     {isCaretakerOwner ? (
-                      <Link to={`/caretaker/caretakers/${caretaker.id}`}>
+                      <Link
+                        to={`/caretaker/caretakers/${caretaker.id}`}
+                        state={{ from: `/caretaker/children/${child.id}` }}
+                      >
                         <strong>
                           {caretaker.firstName} {caretaker.lastName}
                         </strong>
@@ -244,19 +249,31 @@ export default function ChildProfilePage() {
                 {removeChildError}
               </div>
             )}
+
             {removeChildSuccess && (
               <div className="request-success" role="status">
                 {removeChildSuccess}
               </div>
             )}
 
-            <p className="section-description">
-              If you need to remove this child from the center, submit a removal request for staff to review.
-            </p>
+            {hasPendingRemovalRequest ? (
+              <div className="removal-pending">
+                <strong>Removal request pending</strong>
+                <p className="section-description">
+                  A removal request for this child has already been submitted and is waiting for staff review.
+                </p>
+              </div>
+            ) : (
+              <>
+                <p className="section-description">
+                  If you need to remove this child from the center, submit a removal request for staff to review.
+                </p>
 
-            <Button variant="danger" onClick={handleRequestRemoveChild} disabled={Boolean(removeChildSuccess)}>
-              Request to remove this child
-            </Button>
+                <Button variant="danger" onClick={handleRequestRemoveChild}>
+                  Request to remove this child
+                </Button>
+              </>
+            )}
           </Card>
         )}
         </div>

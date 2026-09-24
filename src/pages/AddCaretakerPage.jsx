@@ -33,6 +33,7 @@ export default function AddCaretakerPage() {
     myChildren[0]?.id ?? ''
   )
   const [form, setForm] = useState(EMPTY_FORM)
+  const [confirmingCaretaker, setConfirmingCaretaker] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [listError, setListError] = useState('')
@@ -87,13 +88,19 @@ export default function AddCaretakerPage() {
 
   function handleAddCaretaker(event) {
     event.preventDefault()
+    setError('')
+    setSuccess('')
+    setConfirmingCaretaker(true)
+  }
 
+  function handleConfirmAddCaretaker() {
     setError('')
     setSuccess('')
 
     const result = addAuthorizedCaretaker(selectedChildId, form)
 
     if (!result.ok) {
+      setConfirmingCaretaker(false)
       setError(result.error)
       return
     }
@@ -101,8 +108,8 @@ export default function AddCaretakerPage() {
     setSuccess(
       `${result.caretaker.firstName} ${result.caretaker.lastName} was added as an authorized caretaker.`
     )
-
     setForm(EMPTY_FORM)
+    setConfirmingCaretaker(false)
   }
 
   function handleRemoveCaretaker(caretaker) {
@@ -178,7 +185,10 @@ export default function AddCaretakerPage() {
                 />
 
                 <div className="authorized-caretaker-info">
-                  <Link to={`/caretaker/caretakers/${caretaker.id}`}>
+                  <Link
+                    to={`/caretaker/caretakers/${caretaker.id}`}
+                    state={{ from: '/caretaker/add-caretaker' }}
+                  >
                     <strong>
                       {caretaker.firstName} {caretaker.lastName}
                     </strong>
@@ -328,6 +338,61 @@ export default function AddCaretakerPage() {
           </div>
         </form>
       </section>
+
+      {confirmingCaretaker && (
+        <div className="caretaker-confirm-overlay">
+          <div className="caretaker-confirm-dialog">
+            <h2>Confirm caretaker information</h2>
+
+            <p>
+              Please verify that the information below is correct before adding this caretaker.
+            </p>
+
+            <div className="caretaker-confirm-details">
+              <div>
+                <span>Name</span>
+                <strong>{form.firstName} {form.lastName}</strong>
+              </div>
+
+              <div>
+                <span>Email</span>
+                <strong>{form.email}</strong>
+              </div>
+
+              <div>
+                <span>Phone</span>
+                <strong>{form.phone}</strong>
+              </div>
+
+              <div>
+                <span>Mailing address</span>
+                <strong>{form.mailingAddress}</strong>
+              </div>
+
+              <div>
+                <span>Authorized for</span>
+                <strong>
+                  {myChildren.find((child) => child.id === selectedChildId)?.firstName}{' '}
+                  {myChildren.find((child) => child.id === selectedChildId)?.lastName}
+                </strong>
+              </div>
+            </div>
+
+            <div className="caretaker-confirm-actions">
+              <Button
+                variant="ghost"
+                onClick={() => setConfirmingCaretaker(false)}
+              >
+                Cancel
+              </Button>
+
+              <Button onClick={handleConfirmAddCaretaker}>
+                Confirm and add
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
