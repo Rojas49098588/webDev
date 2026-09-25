@@ -774,7 +774,9 @@ export function AppProvider({ children }) {
     return { ok: true }
   }
 
-  function addAuthorizedCaretaker(childId, { firstName, lastName, email, phone, mailingAddress }) {
+  // Checks a new secondary caretaker without saving it, so a page can
+  // confirm the details with the user first. Returns { ok, error }.
+  function validateAuthorizedCaretaker(childId, { firstName, lastName, email, phone, mailingAddress }) {
     const child = state.children.find((item) => item.id === childId)
 
     if (!child || child.primaryCaretakerId !== state.session.id) {
@@ -822,6 +824,20 @@ export function AppProvider({ children }) {
         error: 'This caretaker is already authorized for this child.',
       }
     }
+
+    return { ok: true }
+  }
+
+  function addAuthorizedCaretaker(childId, information) {
+    const validation = validateAuthorizedCaretaker(childId, information)
+    if (!validation.ok) {
+      return validation
+    }
+
+    const child = state.children.find((item) => item.id === childId)
+    const { firstName, lastName, email, phone, mailingAddress } = information
+    const trimmedFirstName = firstName.trim()
+    const trimmedLastName = lastName.trim()
 
     const caretaker = {
       id: `authorized-${Date.now()}`,
@@ -1247,6 +1263,7 @@ function updatePaymentRecord(paymentInformation) {
     approveRemoveChildRequest,
     denyRemoveChildRequest,
     submitAddChildRequest,
+    validateAuthorizedCaretaker,
     addAuthorizedCaretaker,
     removeAuthorizedCaretaker,
     removeSecondaryCaretaker,

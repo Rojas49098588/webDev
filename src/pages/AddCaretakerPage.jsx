@@ -4,7 +4,8 @@ import { useApp } from '../context/AppContext.jsx'
 import Button from '../components/ui/Button.jsx'
 import Avatar from '../components/ui/Avatar.jsx'
 import AddressFields from '../components/ui/AddressFields.jsx'
-import { EMPTY_ADDRESS } from '../utils/address.js'
+import { EMPTY_ADDRESS, formatAddress } from '../utils/address.js'
+import { formatPhone } from '../utils/validation.js'
 import './AddCaretakerPage.css'
 
 const EMPTY_FORM = {
@@ -20,6 +21,7 @@ export default function AddCaretakerPage() {
     session,
     children,
     users,
+    validateAuthorizedCaretaker,
     addAuthorizedCaretaker,
     removeAuthorizedCaretaker,
     removeSecondaryCaretaker,
@@ -92,6 +94,13 @@ export default function AddCaretakerPage() {
     event.preventDefault()
     setError('')
     setSuccess('')
+
+    const validation = validateAuthorizedCaretaker(selectedChildId, form)
+    if (!validation.ok) {
+      setError(validation.error)
+      return
+    }
+
     setConfirmingCaretaker(true)
   }
 
@@ -357,12 +366,12 @@ export default function AddCaretakerPage() {
 
               <div>
                 <span>Phone</span>
-                <strong>{form.phone}</strong>
+                <strong>{formatPhone(form.phone)}</strong>
               </div>
 
               <div>
                 <span>Mailing address</span>
-                <strong>{form.mailingAddress}</strong>
+                <strong>{formatAddress(form.mailingAddress)}</strong>
               </div>
 
               <div>
