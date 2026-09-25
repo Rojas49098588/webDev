@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useApp } from '../context/AppContext.jsx'
 import SearchInput from '../components/ui/SearchInput.jsx'
+import { matchesChildSearch } from '../utils/childSearch.js'
 import './AttendanceRecords.css'
 
 export default function CaretakerAttendancePage() {
@@ -19,19 +20,7 @@ export default function CaretakerAttendancePage() {
       child.primaryCaretakerId === session.id
   )
 
-  const searchText = search.toLowerCase().trim()
-
-  const filteredChildren = myChildren.filter((child) => {
-    if (!searchText) {
-      return true
-    }
-
-    return (
-      child.firstName.toLowerCase().includes(searchText) ||
-      child.lastName.toLowerCase().includes(searchText)
-      (searchText.length === 4 && birthYear === searchText)
-    )
-  })
+  const filteredChildren = myChildren.filter((child) => matchesChildSearch(child, search))
 
   const selectedChild = myChildren.find(
     (child) => child.id === selectedChildId
@@ -71,7 +60,7 @@ export default function CaretakerAttendancePage() {
                 setSelectedChildId('')
               }
             }}
-            placeholder="Search by first or last name"
+            placeholder="Search by name or birth year"
             label="Search my children"
           />
         </div>

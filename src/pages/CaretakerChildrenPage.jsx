@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useApp } from '../context/AppContext.jsx'
 import SearchInput from '../components/ui/SearchInput.jsx'
+import { matchesChildSearch } from '../utils/childSearch.js'
 import DataRow from '../components/ui/DataRow.jsx'
 import Badge from '../components/ui/Badge.jsx'
 import Button from '../components/ui/Button.jsx'
@@ -26,17 +27,7 @@ export default function CaretakerChildrenPage() {
     (child) => child.active && child.primaryCaretakerId === session.id
   )
 
-  const searchText = search.toLowerCase().trim()
-
-  const filteredChildren = myChildren.filter((child) => {
-    if (!searchText) {
-      return true
-    }
-    return (
-      child.firstName.toLowerCase().includes(searchText) ||
-      child.lastName.toLowerCase().includes(searchText)
-    )
-  })
+  const filteredChildren = myChildren.filter((child) => matchesChildSearch(child, search))
 
   const myPendingAddRequests = addChildRequests.filter(
     (request) => request.primaryCaretakerId === session.id
@@ -88,7 +79,7 @@ export default function CaretakerChildrenPage() {
           id="caretaker-child-search-input"
           value={search}
           onChange={setSearch}
-          placeholder="Search by first or last name"
+          placeholder="Search by name or birth year"
           label="Search my children"
         />
       </div>

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useApp } from '../context/AppContext.jsx'
 import SearchInput from '../components/ui/SearchInput.jsx'
+import { matchesChildSearch } from '../utils/childSearch.js'
 import Button from '../components/ui/Button.jsx'
 import { formatCardNumber, getCardBrand } from '../utils/validation.js'
 import './Payments.css'
@@ -31,19 +32,7 @@ export default function CaretakerPaymentsPage() {
       child.primaryCaretakerId === session.id
   )
 
-  const searchText = search.toLowerCase().trim()
-
-  const filteredChildren = myChildren.filter((child) => {
-    if (!searchText) {
-      return true
-    }
-
-    return (
-      child.firstName.toLowerCase().includes(searchText) ||
-      child.lastName.toLowerCase().includes(searchText)
-      (searchText.length === 4 && birthYear === searchText)
-    )
-  })
+  const filteredChildren = myChildren.filter((child) => matchesChildSearch(child, search))
 
   const selectedChild = myChildren.find(
     (child) => child.id === selectedChildId
@@ -130,7 +119,7 @@ export default function CaretakerPaymentsPage() {
                 setPayError('')
               }
             }}
-            placeholder="Search by first or last name"
+            placeholder="Search by name or birth year"
             label="Search my children"
           />
         </div>
