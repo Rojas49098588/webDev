@@ -3,7 +3,6 @@ import { useApp } from '../context/AppContext.jsx'
 import SearchInput from '../components/ui/SearchInput.jsx'
 import { matchesChildSearch } from '../utils/childSearch.js'
 import DataRow from '../components/ui/DataRow.jsx'
-import Badge from '../components/ui/Badge.jsx'
 import Button from '../components/ui/Button.jsx'
 import './ChildManagementPage.css'
 import './CaretakerChildrenPage.css'
@@ -95,7 +94,6 @@ export default function CaretakerChildrenPage() {
               firstName={child.firstName}
               lastName={child.lastName}
               fields={[{ label: 'Date of birth', value: child.dateOfBirth }]}
-              badge={<Badge variant="green">Active</Badge>}
             />
           ))
         )}
