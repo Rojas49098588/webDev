@@ -1214,7 +1214,7 @@ function updatePaymentRecord(paymentInformation) {
     const cardError =
       validateCardNumber(card.cardNumber) ||
       validateExpiration(card.expiration) ||
-      validateCVV(card.cvv) ||
+      validateCVV(card.cvv, card.cardNumber) ||
       (validateName(card.nameOnCard) ? `Name on card: ${validateName(card.nameOnCard)}` : null)
     if (cardError) {
       return { ok: false, error: cardError }

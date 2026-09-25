@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useApp } from '../context/AppContext.jsx'
 import SearchInput from '../components/ui/SearchInput.jsx'
 import Button from '../components/ui/Button.jsx'
+import { formatCardNumber, getCardBrand } from '../utils/validation.js'
 import './Payments.css'
 
 export default function CaretakerPaymentsPage() {
@@ -47,6 +48,8 @@ export default function CaretakerPaymentsPage() {
   const selectedChild = myChildren.find(
     (child) => child.id === selectedChildId
   )
+
+  const cardBrand = getCardBrand(cardNumber)
 
   const payments = selectedChildId
     ? getChildPayments(selectedChildId)
@@ -287,21 +290,19 @@ export default function CaretakerPaymentsPage() {
                       <div className="payment-form-field">
                         <label htmlFor={`pay-card-${payment.id}`}>
                           Card number
+                          {cardBrand && (
+                            <span className="card-brand-badge">{cardBrand.name}</span>
+                          )}
                         </label>
                         <input
                           id={`pay-card-${payment.id}`}
                           type="text"
                           inputMode="numeric"
+                          autoComplete="cc-number"
                           value={cardNumber}
-                          onChange={(event) => {
-                            const value = event.target.value
-                              .replace(/\D/g, '')
-                              .slice(0, 16)
-
-                            const formatted = value.replace(/(\d{4})(?=\d)/g, '$1 ')
-
-                            setCardNumber(formatted)
-                          }}
+                          onChange={(event) =>
+                            setCardNumber(formatCardNumber(event.target.value))
+                          }
                         />
                       </div>
 
@@ -332,15 +333,18 @@ export default function CaretakerPaymentsPage() {
 
                         <div className="payment-form-field">
                           <label htmlFor={`pay-cvv-${payment.id}`}>
-                            CVV
+                            {cardBrand?.codeName ?? 'CVV'}
                           </label>
                           <input
                             id={`pay-cvv-${payment.id}`}
                             type="password"
                             inputMode="numeric"
+                            autoComplete="cc-csc"
+                            placeholder={`${cardBrand?.codeSize ?? 3} digits`}
+                            maxLength={cardBrand?.codeSize ?? 4}
                             value={cvv}
                             onChange={(event) =>
-                              setCvv(event.target.value)
+                              setCvv(event.target.value.replace(/\D/g, ''))
                             }
                           />
                         </div>
